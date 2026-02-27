@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Walking Offset Adjust
+Comment=Walking Offset Adjust Program
+Encoding=UTF-8
+Exec=bash /home/ubuntu/software/walking_offset_adjust/walking_offset_adjust.sh
+Terminal=false
+MultipleArgs=false
+Type=Application
+StartupNotify=true
+Icon=/home/ubuntu/software/walking_offset_adjust/resources/app.png

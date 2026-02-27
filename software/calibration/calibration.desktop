@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Tool
+Comment=Tool Program
+Encoding=UTF-8
+Exec=bash /home/ubuntu/software/calibration/calibration.sh
+Terminal=false
+MultipleArgs=false
+Type=Application
+StartupNotify=true
+Icon=/home/ubuntu/software/calibration/resources/app.png

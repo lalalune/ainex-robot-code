@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <!--板载传感器-->
+    <include file="$(find ainex_sdk)/launch/sensor_node.launch"/>
+
+    <!--步态控制节点-->
+    <include file="$(find ainex_kinematics)/launch/ainex_controller.launch"/>
+
+    <!--imu过滤-->
+    <include file="$(find ainex_peripherals)/launch/imu.launch"/>
+</launch>

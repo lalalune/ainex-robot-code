@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=AiNex Controller
+Comment=AiNex Controller Program
+Encoding=UTF-8
+Exec=bash /home/ubuntu/software/ainex_controller/ainex_controller.sh
+Terminal=false
+MultipleArgs=false
+Type=Application
+StartupNotify=true
+Icon=/home/ubuntu/software/ainex_controller/images/AiNexPro.ico

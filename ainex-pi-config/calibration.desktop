@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=TOOL
+Comment=TOOL Program
+Encoding=UTF-8
+Exec=bash -c "xhost + && docker exec -u ubuntu -w /home/ubuntu ainex /bin/zsh -c 'bash ~/software/calibration/calibration.sh'"
+Terminal=false
+MultipleArgs=false
+Type=Application
+Categories=Application;Development;
+StartupNotify=true
+Icon=/home/pi/ainex/app.png

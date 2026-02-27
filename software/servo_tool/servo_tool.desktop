@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Servo Tool
+Comment=Servo Tool Program
+Encoding=UTF-8
+Exec=bash /home/ubuntu/software/servo_tool/servo_tool.sh
+Terminal=false
+MultipleArgs=false
+Type=Application
+StartupNotify=true
+Icon=/home/ubuntu/software/servo_tool/resources/app.png

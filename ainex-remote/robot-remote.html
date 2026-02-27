@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiNex Robot Remote</title>
+<script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --accent: #0f3460;
+    --highlight: #e94560;
+    --text: #eee;
+    --text-dim: #8892a4;
+    --success: #4ecca3;
+    --warn: #f0a500;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--accent);
+  }
+  .topbar h1 { font-size: 18px; font-weight: 600; }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--highlight);
+    transition: background 0.3s;
+  }
+  .status-dot.connected { background: var(--success); }
+
+  /* Main layout */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    height: calc(100vh - 44px);
+  }
+
+  /* Video panel */
+  .video-panel {
+    position: relative;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .video-panel img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .video-overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .video-overlay select, .video-overlay button {
+    background: rgba(0,0,0,0.7);
+    color: var(--text);
+    border: 1px solid var(--accent);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* Side panel */
+  .side-panel {
+    background: var(--panel);
+    border-left: 1px solid var(--accent);
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Section cards */
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .card h3 {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  /* Connection input */
+  .conn-row {
+    display: flex;
+    gap: 6px;
+  }
+  .conn-row input {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .conn-row button {
+    padding: 6px 14px;
+  }
+
+  /* D-pad walking controls */
+  .dpad {
+    display: grid;
+    grid-template-columns: 60px 60px 60px;
+    grid-template-rows: 60px 60px 60px;
+    gap: 4px;
+    justify-content: center;
+    margin: 4px 0;
+  }
+  .dpad-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    border: 1px solid #1a4a80;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s, transform 0.1s;
+  }
+  .dpad-btn:hover { background: #1a5a90; }
+  .dpad-btn:active, .dpad-btn.active {
+    background: var(--highlight);
+    transform: scale(0.95);
+  }
+  .dpad-empty { visibility: hidden; }
+  .dpad-center {
+    background: var(--highlight);
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  /* Speed slider */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .slider-row label { font-size: 12px; color: var(--text-dim); min-width: 50px; }
+  .slider-row input[type=range] { flex: 1; accent-color: var(--highlight); }
+  .slider-row span { font-size: 12px; min-width: 30px; text-align: right; }
+
+  /* Head control */
+  .head-control {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .head-slider-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .head-slider-group label {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .head-slider-group input[type=range] {
+    width: 100%;
+    accent-color: var(--highlight);
+  }
+  .head-reset {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Action buttons */
+  .action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .action-btn {
+    padding: 8px 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* Sensor readout */
+  .sensors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .sensor-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .sensor-item .label { font-size: 11px; color: var(--text-dim); }
+  .sensor-item .value { font-size: 16px; font-weight: 600; }
+
+  /* Shared button style */
+  button {
+    background: var(--accent);
+    color: var(--text);
+    border: 1px solid #1a4a80;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 12px;
+    transition: background 0.15s;
+  }
+  button:hover { background: #1a5a90; }
+  button.danger { background: var(--highlight); border-color: #c0374d; }
+  button.danger:hover { background: #d03050; }
+  button.success { background: #2a8a6a; border-color: #1f6b50; }
+  button.success:hover { background: #35a07a; }
+
+  /* Keyboard hints */
+  .keyhint {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* Walking state indicator */
+  .walk-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 4px;
+    background: var(--panel);
+    margin-bottom: 4px;
+  }
+  .walk-state .indicator {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--text-dim);
+  }
+  .walk-state .indicator.active { background: var(--success); }
+
+  /* Log area */
+  .log {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 6px;
+    max-height: 80px;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>AiNex Remote Control</h1>
+  <div class="status">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Disconnected</span>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Video feed -->
+  <div class="video-panel">
+    <img id="videoFeed" alt="Camera feed" />
+    <div class="video-overlay">
+      <select id="videoTopic">
+        <option value="/camera/image_raw">Raw Camera</option>
+        <option value="/camera/image_rect_color">Rectified Color</option>
+        <option value="/color_detection/image_result">Color Detection</option>
+        <option value="/face_detect/image_result">Face Detection</option>
+        <option value="/app/image_result">App Result</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Side panel controls -->
+  <div class="side-panel">
+
+    <!-- Connection -->
+    <div class="card">
+      <h3>Connection</h3>
+      <div class="conn-row">
+        <input type="text" id="robotIp" value="192.168.1.218" placeholder="Robot IP" />
+        <button id="connectBtn" class="success" onclick="toggleConnection()">Connect</button>
+      </div>
+    </div>
+
+    <!-- Walking controls -->
+    <div class="card">
+      <h3>Walking</h3>
+      <div class="walk-state">
+        <div class="indicator" id="walkIndicator"></div>
+        <span id="walkStateText">Idle</span>
+      </div>
+      <div class="dpad">
+        <div class="dpad-btn dpad-empty"></div>
+        <div class="dpad-btn" data-dir="forward">&#9650;</div>
+        <div class="dpad-btn dpad-empty"></div>
+        <div class="dpad-btn" data-dir="turn-left">&#8630;</div>
+        <div class="dpad-btn dpad-center danger" data-dir="stop">STOP</div>
+        <div class="dpad-btn" data-dir="turn-right">&#8631;</div>
+        <div class="dpad-btn" data-dir="left">&#9664;</div>
+        <div class="dpad-btn" data-dir="backward">&#9660;</div>
+        <div class="dpad-btn" data-dir="right">&#9654;</div>
+      </div>
+      <div class="keyhint">W/A/S/D = move &bull; Q/E = turn &bull; Space = stop</div>
+      <div class="slider-row">
+        <label>Speed</label>
+        <input type="range" id="speedSlider" min="1" max="4" value="2" />
+        <span id="speedVal">2</span>
+      </div>
+      <div class="slider-row">
+        <label>Height</label>
+        <input type="range" id="heightSlider" min="15" max="60" value="36" />
+        <span id="heightVal">0.036</span>
+      </div>
+      <div class="slider-row">
+        <label>Stride</label>
+        <input type="range" id="strideSlider" min="5" max="20" value="15" />
+        <span id="strideVal">0.015</span>
+      </div>
+    </div>
+
+    <!-- Head control -->
+    <div class="card">
+      <h3>Head</h3>
+      <div class="head-control">
+        <div class="head-slider-group">
+          <label>Pan (L/R): <span id="panVal">0.00</span></label>
+          <input type="range" id="panSlider" min="-80" max="80" value="0" step="1" />
+        </div>
+        <div class="head-slider-group">
+          <label>Tilt (U/D): <span id="tiltVal">0.00</span></label>
+          <input type="range" id="tiltSlider" min="-30" max="30" value="0" step="1" />
+        </div>
+        <button class="head-reset" onclick="resetHead()">Reset</button>
+      </div>
+      <div class="keyhint">Arrow keys = head &bull; Home = center</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+      <h3>Actions</h3>
+      <div class="action-grid">
+        <button class="action-btn" onclick="playAction('wave')">Wave</button>
+        <button class="action-btn" onclick="playAction('greet')">Greet</button>
+        <button class="action-btn" onclick="playAction('twist')">Twist</button>
+        <button class="action-btn" onclick="playAction('left_shot')">Kick L</button>
+        <button class="action-btn" onclick="playAction('right_shot')">Kick R</button>
+        <button class="action-btn" onclick="playAction('stand')">Stand</button>
+        <button class="action-btn" onclick="playAction('stand_low')">Crouch</button>
+        <button class="action-btn" onclick="playAction('lie_to_stand')">Get Up (F)</button>
+        <button class="action-btn" onclick="playAction('recline_to_stand')">Get Up (B)</button>
+        <button class="action-btn" onclick="playAction('climb_stairs')">Climb</button>
+        <button class="action-btn" onclick="playAction('hand_open')">Hand Open</button>
+        <button class="action-btn" onclick="playAction('hand_back')">Hand Back</button>
+      </div>
+    </div>
+
+    <!-- Sensors -->
+    <div class="card">
+      <h3>Sensors</h3>
+      <div class="sensors">
+        <div class="sensor-item">
+          <span class="label">Battery</span>
+          <span class="value" id="batteryVal">--</span>
+        </div>
+        <div class="sensor-item">
+          <span class="label">Walking</span>
+          <span class="value" id="isWalkingVal">--</span>
+        </div>
+        <div class="sensor-item">
+          <span class="label">IMU Roll</span>
+          <span class="value" id="imuRoll">--</span>
+        </div>
+        <div class="sensor-item">
+          <span class="label">IMU Pitch</span>
+          <span class="value" id="imuPitch">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="card">
+      <h3>Log</h3>
+      <div class="log" id="logArea"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---- State ----
+let ros = null;
+let connected = false;
+let walkingEnabled = false;
+let currentDirection = null;
+
+// ROS publishers/subscribers
+let walkParamPub = null;
+let walkCommandClient = null;
+let headPanPub = null;
+let headTiltPub = null;
+let actionPub = null;
+let batterySub = null;
+let walkingSub = null;
+let imuSub = null;
+
+// ---- Logging ----
+function log(msg) {
+  const el = document.getElementById('logArea');
+  const time = new Date().toLocaleTimeString();
+  el.innerHTML += `<div>[${time}] ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+// ---- Connection ----
+function toggleConnection() {
+  if (connected) {
+    disconnect();
+  } else {
+    connect();
+  }
+}
+
+function connect() {
+  const ip = document.getElementById('robotIp').value.trim();
+  if (!ip) return;
+
+  log(`Connecting to ${ip}...`);
+
+  ros = new ROSLIB.Ros({ url: `ws://${ip}:9090` });
+
+  ros.on('connection', () => {
+    connected = true;
+    updateConnectionUI(true);
+    log('Connected to ROSBridge');
+    setupPublishers();
+    setupSubscribers();
+    updateVideoFeed();
+  });
+
+  ros.on('error', (err) => {
+    log(`Error: ${err}`);
+  });
+
+  ros.on('close', () => {
+    connected = false;
+    updateConnectionUI(false);
+    log('Disconnected');
+  });
+}
+
+function disconnect() {
+  if (ros) {
+    ros.close();
+    ros = null;
+  }
+  connected = false;
+  updateConnectionUI(false);
+}
+
+function updateConnectionUI(isConnected) {
+  document.getElementById('statusDot').className = 'status-dot' + (isConnected ? ' connected' : '');
+  document.getElementById('statusText').textContent = isConnected ? 'Connected' : 'Disconnected';
+  document.getElementById('connectBtn').textContent = isConnected ? 'Disconnect' : 'Connect';
+  document.getElementById('connectBtn').className = isConnected ? 'danger' : 'success';
+}
+
+// ---- Video ----
+function updateVideoFeed() {
+  const ip = document.getElementById('robotIp').value.trim();
+  const topic = document.getElementById('videoTopic').value;
+  const img = document.getElementById('videoFeed');
+  // Use web_video_server's stream endpoint
+  img.src = `http://${ip}:8080/stream?topic=${encodeURIComponent(topic)}&type=mjpeg&quality=70`;
+}
+
+document.getElementById('videoTopic').addEventListener('change', () => {
+  if (connected) updateVideoFeed();
+});
+
+// ---- ROS Publishers & Subscribers ----
+function setupPublishers() {
+  // Walking param publisher (simplified AppWalkingParam)
+  walkParamPub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/app/set_walking_param',
+    messageType: 'ainex_interfaces/AppWalkingParam'
+  });
+
+  // Walking command service
+  walkCommandClient = new ROSLIB.Service({
+    ros: ros,
+    name: '/walking/command',
+    serviceType: 'ainex_interfaces/SetWalkingCommand'
+  });
+
+  // Head pan publisher
+  headPanPub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/head_pan_controller/command',
+    messageType: 'ainex_interfaces/HeadState'
+  });
+
+  // Head tilt publisher
+  headTiltPub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/head_tilt_controller/command',
+    messageType: 'ainex_interfaces/HeadState'
+  });
+
+  // Action publisher
+  actionPub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/app/set_action',
+    messageType: 'std_msgs/String'
+  });
+}
+
+function setupSubscribers() {
+  // Battery
+  batterySub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/ros_robot_controller/battery',
+    messageType: 'std_msgs/UInt16'
+  });
+  batterySub.subscribe((msg) => {
+    const mv = msg.data;
+    const pct = Math.round(Math.max(0, Math.min(100, (mv - 10000) / (12600 - 10000) * 100)));
+    document.getElementById('batteryVal').textContent = `${(mv / 1000).toFixed(1)}V (${pct}%)`;
+  });
+
+  // Walking state
+  walkingSub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/walking/is_walking',
+    messageType: 'std_msgs/Bool'
+  });
+  walkingSub.subscribe((msg) => {
+    const walking = msg.data;
+    document.getElementById('isWalkingVal').textContent = walking ? 'Walking' : 'Idle';
+    document.getElementById('walkIndicator').className = 'indicator' + (walking ? ' active' : '');
+    document.getElementById('walkStateText').textContent = walking ? 'Walking' : 'Idle';
+  });
+
+  // IMU
+  imuSub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/imu',
+    messageType: 'sensor_msgs/Imu',
+    throttle_rate: 200
+  });
+  imuSub.subscribe((msg) => {
+    const q = msg.orientation;
+    // Convert quaternion to euler (approx)
+    const sinr = 2 * (q.w * q.x + q.y * q.z);
+    const cosr = 1 - 2 * (q.x * q.x + q.y * q.y);
+    const roll = Math.atan2(sinr, cosr) * 180 / Math.PI;
+
+    const sinp = 2 * (q.w * q.y - q.z * q.x);
+    const pitch = (Math.abs(sinp) >= 1 ? Math.sign(sinp) * 90 : Math.asin(sinp) * 180 / Math.PI);
+
+    document.getElementById('imuRoll').textContent = roll.toFixed(1) + '\u00b0';
+    document.getElementById('imuPitch').textContent = pitch.toFixed(1) + '\u00b0';
+  });
+}
+
+// ---- Walking Commands ----
+function getWalkParams() {
+  return {
+    speed: parseInt(document.getElementById('speedSlider').value),
+    height: parseInt(document.getElementById('heightSlider').value) / 1000,
+    stride: parseInt(document.getElementById('strideSlider').value) / 1000
+  };
+}
+
+function sendWalkCommand(command) {
+  if (!walkCommandClient) return;
+  const req = new ROSLIB.ServiceRequest({ command: command });
+  walkCommandClient.callService(req, (result) => {
+    log(`Walk command '${command}': ${result.result ? 'OK' : 'FAIL'}`);
+  });
+}
+
+function walk(direction) {
+  if (!connected || !walkParamPub) return;
+
+  const p = getWalkParams();
+  let x = 0, y = 0, angle = 0;
+
+  switch (direction) {
+    case 'forward':    x = p.stride;   break;
+    case 'backward':   x = -p.stride;  break;
+    case 'left':       y = p.stride;   break;
+    case 'right':      y = -p.stride;  break;
+    case 'turn-left':  angle = 8;      break;
+    case 'turn-right': angle = -8;     break;
+    case 'stop':
+      stopWalking();
+      return;
+  }
+
+  if (!walkingEnabled) {
+    sendWalkCommand('start');
+    walkingEnabled = true;
+  }
+
+  const msg = new ROSLIB.Message({
+    speed: p.speed,
+    height: p.height,
+    x: x,
+    y: y,
+    angle: angle
+  });
+  walkParamPub.publish(msg);
+}
+
+function stopWalking() {
+  if (!connected) return;
+
+  // Send zero params first
+  if (walkParamPub) {
+    const p = getWalkParams();
+    const msg = new ROSLIB.Message({
+      speed: p.speed,
+      height: p.height,
+      x: 0, y: 0, angle: 0
+    });
+    walkParamPub.publish(msg);
+  }
+
+  sendWalkCommand('stop');
+  walkingEnabled = false;
+  currentDirection = null;
+  clearActiveButtons();
+}
+
+// ---- Head Control ----
+function sendHeadPan(degrees) {
+  if (!connected || !headPanPub) return;
+  const radians = degrees * Math.PI / 180;
+  headPanPub.publish(new ROSLIB.Message({ position: radians, duration: 0.3 }));
+}
+
+function sendHeadTilt(degrees) {
+  if (!connected || !headTiltPub) return;
+  const radians = degrees * Math.PI / 180;
+  headTiltPub.publish(new ROSLIB.Message({ position: radians, duration: 0.3 }));
+}
+
+function resetHead() {
+  document.getElementById('panSlider').value = 0;
+  document.getElementById('tiltSlider').value = 0;
+  document.getElementById('panVal').textContent = '0.00';
+  document.getElementById('tiltVal').textContent = '0.00';
+  sendHeadPan(0);
+  sendHeadTilt(0);
+}
+
+document.getElementById('panSlider').addEventListener('input', (e) => {
+  const deg = parseInt(e.target.value);
+  document.getElementById('panVal').textContent = deg.toFixed(0) + '\u00b0';
+  sendHeadPan(deg);
+});
+
+document.getElementById('tiltSlider').addEventListener('input', (e) => {
+  const deg = parseInt(e.target.value);
+  document.getElementById('tiltVal').textContent = deg.toFixed(0) + '\u00b0';
+  sendHeadTilt(deg);
+});
+
+// ---- Actions ----
+function playAction(name) {
+  if (!connected || !actionPub) return;
+  log(`Playing action: ${name}`);
+  // Stop walking first
+  if (walkingEnabled) stopWalking();
+  actionPub.publish(new ROSLIB.Message({ data: name }));
+}
+
+// ---- Sliders ----
+document.getElementById('speedSlider').addEventListener('input', (e) => {
+  document.getElementById('speedVal').textContent = e.target.value;
+});
+document.getElementById('heightSlider').addEventListener('input', (e) => {
+  document.getElementById('heightVal').textContent = (parseInt(e.target.value) / 1000).toFixed(3);
+});
+document.getElementById('strideSlider').addEventListener('input', (e) => {
+  document.getElementById('strideVal').textContent = (parseInt(e.target.value) / 1000).toFixed(3);
+});
+
+// ---- D-pad mouse/touch events ----
+document.querySelectorAll('.dpad-btn[data-dir]').forEach(btn => {
+  const dir = btn.dataset.dir;
+
+  const activate = (e) => {
+    e.preventDefault();
+    btn.classList.add('active');
+    currentDirection = dir;
+    walk(dir);
+  };
+  const deactivate = (e) => {
+    e.preventDefault();
+    btn.classList.remove('active');
+    if (currentDirection === dir && dir !== 'stop') {
+      stopWalking();
+    }
+  };
+
+  // Click for stop button
+  if (dir === 'stop') {
+    btn.addEventListener('mousedown', (e) => { e.preventDefault(); stopWalking(); });
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); stopWalking(); });
+    return;
+  }
+
+  btn.addEventListener('mousedown', activate);
+  btn.addEventListener('mouseup', deactivate);
+  btn.addEventListener('mouseleave', deactivate);
+  btn.addEventListener('touchstart', activate);
+  btn.addEventListener('touchend', deactivate);
+  btn.addEventListener('touchcancel', deactivate);
+});
+
+function clearActiveButtons() {
+  document.querySelectorAll('.dpad-btn.active').forEach(b => b.classList.remove('active'));
+}
+
+// ---- Keyboard controls ----
+const keyMap = {
+  'w': 'forward', 'W': 'forward',
+  'a': 'left', 'A': 'left',
+  's': 'backward', 'S': 'backward',
+  'd': 'right', 'D': 'right',
+  'q': 'turn-left', 'Q': 'turn-left',
+  'e': 'turn-right', 'E': 'turn-right',
+  ' ': 'stop'
+};
+
+const headKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home']);
+const activeKeys = new Set();
+
+document.addEventListener('keydown', (e) => {
+  // Don't capture when typing in input
+  if (e.target.tagName === 'INPUT') return;
+
+  if (keyMap[e.key] !== undefined) {
+    e.preventDefault();
+    if (activeKeys.has(e.key)) return; // key repeat
+    activeKeys.add(e.key);
+
+    const dir = keyMap[e.key];
+    if (dir === 'stop') {
+      stopWalking();
+    } else {
+      currentDirection = dir;
+      // Highlight corresponding button
+      const btn = document.querySelector(`.dpad-btn[data-dir="${dir}"]`);
+      if (btn) btn.classList.add('active');
+      walk(dir);
+    }
+  }
+
+  if (headKeys.has(e.key)) {
+    e.preventDefault();
+    const panSlider = document.getElementById('panSlider');
+    const tiltSlider = document.getElementById('tiltSlider');
+    const step = 5;
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        panSlider.value = Math.min(80, parseInt(panSlider.value) + step);
+        document.getElementById('panVal').textContent = panSlider.value + '\u00b0';
+        sendHeadPan(parseInt(panSlider.value));
+        break;
+      case 'ArrowRight':
+        panSlider.value = Math.max(-80, parseInt(panSlider.value) - step);
+        document.getElementById('panVal').textContent = panSlider.value + '\u00b0';
+        sendHeadPan(parseInt(panSlider.value));
+        break;
+      case 'ArrowUp':
+        tiltSlider.value = Math.min(30, parseInt(tiltSlider.value) + step);
+        document.getElementById('tiltVal').textContent = tiltSlider.value + '\u00b0';
+        sendHeadTilt(parseInt(tiltSlider.value));
+        break;
+      case 'ArrowDown':
+        tiltSlider.value = Math.max(-30, parseInt(tiltSlider.value) - step);
+        document.getElementById('tiltVal').textContent = tiltSlider.value + '\u00b0';
+        sendHeadTilt(parseInt(tiltSlider.value));
+        break;
+      case 'Home':
+        resetHead();
+        break;
+    }
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+
+  if (keyMap[e.key] !== undefined && keyMap[e.key] !== 'stop') {
+    activeKeys.delete(e.key);
+    const dir = keyMap[e.key];
+    const btn = document.querySelector(`.dpad-btn[data-dir="${dir}"]`);
+    if (btn) btn.classList.remove('active');
+
+    // If this was the current direction, stop
+    if (currentDirection === dir) {
+      // Check if another movement key is still held
+      let newDir = null;
+      for (const [key, d] of Object.entries(keyMap)) {
+        if (d !== 'stop' && activeKeys.has(key)) {
+          newDir = d;
+          break;
+        }
+      }
+      if (newDir) {
+        currentDirection = newDir;
+        walk(newDir);
+      } else {
+        stopWalking();
+      }
+    }
+  }
+});
+
+// ---- Init ----
+log('Ready. Enter robot IP and click Connect.');
+log('Keyboard: WASD=move, QE=turn, Space=stop, Arrows=head');
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[Unit]
+Description=My Docker App
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+Restart=no
+User=pi
+Environment="DISPLAY=:0"
+ExecStart=/bin/bash /home/pi/ainex/start_node.sh 
+
+[Install]
+WantedBy=multi-user.target

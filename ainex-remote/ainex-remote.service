@@ -1,0 +1,14 @@
+[Unit]
+Description=AiNex Remote Control Web Server
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/ainex-remote/serve-remote.py
+WorkingDirectory=/home/pi/ainex-remote
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

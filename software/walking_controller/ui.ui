@@ -1,0 +1,1128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1100</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1100</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>700</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Walking Controller 1.0</string>
+  </property>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1100</width>
+     <height>600</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1100</width>
+     <height>600</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1100</width>
+     <height>600</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QWidget#widget {
+background-color: #EBEBEB;
+}
+</string>
+   </property>
+   <widget class="QPushButton" name="pushButton_stop">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>510</y>
+      <width>70</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+background-color: #FFA500;
+color:rgb(0, 0, 0)
+}
+QPushButton{border-radius:6px;}
+QPushButton:pressed{
+border:2px solid rgb(126, 188, 89, 0);}</string>
+    </property>
+    <property name="text">
+     <string>stop</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_apply">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>510</y>
+      <width>70</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+background-color: #A2A2A2;
+color:rgb(0, 0, 0)
+}
+QPushButton{border-radius:6px;}
+QPushButton:pressed{
+border:2px solid rgb(126, 188, 89, 0);}</string>
+    </property>
+    <property name="text">
+     <string>apply</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_start">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>510</y>
+      <width>70</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+background-color: #FFA500;
+color:rgb(0, 0, 0)
+}
+QPushButton{border-radius:6px;}
+QPushButton:pressed{
+border:2px solid rgb(126, 188, 89, 0);}</string>
+    </property>
+    <property name="text">
+     <string>start</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>351</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QSplitter" name="splitter_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_init_x_offset">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_x_offset(初始姿态在X方向(前后)偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_x_offset">
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_5">
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_y_offset">
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_y_offset(初始姿态在Y方向(左右)偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_y_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_22">
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_init_z_offset">
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_z_offset(初始姿态在Z方向(上下)偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_z_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>0.025</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_6">
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_init_roll_offset">
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_roll_offset(初始姿态左右倾斜偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_roll_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_7">
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_init_pitch_offset">
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_pitch_offset(初始姿态前后倾斜偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_pitch_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_8">
+       <property name="maximumSize">
+        <size>
+         <width>344</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_init_yaw_offset">
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>280</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>init_yaw_offset(初始姿态旋转偏移)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_init_yaw_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>70</y>
+      <width>361</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QSplitter" name="splitter_9">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_period_time">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>period_time(周期（左右脚各抬一次腿)）</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_period_time">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>800</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_10">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_dsp_ratio">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>dsp_ratio(一个周期里双脚着地时间占比)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_dsp_ratio">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.2</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_11">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_step_fb_ratio">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>step_fb_ratio(左脚和右脚间X方向的距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_step_fb_ratio">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.28</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_17">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_y_swap_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>y_swap_amplitude(左右摆动的距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_y_swap_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.028</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_18">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_z_swap_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>z_swap_amplitude(上下浮动的距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_z_swap_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.006</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_19">
+       <property name="maximumSize">
+        <size>
+         <width>354</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_pelvis_offset">
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>290</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>pelvis_offset(臀部关节左右摆动的距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_pelvis_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.5</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>70</y>
+      <width>331</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QSplitter" name="splitter_12">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_x_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>x_move_amplitude(向X方向移动距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_x_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.02</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_13">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_y_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>y_move_amplitude(向Y方向移动距离)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_y_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_14">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_z_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>z_move_amplitude(抬脚高度)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_z_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.02</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_15">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_angle_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>angle_move_amplitude(转弯度)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_angle_move_amplitude">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0.0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_16">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_arm_swing_gain">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>arm_swing_gain(手臂摆动幅度)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_arm_swing_gain">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSplitter" name="splitter_20">
+       <property name="maximumSize">
+        <size>
+         <width>324</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QLabel" name="label_hip_pitch_offset">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>hip_pitch_offset(臀部前后倾斜角度)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_hip_pitch_offset">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>7</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QRadioButton" name="radioButton_zh">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>中文</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButton_en">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>20</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>English</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
