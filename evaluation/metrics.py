@@ -232,11 +232,14 @@ def compute_grounding_accuracy(episodes: Sequence[EpisodeResult]) -> float:
 
 
 def compute_recovery_rate(episodes: Sequence[EpisodeResult]) -> float:
-    """Of episodes with injected failure, fraction that recovered and succeeded."""
+    """Of episodes with injected failure, fraction that replanned AND succeeded."""
     failed_eps = [e for e in episodes if e.failure_injected]
     if not failed_eps:
         return 0.0
-    return sum(1 for e in failed_eps if e.recovered_from_failure) / len(failed_eps)
+    return sum(
+        1 for e in failed_eps
+        if e.recovered_from_failure and e.success
+    ) / len(failed_eps)
 
 
 def compute_time_stats(

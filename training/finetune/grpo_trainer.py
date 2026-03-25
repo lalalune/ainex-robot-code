@@ -327,30 +327,34 @@ def export_preference_dataset(
 def run_dpo_training(
     preference_path: Path,
     output_dir: Path,
-    model_name: str = "meta-llama/Llama-3.1-8B-Instruct",
+    model_name: str = "Qwen/Qwen3-4B",
     epochs: int = 3,
     learning_rate: float = 5e-7,
-    batch_size: int = 4,
-    max_length: int = 2048,
+    batch_size: int = 1,
+    max_length: int = 32768,
     beta: float = 0.1,
     lora_rank: int = 16,
     lora_alpha: int = 32,
+    turboquant_bits: int = 4,
+    qlora: bool = True,
 ) -> Path:
-    """Run DPO training using transformers + trl + peft.
+    """Run QLoRA DPO training on 16 GB GPU.
 
-    This performs LoRA-based DPO fine-tuning on the preference dataset.
-    Requires: transformers, trl, peft, torch, datasets.
+    Trains at 32k context on Qwen3-4B with 4-bit QLoRA quantized base,
+    gradient checkpointing, and TurboQuant KV cache compression.
+    YaRN rope scaling can extend inference to 64k.
+    Requires: transformers, trl, peft, torch, datasets, bitsandbytes.
     """
     try:
         import torch
         from datasets import Dataset
         from peft import LoraConfig, TaskType
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
         from trl import DPOConfig, DPOTrainer
     except ImportError as exc:
         raise RuntimeError(
             f"Missing dependency for local training: {exc}. "
-            "Install with: pip install transformers trl peft torch datasets"
+            "Install with: pip install transformers trl peft torch datasets bitsandbytes"
         )
 
     logger.info("Loading preference dataset from %s", preference_path)
@@ -364,17 +368,14 @@ def run_dpo_training(
     if not records:
         raise ValueError("No preference pairs found.")
 
-    # Convert to the format expected by DPOTrainer
+    # Convert to the format expected by DPOTrainer (Qwen3 ChatML format)
     def format_prompt(messages: list[dict[str, str]]) -> str:
         parts = []
         for m in messages:
             role = m["role"]
             content = m["content"]
-            if role == "system":
-                parts.append(f"<|system|>\n{content}")
-            elif role == "user":
-                parts.append(f"<|user|>\n{content}")
-        return "\n".join(parts) + "\n<|assistant|>\n"
+            parts.append(f"<|im_start|>{role}\n{content}<|im_end|>")
+        return "\n".join(parts) + "\n<|im_start|>assistant\n"
 
     dataset_dict = {
         "prompt": [format_prompt(r["prompt"]) for r in records],
@@ -383,28 +384,59 @@ def run_dpo_training(
     }
     dataset = Dataset.from_dict(dataset_dict)
 
-    logger.info("Loading model: %s", model_name)
+    logger.info("Loading model: %s (QLoRA=%s)", model_name, qlora)
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-        trust_remote_code=True,
-    )
+    # QLoRA: load base model in 4-bit NF4 to fit on 16 GB GPU
+    # Model weights: ~2.5 GB instead of ~8 GB
+    model_kwargs = {
+        "trust_remote_code": True,
+        "device_map": "auto",
+    }
+    if qlora:
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+        )
+        model_kwargs["quantization_config"] = bnb_config
+    else:
+        model_kwargs["torch_dtype"] = torch.bfloat16
 
-    # LoRA config
+    model = AutoModelForCausalLM.from_pretrained(model_name, **model_kwargs)
+
+    # Gradient checkpointing: trade compute for memory
+    model.gradient_checkpointing_enable()
+
+    # Apply TurboQuant KV cache compression
+    if turboquant_bits > 0:
+        try:
+            from turboquant import patch_model as tq_patch
+            tq_patch(model, bits=turboquant_bits)
+            logger.info(
+                "TurboQuant %d-bit KV cache compression enabled", turboquant_bits
+            )
+        except ImportError:
+            logger.warning(
+                "turboquant not installed; running without KV cache compression"
+            )
+
+    # LoRA config -- Qwen3 benefits from targeting gate/up/down projections
     peft_config = LoraConfig(
         task_type=TaskType.CAUSAL_LM,
         r=lora_rank,
         lora_alpha=lora_alpha,
         lora_dropout=0.05,
-        target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+        target_modules=[
+            "q_proj", "v_proj", "k_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj",
+        ],
     )
 
-    # DPO training config
+    # DPO training config -- tuned for 16 GB GPU
     output_dir.mkdir(parents=True, exist_ok=True)
     training_args = DPOConfig(
         output_dir=str(output_dir),
@@ -418,7 +450,9 @@ def run_dpo_training(
         save_steps=100,
         save_total_limit=3,
         bf16=True,
-        gradient_accumulation_steps=4,
+        gradient_accumulation_steps=16,  # effective batch = 16
+        gradient_checkpointing=True,
+        optim="adamw_bnb_8bit",  # 8-bit Adam: ~50% less optimizer VRAM
         warmup_ratio=0.1,
         report_to="none",
         remove_unused_columns=False,
@@ -499,7 +533,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     )
     parser.add_argument(
         "--model",
-        default="meta-llama/Llama-3.1-8B-Instruct",
+        default="Qwen/Qwen3-4B",
         help="Base model for fine-tuning.",
     )
     parser.add_argument(
@@ -510,7 +544,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument(
         "--batch-size",
         type=int,
-        default=4,
+        default=1,
     )
     parser.add_argument(
         "--beta",
@@ -528,6 +562,24 @@ def main(argv: Sequence[str] | None = None) -> None:
         "--lora-rank",
         type=int,
         default=16,
+    )
+    parser.add_argument(
+        "--turboquant-bits",
+        type=int,
+        default=4,
+        help="TurboQuant KV cache bit width (0 to disable, default: 4).",
+    )
+    parser.add_argument(
+        "--qlora",
+        action="store_true",
+        default=True,
+        help="Use QLoRA 4-bit base model (default: on, fits 16 GB GPU).",
+    )
+    parser.add_argument(
+        "--no-qlora",
+        dest="qlora",
+        action="store_false",
+        help="Disable QLoRA; load base model in bf16 (needs >24 GB VRAM).",
     )
     parser.add_argument(
         "--export-only",
@@ -595,6 +647,8 @@ def main(argv: Sequence[str] | None = None) -> None:
             batch_size=args.batch_size,
             beta=args.beta,
             lora_rank=args.lora_rank,
+            turboquant_bits=args.turboquant_bits,
+            qlora=args.qlora,
         )
         print(f"Training complete. Model saved to {model_path}")
     except RuntimeError as exc:

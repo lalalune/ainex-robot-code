@@ -17,6 +17,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
+
 import jax
 
 from training.mujoco.joystick import Joystick
@@ -44,7 +46,7 @@ def make_ppo_config(num_timesteps: int = 100_000_000, num_evals: int = 10) -> di
         "batch_size": 256,
         "max_grad_norm": 1.0,
         "policy_hidden_layer_sizes": (128, 128, 128, 128),
-        "value_hidden_layer_sizes": (256, 256, 256, 256, 256),
+        "value_hidden_layer_sizes": (128, 128, 128, 128),
     }
 
 
@@ -137,10 +139,11 @@ def train(
     # Training metrics tracking
     train_metrics = []
     best_reward = float("-inf")
+    best_params = None
     start_time = time.time()
 
     def progress_callback(num_steps, metrics):
-        nonlocal best_reward
+        nonlocal best_reward, best_params
         elapsed = time.time() - start_time
         reward = float(metrics.get("eval/episode_reward", 0))
         train_metrics.append({
@@ -200,7 +203,8 @@ def train(
         ),
         seed=seed,
         progress_fn=progress_callback,
-        save_checkpoint_path=str((ckpt_dir / "brax_ckpt").resolve()),
+        # NOTE: orbax checkpointing disabled — it OOMs on 16GB GPUs during
+        # the GPU→CPU param transfer. We save final_params manually below.
     )
 
     elapsed = time.time() - start_time
@@ -208,10 +212,21 @@ def train(
     print(f"Training complete in {elapsed:.1f}s")
     print(f"Best reward: {best_reward:.2f}")
 
-    # Save final checkpoint
+    # Save final checkpoint — use jax.device_get to transfer params to CPU
+    # before saving, avoiding the orbax OOM issue.
     final_path = ckpt_dir / "final_params"
-    brax_model.save_params(final_path, params)
-    print(f"Saved params: {final_path}")
+    try:
+        cpu_params = jax.device_get(params)
+        brax_model.save_params(final_path, cpu_params)
+        print(f"Saved params: {final_path}")
+    except Exception as e:
+        print(f"WARNING: Failed to save final_params ({e})")
+        # Try saving with pickle as fallback
+        import pickle
+        fallback_path = ckpt_dir / "final_params.pkl"
+        with open(fallback_path, "wb") as f:
+            pickle.dump(jax.tree.map(np.asarray, params), f)
+        print(f"Saved fallback params: {fallback_path}")
 
     # Save training metrics
     with open(ckpt_dir / "metrics.json", "w") as f:

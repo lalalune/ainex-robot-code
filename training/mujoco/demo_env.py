@@ -202,12 +202,19 @@ class DemoEnv:
             qpos_idx = self._act_qpos_idx[act_idx]
             joint_positions[jname] = float(self.data.qpos[qpos_idx])
 
-        # IMU: extract roll and pitch from the gravity (upvector) sensor.
-        # The upvector sensor gives the z-axis of the IMU site in world frame.
+        # IMU: the upvector sensor (framezaxis on body_link) gives the body
+        # Z-axis in world frame.  At rest this reads [0, -1, 0] due to the
+        # URDF body-frame convention.  We convert to roll/pitch matching the
+        # real robot's IMU convention: roll=0, pitch=0 when upright.
         gravity = self.data.sensordata[self._gravity_adr].copy()
-        # Roll ~ atan2(gy, gz), Pitch ~ atan2(-gx, gz)
-        imu_roll = float(math.atan2(gravity[1], gravity[2]))
-        imu_pitch = float(math.atan2(-gravity[0], gravity[2]))
+        # gravity[2] = world-Z component of body-Z → 0 when upright, -1 when face-down
+        # gravity[0] = world-X component → lateral tilt
+        # gravity[1] = world-Y component → -1 when upright
+        # When upright: g=[0,-1,0], we want roll=pitch=0.
+        # Roll  = atan2(gx, -gy)  → atan2(0, 1) = 0
+        # Pitch = atan2(gz, -gy)  → atan2(0, 1) = 0
+        imu_roll = float(math.atan2(gravity[0], -gravity[1]))
+        imu_pitch = float(math.atan2(gravity[2], -gravity[1]))
 
         # Gyro
         gyro = self.data.sensordata[self._gyro_adr].copy()

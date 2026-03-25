@@ -39,11 +39,14 @@ class AiNexEnv(mjx_env.MjxEnv):
         self._mj_model.opt.timestep = config.sim_dt
 
         # Set PD gains on joints (skip first 6 DOFs = freejoint)
+        # Only override leg actuators (0:12) with config values;
+        # head/arm actuators keep their XML-defined kp values.
+        n_leg = 12
         if getattr(config, "Kd", 0) > 0:
-            self._mj_model.dof_damping[6:] = config.Kd
+            self._mj_model.dof_damping[6:6 + n_leg] = config.Kd
         if getattr(config, "Kp", 0) > 0:
-            self._mj_model.actuator_gainprm[:, 0] = config.Kp
-            self._mj_model.actuator_biasprm[:, 1] = -config.Kp
+            self._mj_model.actuator_gainprm[:n_leg, 0] = config.Kp
+            self._mj_model.actuator_biasprm[:n_leg, 1] = -config.Kp
 
         self._mj_model.vis.global_.offwidth = 1920
         self._mj_model.vis.global_.offheight = 1080

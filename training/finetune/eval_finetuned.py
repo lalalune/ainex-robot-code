@@ -6,13 +6,16 @@ Measures:
   - Decomposition quality: are multi-step plans logically ordered?
   - Recovery rate: can the model propose fixes when errors are reported?
 
+Uses TurboQuant KV cache compression to reduce inference memory overhead.
+
 Usage
 -----
     python -m training.finetune.eval_finetuned \
         --test-data  finetune_data/test.jsonl \
         --finetuned  model/final/ \
-        --baseline   meta-llama/Llama-3.1-8B-Instruct \
-        --output     eval_results/
+        --baseline   Qwen/Qwen3-4B \
+        --output     eval_results/ \
+        --turboquant-bits 4
 """
 
 from __future__ import annotations
@@ -189,30 +192,70 @@ def load_test_data(path: Path) -> list[TestExample]:
 # ---------------------------------------------------------------------------
 
 class ModelInterface:
-    """Abstract interface for generating text from a model.
+    """Interface for generating text from a HuggingFace model.
 
-    Supports two backends:
-      - Local HuggingFace model (transformers)
-      - Placeholder for API-based models
+    Loads with QLoRA 4-bit quantization and TurboQuant KV cache compression
+    to fit on 16 GB GPUs even at long context.
     """
 
-    def __init__(self, model_path: str, device: str = "auto") -> None:
+    def __init__(
+        self,
+        model_path: str,
+        device: str = "auto",
+        turboquant_bits: int = 4,
+        qlora: bool = True,
+    ) -> None:
         self.model_path = model_path
         self.device = device
-        self._pipeline: Any = None
+        self.turboquant_bits = turboquant_bits
+        self.qlora = qlora
+        self._model: Any = None
+        self._tokenizer: Any = None
         self._is_loaded = False
 
     def load(self) -> None:
-        """Load the model."""
+        """Load the model with QLoRA + TurboQuant for 16 GB GPU inference."""
         try:
-            from transformers import pipeline as hf_pipeline
+            import torch
+            from transformers import AutoModelForCausalLM, AutoTokenizer
 
-            self._pipeline = hf_pipeline(
-                "text-generation",
-                model=self.model_path,
-                device_map=self.device,
-                trust_remote_code=True,
+            self._tokenizer = AutoTokenizer.from_pretrained(
+                self.model_path, trust_remote_code=True
             )
+
+            model_kwargs = {
+                "device_map": self.device,
+                "trust_remote_code": True,
+            }
+
+            if self.qlora:
+                from transformers import BitsAndBytesConfig
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.bfloat16,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True,
+                )
+            else:
+                model_kwargs["torch_dtype"] = torch.bfloat16
+
+            self._model = AutoModelForCausalLM.from_pretrained(
+                self.model_path, **model_kwargs
+            )
+
+            # Apply TurboQuant KV cache compression
+            if self.turboquant_bits > 0:
+                try:
+                    from turboquant import patch_model
+                    patch_model(self._model, bits=self.turboquant_bits)
+                    logger.info(
+                        "TurboQuant %d-bit KV cache enabled for %s",
+                        self.turboquant_bits,
+                        self.model_path,
+                    )
+                except ImportError:
+                    logger.warning("turboquant not available; using standard KV cache")
+
             self._is_loaded = True
             logger.info("Loaded model from %s", self.model_path)
         except Exception as exc:
@@ -230,24 +273,31 @@ class ModelInterface:
         max_new_tokens: int = 512,
     ) -> ModelOutput:
         """Generate a completion for the given prompt."""
-        if not self._is_loaded or self._pipeline is None:
-            # Fallback: return empty (metrics will reflect this)
+        if not self._is_loaded or self._model is None:
             return ModelOutput(text="", latency_ms=0.0)
 
-        prompt_text = "\n".join(
-            f"[{m['role']}]: {m['content']}" for m in messages
-        )
+        # Format as ChatML (Qwen2.5 format)
+        parts = []
+        for m in messages:
+            parts.append(f"<|im_start|>{m['role']}\n{m['content']}<|im_end|>")
+        prompt_text = "\n".join(parts) + "\n<|im_start|>assistant\n"
 
         t0 = time.monotonic()
         try:
-            result = self._pipeline(
-                prompt_text,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                temperature=0.0,
-                return_full_text=False,
+            inputs = self._tokenizer(prompt_text, return_tensors="pt").to(
+                self._model.device
             )
-            text = result[0]["generated_text"] if result else ""
+            with __import__("torch").no_grad():
+                outputs = self._model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    do_sample=False,
+                    temperature=None,
+                    top_p=None,
+                )
+            # Decode only the generated tokens
+            new_tokens = outputs[0][inputs["input_ids"].shape[-1]:]
+            text = self._tokenizer.decode(new_tokens, skip_special_tokens=True)
         except Exception as exc:
             logger.warning("Generation failed: %s", exc)
             text = ""
@@ -540,8 +590,12 @@ def run_evaluation(
     baseline_path: str | None,
     output_dir: Path,
     device: str = "auto",
+    turboquant_bits: int = 4,
 ) -> dict[str, EvalMetrics]:
-    """Run evaluation comparing finetuned vs baseline models."""
+    """Run evaluation comparing finetuned vs baseline models.
+
+    Uses TurboQuant KV cache compression to reduce memory during inference.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     all_metrics: dict[str, EvalMetrics] = {}
 
@@ -549,7 +603,9 @@ def run_evaluation(
 
     # Try to load real models; fall back to offline evaluation
     if finetuned_path:
-        model = ModelInterface(finetuned_path, device=device)
+        model = ModelInterface(
+            finetuned_path, device=device, turboquant_bits=turboquant_bits
+        )
         model.load()
         if model._is_loaded:
             models_to_eval.append(("finetuned", model))
@@ -561,7 +617,9 @@ def run_evaluation(
             models_to_eval.append(("finetuned", offline))
 
     if baseline_path:
-        model = ModelInterface(baseline_path, device=device)
+        model = ModelInterface(
+            baseline_path, device=device, turboquant_bits=turboquant_bits
+        )
         model.load()
         if model._is_loaded:
             models_to_eval.append(("baseline", model))
@@ -654,7 +712,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument(
         "--baseline",
         default=None,
-        help="Path or HF name of baseline model.",
+        help="Path or HF name of baseline model (default: Qwen/Qwen3-4B).",
     )
     parser.add_argument(
         "--output",
@@ -665,6 +723,12 @@ def main(argv: Sequence[str] | None = None) -> None:
         "--device",
         default="auto",
         help="Device for model inference (default: auto).",
+    )
+    parser.add_argument(
+        "--turboquant-bits",
+        type=int,
+        default=4,
+        help="TurboQuant KV cache bit width (0 to disable, default: 4).",
     )
     parser.add_argument(
         "--verbose",
@@ -688,6 +752,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         baseline_path=args.baseline,
         output_dir=Path(args.output),
         device=args.device,
+        turboquant_bits=args.turboquant_bits,
     )
 
 

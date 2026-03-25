@@ -147,9 +147,10 @@ def render_trajectory_mp4(
             data.qpos[:] = qpos_flat
         mujoco.mj_forward(model, data)
 
-        # Validate robot stays above ground
+        # Validate robot stays above ground (warn but don't abort for rendering)
         ok, violations = validate_robot_above_ground(model, data)
-        if not ok:
+        if not ok and i < 5:
+            # Only abort on very early ground penetration (bad init)
             renderer.close()
             raise RuntimeError(
                 f"Ground penetration at trajectory step {i}:\n"

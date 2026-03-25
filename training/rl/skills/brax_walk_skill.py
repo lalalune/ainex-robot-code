@@ -76,9 +76,10 @@ class BraxWalkSkill(BaseSkill):
         else:
             self._default_pose = np.array([
                 # Right leg: hip_yaw, hip_roll, hip_pitch, knee, ank_pitch, ank_roll
-                0, 0, -0.3, 0.6, -0.3, 0,
-                # Left leg: hip_yaw, hip_roll, hip_pitch, knee, ank_pitch, ank_roll
-                0, 0, 0.3, -0.6, 0.3, 0,
+                # From real robot init_pose.yaml
+                0, -0.016, 0.828, -1.192, -0.625, -0.016,
+                # Left leg
+                0, 0.016, -0.828, 1.192, 0.625, 0.016,
             ], dtype=np.float32)
 
         self._params = SkillParams()
@@ -96,13 +97,13 @@ class BraxWalkSkill(BaseSkill):
         """Set velocity command for the walking policy.
 
         Args:
-            vx: Forward velocity (m/s). Training range: [-0.3, 0.8].
+            vx: Forward velocity (m/s). Training range: [-0.3, 1.2].
             vy: Lateral velocity (m/s). Training range: [-0.4, 0.4].
-            vyaw: Yaw rate (rad/s). Training range: [-0.5, 0.5].
+            vyaw: Yaw rate (rad/s). Training range: [-0.8, 0.8].
         """
-        self._command[0] = np.clip(vx, -0.3, 0.8)
+        self._command[0] = np.clip(vx, -0.3, 1.2)
         self._command[1] = np.clip(vy, -0.4, 0.4)
-        self._command[2] = np.clip(vyaw, -0.5, 0.5)
+        self._command[2] = np.clip(vyaw, -0.8, 0.8)
 
     def reset(self, params: SkillParams | None = None) -> None:
         self._params = params or SkillParams()

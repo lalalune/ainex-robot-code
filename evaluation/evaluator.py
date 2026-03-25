@@ -150,7 +150,13 @@ class DefaultSkillExecutor:
     skill switching.  When no trained checkpoint is loaded, skills output
     zero actions (which the sim scene handler interprets as a no-op and
     instead applies a heuristic motion model).
+
+    grasp/release/place are handled as instant commands (zero action,
+    RUNNING status) -- the actual state change happens in the scene sim.
     """
+
+    # Skills handled by the scene sim rather than a learned policy
+    _SIM_HANDLED_SKILLS = frozenset({"grasp", "release", "place"})
 
     def __init__(self, registry: SkillRegistry | None = None) -> None:
         self._registry = registry or SkillRegistry()
@@ -166,6 +172,13 @@ class DefaultSkillExecutor:
         intent: GroundedIntent,
         obs: np.ndarray,
     ) -> tuple[np.ndarray, SkillStatus]:
+        # Sim-handled skills: return zero action, RUNNING status.
+        # The scene sim will execute the grasp/release logic.
+        if intent.skill_name in self._SIM_HANDLED_SKILLS:
+            self._active_skill = None
+            self._active_name = intent.skill_name
+            return np.zeros(AINEX_ACTION_DIM, dtype=np.float32), SkillStatus.RUNNING
+
         # Switch skill if needed
         if intent.skill_name != self._active_name:
             skill = self._registry.get(intent.skill_name)
@@ -274,18 +287,43 @@ class _SceneSim:
             turn = max(-_TURN_SPEED, min(_TURN_SPEED, yaw_err))
             scene.robot_yaw += turn
 
-        # Grasp check: if close enough and intent is a manipulation skill
-        if not scene.grasped_entity:
+        # Explicit grasp: only when skill is "grasp" and close to target entity
+        if intent.skill_name == "grasp" and not scene.grasped_entity:
             for ent in scene.entities:
                 if ent.grasped:
                     continue
+                # Grasp the targeted entity (or nearest if no label match)
+                if intent.target_entity_label and ent.label != intent.target_entity_label:
+                    continue
                 d = float(np.linalg.norm(scene.robot_xy - ent.xy))
-                if d < _GRASP_DISTANCE and intent.skill_name in (
-                    "walk_to_target", "walk"
-                ):
-                    # Auto-grasp when close enough (manipulation tasks)
+                if d < _GRASP_DISTANCE:
                     ent.grasped = True
                     scene.grasped_entity = ent.label
+                    break
+            else:
+                # Fallback: grasp nearest entity within range
+                if intent.target_entity_label == "":
+                    best_ent = None
+                    best_d = _GRASP_DISTANCE
+                    for ent in scene.entities:
+                        if ent.grasped:
+                            continue
+                        d = float(np.linalg.norm(scene.robot_xy - ent.xy))
+                        if d < best_d:
+                            best_d = d
+                            best_ent = ent
+                    if best_ent is not None:
+                        best_ent.grasped = True
+                        scene.grasped_entity = best_ent.label
+
+        # Explicit release: drop the grasped entity at current position
+        if intent.skill_name in ("release", "place") and scene.grasped_entity:
+            for ent in scene.entities:
+                if ent.label == scene.grasped_entity:
+                    ent.grasped = False
+                    ent.xy = scene.robot_xy.copy()  # Drop at current position
+                    break
+            scene.grasped_entity = ""
 
         # Move grasped entity with robot
         for ent in scene.entities:
@@ -455,32 +493,39 @@ def _check_success(
         return scene.grasped_entity != ""
 
     if criterion == SuccessCriterion.PLACED:
-        # Grasped object must be within a goal zone AND released
+        # Target entity must be within a goal zone AND not currently grasped
         for gz in scene.goal_zones:
             for ent in scene.entities:
-                if ent.is_target:
+                if ent.is_target and not ent.grasped:
                     d = float(np.linalg.norm(ent.xy - gz.xy))
                     if d <= gz.radius:
                         return True
         return False
 
     if criterion == SuccessCriterion.SEQUENCE:
-        # All sub-goals completed -- approximated by all target entities
-        # being in their corresponding goal zones
+        # All sub-goals completed -- every target entity must be released
+        # and within some goal zone (matched by color or any zone if only one target)
         if not task.sub_goals:
             return False
-        # Check: every target entity is within some goal zone
-        for ent in scene.entities:
-            if ent.is_target:
-                in_zone = False
-                for gz in scene.goal_zones:
-                    if ent.color in gz.label or gz.label in ent.label:
-                        d = float(np.linalg.norm(ent.xy - gz.xy))
-                        if d <= gz.radius:
-                            in_zone = True
-                            break
-                if not in_zone:
-                    return False
+        target_ents = [e for e in scene.entities if e.is_target]
+        if not target_ents:
+            return False
+        for ent in target_ents:
+            if ent.grasped:
+                return False  # Still holding an object
+            in_zone = False
+            for gz in scene.goal_zones:
+                # Match by color overlap or label overlap
+                color_match = ent.color in gz.label or gz.label in ent.label
+                # If there's only one target, accept any goal zone
+                any_zone_ok = len(target_ents) == 1
+                if color_match or any_zone_ok:
+                    d = float(np.linalg.norm(ent.xy - gz.xy))
+                    if d <= gz.radius:
+                        in_zone = True
+                        break
+            if not in_zone:
+                return False
         return True
 
     if criterion == SuccessCriterion.RECOVERY:
@@ -520,17 +565,19 @@ def _count_sub_goals(scene: _SceneState, task: EvalTask) -> int:
 # Planning accuracy check
 # ---------------------------------------------------------------------------
 
-# Maps task success criterion to a "reasonable" skill sequence.
-_EXPECTED_SKILL_PLANS: dict[str, set[str]] = {
-    "walk_to_red_ball": {"walk", "walk_to_target"},
-    "walk_to_named_entity": {"walk", "walk_to_target"},
-    "face_and_approach": {"turn", "walk", "walk_to_target"},
-    "pick_up_object": {"walk", "walk_to_target", "grasp"},
-    "carry_to_target": {"walk", "walk_to_target", "grasp", "place"},
-    "sort_by_color": {"walk", "walk_to_target", "grasp", "place", "turn"},
-    "disambiguated_nav": {"walk", "walk_to_target", "turn"},
-    "multi_step_fetch": {"walk", "walk_to_target", "grasp", "place", "turn"},
-    "recovery_from_failure": {"walk", "walk_to_target", "turn", "stand"},
+# Maps task name to (allowed skills, required skills).
+# allowed: planner must only use skills from this set.
+# required: planner must use at least these skills for the plan to be correct.
+_EXPECTED_SKILL_PLANS: dict[str, tuple[set[str], set[str]]] = {
+    "walk_to_red_ball":      ({"walk", "walk_to_target", "turn", "stand"}, {"walk"}),
+    "walk_to_named_entity":  ({"walk", "walk_to_target", "turn", "stand"}, {"walk"}),
+    "face_and_approach":     ({"turn", "walk", "walk_to_target", "stand"}, {"turn", "walk"}),
+    "pick_up_object":        ({"walk", "walk_to_target", "turn", "stand", "grasp"}, {"grasp"}),
+    "carry_to_target":       ({"walk", "walk_to_target", "turn", "stand", "grasp", "release", "place"}, {"grasp", "release"}),
+    "sort_by_color":         ({"walk", "walk_to_target", "turn", "stand", "grasp", "release", "place"}, {"grasp", "release"}),
+    "disambiguated_nav":     ({"walk", "walk_to_target", "turn", "stand"}, {"walk"}),
+    "multi_step_fetch":      ({"walk", "walk_to_target", "turn", "stand", "grasp", "release", "place"}, {"grasp", "release"}),
+    "recovery_from_failure": ({"walk", "walk_to_target", "turn", "stand"}, {"walk"}),
 }
 
 
@@ -538,12 +585,23 @@ def _check_planning_correct(
     task: EvalTask,
     trajectory: list[StepRecord],
 ) -> bool:
-    """Did the planner only select skills from the expected set?"""
-    expected = _EXPECTED_SKILL_PLANS.get(task.name, set(task.required_skills))
+    """Did the planner use correct skills?
+
+    Checks both:
+    1. Exclusion: no skills outside the allowed set.
+    2. Inclusion: all required skills appear at least once.
+    """
+    allowed, required = _EXPECTED_SKILL_PLANS.get(
+        task.name, (set(task.required_skills), set())
+    )
+    used_skills: set[str] = set()
     for rec in trajectory:
-        if rec.planned_skill and rec.planned_skill not in expected:
-            return False
-    return True
+        if rec.planned_skill:
+            if rec.planned_skill not in allowed:
+                return False
+            used_skills.add(rec.planned_skill)
+    # Check that all required skills were used
+    return required.issubset(used_skills)
 
 
 def _check_grounding_correct(

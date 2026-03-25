@@ -89,11 +89,23 @@ class ScriptedPlanner:
     """Baseline: hand-coded heuristic planner.
 
     Parses the instruction for keywords and selects skills accordingly.
-    Demonstrates what a simple rule-based system can achieve.
+    Uses a simple state machine: navigate -> grasp -> navigate -> release.
+    No replanning on failure — demonstrates a rigid rule-based system.
     """
 
+    def __init__(self) -> None:
+        self._phase = "navigate"  # navigate | grasp | carry | release | done
+
     def __call__(self, ctx: EmbodiedContext) -> GroundedIntent:
+        # Reset state machine at start of each episode
+        if ctx.step == 0:
+            self._phase = "navigate"
+
         instr = ctx.instruction.lower()
+        is_manip = any(kw in instr for kw in (
+            "pick up", "grab", "get", "fetch", "carry", "bring",
+            "put", "place", "sort",
+        ))
         target_ent = self._find_target(ctx)
 
         if not target_ent:
@@ -106,15 +118,87 @@ class ScriptedPlanner:
         target_xy = (target_ent.x, target_ent.y)
         target_label = target_ent.label
 
-        # Check if we should turn first
         delta_x = target_ent.x - ctx.robot_xy[0]
         delta_y = target_ent.y - ctx.robot_xy[1]
+        dist = math.sqrt(delta_x**2 + delta_y**2)
         target_angle = math.atan2(delta_y, delta_x)
         yaw_err = abs(math.atan2(
             math.sin(target_angle - ctx.robot_yaw),
             math.cos(target_angle - ctx.robot_yaw),
         ))
 
+        # For manipulation: simple state machine (no replanning)
+        if is_manip:
+            needs_carry = any(kw in instr for kw in (
+                "carry", "bring", "put", "place", "sort",
+            ))
+
+            # Phase: navigate to object
+            if self._phase == "navigate" and not ctx.grasped_entity:
+                if dist < 0.08:
+                    self._phase = "grasp"
+                elif yaw_err > 0.5:
+                    return GroundedIntent(
+                        skill_name="turn", target_entity_label=target_label,
+                        target_xy=target_xy, reasoning="scripted: turn to object",
+                    )
+                else:
+                    return GroundedIntent(
+                        skill_name="walk_to_target", target_entity_label=target_label,
+                        target_xy=target_xy, reasoning="scripted: walk to object",
+                    )
+
+            # Phase: grasp
+            if self._phase == "grasp":
+                if ctx.grasped_entity:
+                    self._phase = "carry" if needs_carry else "done"
+                else:
+                    return GroundedIntent(
+                        skill_name="grasp", target_entity_label=target_label,
+                        target_xy=target_xy, reasoning="scripted: grasp object",
+                    )
+
+            # Phase: carry to goal zone
+            if self._phase == "carry" and ctx.goal_zones:
+                gz_label, gx, gy = ctx.goal_zones[0]
+                gz_xy = (gx, gy)
+                dx = gx - ctx.robot_xy[0]
+                dy = gy - ctx.robot_xy[1]
+                gz_dist = math.sqrt(dx**2 + dy**2)
+                if gz_dist < 0.15:
+                    self._phase = "release"
+                else:
+                    gz_angle = math.atan2(dy, dx)
+                    gz_yaw_err = abs(math.atan2(
+                        math.sin(gz_angle - ctx.robot_yaw),
+                        math.cos(gz_angle - ctx.robot_yaw),
+                    ))
+                    if gz_yaw_err > 0.5:
+                        return GroundedIntent(
+                            skill_name="turn", target_entity_label=gz_label,
+                            target_xy=gz_xy, reasoning="scripted: turn to goal",
+                        )
+                    return GroundedIntent(
+                        skill_name="walk_to_target", target_entity_label=gz_label,
+                        target_xy=gz_xy, reasoning="scripted: carry to goal",
+                    )
+
+            # Phase: release
+            if self._phase == "release":
+                self._phase = "done"
+                return GroundedIntent(
+                    skill_name="release", target_entity_label=target_label,
+                    target_xy=(ctx.robot_xy[0], ctx.robot_xy[1]),
+                    reasoning="scripted: release object",
+                )
+
+            if self._phase == "done":
+                return GroundedIntent(
+                    skill_name="stand", reasoning="scripted: task complete",
+                    is_done=True,
+                )
+
+        # Navigation-only tasks
         if yaw_err > 0.5:
             return GroundedIntent(
                 skill_name="turn",
@@ -123,8 +207,6 @@ class ScriptedPlanner:
                 reasoning="scripted: turn to face target",
             )
 
-        # Check distance
-        dist = math.sqrt(delta_x**2 + delta_y**2)
         if dist < 0.15:
             return GroundedIntent(
                 skill_name="stand",
@@ -150,7 +232,6 @@ class ScriptedPlanner:
         for ent in ctx.entities:
             score = 0
             label = ent.label.lower().replace("_", " ")
-            # Keyword overlap between instruction and entity label
             for word in label.split():
                 if word in instr:
                     score += 1
@@ -165,11 +246,10 @@ class SayCanPlanner:
     """Baseline: SayCan-style planner.
 
     Scores each skill by affordance (is it executable?) and selects
-    the highest-scoring skill-entity pair.  Simplified version that
-    uses distance-based affordance rather than a learned value function.
+    the highest-scoring skill-entity pair.  Includes grasp/release
+    affordances for manipulation, but uses flat scoring (no hierarchical
+    decomposition), so it struggles with multi-step tasks.
     """
-
-    _SKILL_ORDER = ["turn", "walk", "walk_to_target", "stand"]
 
     def __call__(self, ctx: EmbodiedContext) -> GroundedIntent:
         target_ent = self._select_target(ctx)
@@ -181,6 +261,7 @@ class SayCanPlanner:
             )
 
         target_xy = (target_ent.x, target_ent.y)
+        target_label = target_ent.label
         dx = target_ent.x - ctx.robot_xy[0]
         dy = target_ent.y - ctx.robot_xy[1]
         dist = math.sqrt(dx**2 + dy**2)
@@ -190,34 +271,75 @@ class SayCanPlanner:
             math.cos(target_angle - ctx.robot_yaw),
         ))
 
+        instr = ctx.instruction.lower()
+        is_manip = any(kw in instr for kw in (
+            "pick up", "grab", "get", "fetch", "carry", "bring",
+            "put", "place", "sort",
+        ))
+
         # Affordance scoring
-        scores: dict[str, float] = {}
-        scores["turn"] = 1.0 if yaw_err > 0.3 else 0.1
-        scores["walk"] = max(0.0, 1.0 - yaw_err / math.pi) * min(1.0, dist)
-        scores["walk_to_target"] = max(0.0, 1.0 - yaw_err / math.pi) * min(1.0, dist) * 1.1
-        scores["stand"] = 1.0 if dist < 0.15 else 0.0
+        scores: dict[str, tuple[float, str, tuple[float, float]]] = {}
+        # (score, target_label, target_xy)
+        scores["turn"] = (1.0 if yaw_err > 0.3 else 0.1, target_label, target_xy)
+        walk_score = max(0.0, 1.0 - yaw_err / math.pi) * min(1.0, dist)
+        scores["walk"] = (walk_score, target_label, target_xy)
+        scores["walk_to_target"] = (walk_score * 1.1, target_label, target_xy)
+        scores["stand"] = (1.0 if dist < 0.15 and not is_manip else 0.0, target_label, target_xy)
+
+        # Manipulation affordances
+        if is_manip:
+            # Grasp: high when close and not holding
+            grasp_score = 2.0 if (dist < 0.10 and not ctx.grasped_entity) else 0.0
+            scores["grasp"] = (grasp_score, target_label, target_xy)
+
+            # If holding an object, retarget navigation to goal zone
+            if ctx.grasped_entity and ctx.goal_zones:
+                gz_label, gx, gy = ctx.goal_zones[0]
+                gz_xy = (gx, gy)
+                gz_dx = gx - ctx.robot_xy[0]
+                gz_dy = gy - ctx.robot_xy[1]
+                gz_dist = math.sqrt(gz_dx**2 + gz_dy**2)
+                gz_angle = math.atan2(gz_dy, gz_dx)
+                gz_yaw_err = abs(math.atan2(
+                    math.sin(gz_angle - ctx.robot_yaw),
+                    math.cos(gz_angle - ctx.robot_yaw),
+                ))
+
+                # Override nav scores to point to goal zone
+                scores["turn"] = (1.0 if gz_yaw_err > 0.3 else 0.1, gz_label, gz_xy)
+                gz_walk = max(0.0, 1.0 - gz_yaw_err / math.pi) * min(1.0, gz_dist)
+                scores["walk"] = (gz_walk, gz_label, gz_xy)
+                scores["walk_to_target"] = (gz_walk * 1.1, gz_label, gz_xy)
+                scores["stand"] = (0.0, target_label, target_xy)
+
+                # Release: high when near goal zone
+                release_score = 2.0 if gz_dist < 0.20 else 0.0
+                scores["release"] = (release_score, target_label, gz_xy)
+            else:
+                scores["release"] = (0.0, target_label, target_xy)
 
         # Select highest scoring skill
-        best_skill = max(scores, key=lambda k: scores[k])
+        best_skill = max(scores, key=lambda k: scores[k][0])
+        best_score, best_label, best_xy = scores[best_skill]
 
-        if best_skill == "stand" and dist < 0.15:
+        if best_skill == "stand":
             return GroundedIntent(
                 skill_name="stand",
-                target_entity_label=target_ent.label,
-                target_xy=target_xy,
+                target_entity_label=best_label,
+                target_xy=best_xy,
                 reasoning=f"saycan: arrived (dist={dist:.3f})",
                 is_done=True,
             )
 
         return GroundedIntent(
             skill_name=best_skill,
-            target_entity_label=target_ent.label,
-            target_xy=target_xy,
-            reasoning=f"saycan: {best_skill} (score={scores[best_skill]:.2f})",
+            target_entity_label=best_label,
+            target_xy=best_xy,
+            reasoning=f"saycan: {best_skill} (score={best_score:.2f})",
         )
 
     def _select_target(self, ctx: EmbodiedContext) -> TrackedEntity | None:
-        """Select target entity by instruction-keyword matching (same as scripted)."""
+        """Select target entity by instruction-keyword matching."""
         instr = ctx.instruction.lower()
         best: TrackedEntity | None = None
         best_score = -1
@@ -274,8 +396,8 @@ class RPG2RobotPlanner:
     """RPG2Robot planner -- hierarchical skill-based planner.
 
     Implements the full RPG2Robot planning loop:
-    1. Parse instruction to identify task type and target entity.
-    2. Decompose into skill sequence (turn -> walk -> grasp -> ...).
+    1. Parse instruction to identify task type and target entities.
+    2. Decompose into skill+target sequence (turn -> walk -> grasp -> ...).
     3. Track skill completion and advance to next sub-goal.
     4. Handle failure by replanning from current state.
 
@@ -287,9 +409,9 @@ class RPG2RobotPlanner:
     def __init__(self, checkpoint: str | None = None) -> None:
         self._checkpoint = checkpoint
         self._model: Any = None
-        self._plan: list[str] = []
+        # Plan is a list of (skill_name, target_label_or_"goal") tuples
+        self._plan: list[tuple[str, str]] = []
         self._plan_idx: int = 0
-        self._target_label: str = ""
         self._last_instruction: str = ""
 
         if checkpoint:
@@ -309,114 +431,145 @@ class RPG2RobotPlanner:
             logger.warning("Failed to load checkpoint %s: %s", path, exc)
 
     def __call__(self, ctx: EmbodiedContext) -> GroundedIntent:
-        # Re-plan if instruction changed or on failure
-        if (ctx.instruction != self._last_instruction
+        # Reset at start of new episode or re-plan on failure/instruction change
+        if (ctx.step == 0
+                or ctx.instruction != self._last_instruction
                 or ctx.previous_skill_status == "failed"):
             self._last_instruction = ctx.instruction
-            self._plan, self._target_label = self._decompose(ctx)
+            self._plan = self._decompose(ctx)
             self._plan_idx = 0
 
-        target_ent = self._resolve_target(ctx, self._target_label)
-        if not target_ent:
+        if self._plan_idx >= len(self._plan):
             return GroundedIntent(
                 skill_name="stand",
-                reasoning="rpg2robot: cannot resolve target entity",
+                reasoning="rpg2robot: plan complete",
                 is_done=True,
             )
 
-        target_xy = (target_ent.x, target_ent.y)
+        current_skill, current_target = self._plan[self._plan_idx]
 
-        # Check current skill completion
-        if self._plan_idx < len(self._plan):
-            current_skill = self._plan[self._plan_idx]
+        # Resolve target: could be an entity label or a goal zone label
+        target_ent = self._resolve_target(ctx, current_target)
+        target_xy = self._resolve_target_xy(ctx, current_target)
 
-            # Advance plan on completion
-            if ctx.previous_skill_status == "completed":
-                self._plan_idx += 1
-                if self._plan_idx >= len(self._plan):
-                    return GroundedIntent(
-                        skill_name="stand",
-                        target_entity_label=self._target_label,
-                        target_xy=target_xy,
-                        reasoning="rpg2robot: plan complete",
-                        is_done=True,
-                    )
-                current_skill = self._plan[self._plan_idx]
-
-            # Check if turn is still needed
-            if current_skill == "turn":
-                dx = target_ent.x - ctx.robot_xy[0]
-                dy = target_ent.y - ctx.robot_xy[1]
-                target_angle = math.atan2(dy, dx)
-                yaw_err = abs(math.atan2(
-                    math.sin(target_angle - ctx.robot_yaw),
-                    math.cos(target_angle - ctx.robot_yaw),
-                ))
-                if yaw_err < 0.3:
-                    self._plan_idx += 1
-                    if self._plan_idx >= len(self._plan):
-                        return GroundedIntent(
-                            skill_name="stand",
-                            target_entity_label=self._target_label,
-                            target_xy=target_xy,
-                            reasoning="rpg2robot: aligned, plan complete",
-                            is_done=True,
-                        )
-                    current_skill = self._plan[self._plan_idx]
-
-            # Check distance for walk skills
-            if current_skill in ("walk", "walk_to_target"):
-                dx = target_ent.x - ctx.robot_xy[0]
-                dy = target_ent.y - ctx.robot_xy[1]
-                dist = math.sqrt(dx**2 + dy**2)
-                if dist < 0.15:
-                    self._plan_idx += 1
-                    if self._plan_idx >= len(self._plan):
-                        return GroundedIntent(
-                            skill_name="stand",
-                            target_entity_label=self._target_label,
-                            target_xy=target_xy,
-                            reasoning=f"rpg2robot: reached target (dist={dist:.3f})",
-                            is_done=True,
-                        )
-                    current_skill = self._plan[self._plan_idx]
-
+        if target_xy is None:
             return GroundedIntent(
-                skill_name=current_skill,
-                target_entity_label=self._target_label,
-                target_xy=target_xy,
-                reasoning=f"rpg2robot: step {self._plan_idx}/{len(self._plan)}",
+                skill_name="stand",
+                reasoning="rpg2robot: cannot resolve target",
+                is_done=True,
             )
 
+        # Check completion conditions for current skill
+        advance = False
+        if current_skill == "turn":
+            dx = target_xy[0] - ctx.robot_xy[0]
+            dy = target_xy[1] - ctx.robot_xy[1]
+            target_angle = math.atan2(dy, dx)
+            yaw_err = abs(math.atan2(
+                math.sin(target_angle - ctx.robot_yaw),
+                math.cos(target_angle - ctx.robot_yaw),
+            ))
+            advance = yaw_err < 0.3
+
+        elif current_skill in ("walk", "walk_to_target"):
+            dx = target_xy[0] - ctx.robot_xy[0]
+            dy = target_xy[1] - ctx.robot_xy[1]
+            dist = math.sqrt(dx**2 + dy**2)
+            advance = dist < 0.08  # Tight threshold to ensure grasp range
+
+        elif current_skill == "grasp":
+            advance = ctx.grasped_entity != ""
+
+        elif current_skill in ("release", "place"):
+            advance = ctx.grasped_entity == ""
+
+        elif current_skill == "stand":
+            advance = True
+
+        if advance:
+            self._plan_idx += 1
+            if self._plan_idx >= len(self._plan):
+                return GroundedIntent(
+                    skill_name="stand",
+                    target_entity_label=current_target,
+                    target_xy=target_xy,
+                    reasoning="rpg2robot: plan complete",
+                    is_done=True,
+                )
+            current_skill, current_target = self._plan[self._plan_idx]
+            target_xy = self._resolve_target_xy(ctx, current_target) or target_xy
+
         return GroundedIntent(
-            skill_name="stand",
-            target_entity_label=self._target_label,
+            skill_name=current_skill,
+            target_entity_label=current_target,
             target_xy=target_xy,
-            reasoning="rpg2robot: plan exhausted",
-            is_done=True,
+            reasoning=f"rpg2robot: step {self._plan_idx + 1}/{len(self._plan)} ({current_skill} -> {current_target})",
         )
 
-    def _decompose(
-        self, ctx: EmbodiedContext
-    ) -> tuple[list[str], str]:
-        """Decompose instruction into skill sequence and target entity label."""
+    def _decompose(self, ctx: EmbodiedContext) -> list[tuple[str, str]]:
+        """Decompose instruction into (skill, target) sequence."""
         instr = ctx.instruction.lower()
-        target_label = self._identify_target(ctx)
+        entities = {e.label: e for e in ctx.entities}
 
-        # Determine task type from instruction keywords
-        if any(kw in instr for kw in ("pick up", "grab", "get", "fetch")):
-            if any(kw in instr for kw in ("carry", "bring", "put", "place")):
-                return ["turn", "walk_to_target", "walk_to_target", "stand"], target_label
-            return ["turn", "walk_to_target", "stand"], target_label
+        # Identify primary target entity
+        target = self._identify_target(ctx)
 
+        # Identify goal zone target (for carry/place tasks)
+        goal_target = ""
+        if ctx.goal_zones:
+            goal_target = ctx.goal_zones[0][0]  # First goal zone label
+
+        # Sort: pick up each entity and carry to matching zone
         if any(kw in instr for kw in ("sort", "each")):
-            return ["turn", "walk_to_target", "walk_to_target", "turn", "walk_to_target", "walk_to_target", "stand"], target_label
+            plan: list[tuple[str, str]] = []
+            for ent in ctx.entities:
+                # Find matching goal zone by color
+                matching_zone = ""
+                for gz_label, _, _ in ctx.goal_zones:
+                    if ent.label.split("_")[0] in gz_label:
+                        matching_zone = gz_label
+                        break
+                if not matching_zone and ctx.goal_zones:
+                    matching_zone = ctx.goal_zones[0][0]
+                plan.extend([
+                    ("turn", ent.label),
+                    ("walk_to_target", ent.label),
+                    ("grasp", ent.label),
+                    ("turn", matching_zone),
+                    ("walk_to_target", matching_zone),
+                    ("release", ent.label),
+                ])
+            return plan
 
+        # Carry / fetch / bring: pick up then deliver to goal
+        has_pick = any(kw in instr for kw in ("pick up", "grab", "get", "fetch"))
+        has_carry = any(kw in instr for kw in ("carry", "bring", "put", "place", "deliver"))
+
+        if has_carry:
+            # Full pick-and-place sequence
+            return [
+                ("turn", target),
+                ("walk_to_target", target),
+                ("grasp", target),
+                ("turn", goal_target or target),
+                ("walk_to_target", goal_target or target),
+                ("release", target),
+            ]
+
+        if has_pick:
+            # Just pick up
+            return [
+                ("turn", target),
+                ("walk_to_target", target),
+                ("grasp", target),
+            ]
+
+        # Face and approach
         if any(kw in instr for kw in ("face", "look at", "rotate toward")):
-            return ["turn", "walk", "stand"], target_label
+            return [("turn", target), ("walk", target)]
 
         # Default: navigation
-        return ["turn", "walk", "stand"], target_label
+        return [("turn", target), ("walk", target)]
 
     def _identify_target(self, ctx: EmbodiedContext) -> str:
         """Identify the target entity from instruction."""
@@ -451,8 +604,140 @@ class RPG2RobotPlanner:
         for ent in ctx.entities:
             if ent.label == label:
                 return ent
-        # Fallback: return first entity
         return ctx.entities[0] if ctx.entities else None
+
+    def _resolve_target_xy(
+        self, ctx: EmbodiedContext, label: str
+    ) -> tuple[float, float] | None:
+        """Resolve a label (entity or goal zone) to xy coordinates."""
+        # Check entities first
+        for ent in ctx.entities:
+            if ent.label == label:
+                return (ent.x, ent.y)
+        # Check goal zones
+        for gz_label, gx, gy in ctx.goal_zones:
+            if gz_label == label:
+                return (gx, gy)
+        # Fallback to first entity
+        if ctx.entities:
+            return (ctx.entities[0].x, ctx.entities[0].y)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Ablation variants of RPG2Robot
+# ---------------------------------------------------------------------------
+
+class RPG2Robot_NoReplan(RPG2RobotPlanner):
+    """Ablation: RPG2Robot without failure replanning."""
+
+    def __call__(self, ctx: EmbodiedContext) -> GroundedIntent:
+        # Only plan once at step 0, never replan on failure
+        if ctx.step == 0 or ctx.instruction != self._last_instruction:
+            self._last_instruction = ctx.instruction
+            self._plan = self._decompose(ctx)
+            self._plan_idx = 0
+        # Skip the failure replan logic — proceed with original plan
+        if self._plan_idx >= len(self._plan):
+            return GroundedIntent(skill_name="stand", reasoning="ablation:no_replan done", is_done=True)
+
+        current_skill, current_target = self._plan[self._plan_idx]
+        target_xy = self._resolve_target_xy(ctx, current_target)
+        if target_xy is None:
+            return GroundedIntent(skill_name="stand", reasoning="no target", is_done=True)
+
+        advance = False
+        if current_skill == "turn":
+            dx = target_xy[0] - ctx.robot_xy[0]
+            dy = target_xy[1] - ctx.robot_xy[1]
+            yaw_err = abs(math.atan2(math.sin(math.atan2(dy, dx) - ctx.robot_yaw), math.cos(math.atan2(dy, dx) - ctx.robot_yaw)))
+            advance = yaw_err < 0.3
+        elif current_skill in ("walk", "walk_to_target"):
+            dist = math.sqrt((target_xy[0] - ctx.robot_xy[0])**2 + (target_xy[1] - ctx.robot_xy[1])**2)
+            advance = dist < 0.08
+        elif current_skill == "grasp":
+            advance = ctx.grasped_entity != ""
+        elif current_skill in ("release", "place"):
+            advance = ctx.grasped_entity == ""
+        elif current_skill == "stand":
+            advance = True
+
+        if advance:
+            self._plan_idx += 1
+            if self._plan_idx >= len(self._plan):
+                return GroundedIntent(skill_name="stand", target_entity_label=current_target, target_xy=target_xy, reasoning="ablation:no_replan complete", is_done=True)
+            current_skill, current_target = self._plan[self._plan_idx]
+            target_xy = self._resolve_target_xy(ctx, current_target) or target_xy
+
+        return GroundedIntent(skill_name=current_skill, target_entity_label=current_target, target_xy=target_xy, reasoning=f"ablation:no_replan {self._plan_idx}/{len(self._plan)}")
+
+
+class RPG2Robot_NoGrasp(RPG2RobotPlanner):
+    """Ablation: RPG2Robot without explicit grasp/release — uses walk proximity only."""
+
+    def _decompose(self, ctx: EmbodiedContext) -> list[tuple[str, str]]:
+        instr = ctx.instruction.lower()
+        target = self._identify_target(ctx)
+        goal_target = ctx.goal_zones[0][0] if ctx.goal_zones else target
+
+        if any(kw in instr for kw in ("sort", "each")):
+            plan: list[tuple[str, str]] = []
+            for ent in ctx.entities:
+                matching_zone = ""
+                for gz_label, _, _ in ctx.goal_zones:
+                    if ent.label.split("_")[0] in gz_label:
+                        matching_zone = gz_label
+                        break
+                if not matching_zone and ctx.goal_zones:
+                    matching_zone = ctx.goal_zones[0][0]
+                plan.extend([("turn", ent.label), ("walk_to_target", ent.label), ("walk_to_target", matching_zone)])
+            return plan
+
+        has_carry = any(kw in instr for kw in ("carry", "bring", "put", "place", "deliver"))
+        has_pick = any(kw in instr for kw in ("pick up", "grab", "get", "fetch"))
+        if has_carry:
+            return [("turn", target), ("walk_to_target", target), ("walk_to_target", goal_target)]
+        if has_pick:
+            return [("turn", target), ("walk_to_target", target)]
+        if any(kw in instr for kw in ("face", "look at", "rotate toward")):
+            return [("turn", target), ("walk", target)]
+        return [("turn", target), ("walk", target)]
+
+
+class RPG2Robot_NoDecompose(RPG2RobotPlanner):
+    """Ablation: RPG2Robot with target ID but no skill decomposition (single walk)."""
+
+    def _decompose(self, ctx: EmbodiedContext) -> list[tuple[str, str]]:
+        target = self._identify_target(ctx)
+        return [("walk_to_target", target)]
+
+
+class RPG2Robot_NoMultitarget(RPG2RobotPlanner):
+    """Ablation: RPG2Robot without multi-target support (single target for sort)."""
+
+    def _decompose(self, ctx: EmbodiedContext) -> list[tuple[str, str]]:
+        instr = ctx.instruction.lower()
+        target = self._identify_target(ctx)
+        goal_target = ctx.goal_zones[0][0] if ctx.goal_zones else target
+
+        # Sort treated as single-target carry (only first entity)
+        if any(kw in instr for kw in ("sort", "each")):
+            return [
+                ("turn", target), ("walk_to_target", target),
+                ("grasp", target), ("turn", goal_target),
+                ("walk_to_target", goal_target), ("release", target),
+            ]
+
+        # Everything else same as full RPG2Robot
+        has_carry = any(kw in instr for kw in ("carry", "bring", "put", "place", "deliver"))
+        has_pick = any(kw in instr for kw in ("pick up", "grab", "get", "fetch"))
+        if has_carry:
+            return [("turn", target), ("walk_to_target", target), ("grasp", target), ("turn", goal_target), ("walk_to_target", goal_target), ("release", target)]
+        if has_pick:
+            return [("turn", target), ("walk_to_target", target), ("grasp", target)]
+        if any(kw in instr for kw in ("face", "look at", "rotate toward")):
+            return [("turn", target), ("walk", target)]
+        return [("turn", target), ("walk", target)]
 
 
 # ---------------------------------------------------------------------------
@@ -465,6 +750,11 @@ PLANNER_REGISTRY: dict[str, type | Any] = {
     "saycan": SayCanPlanner,
     "flat_rl": FlatRLPlanner,
     "rpg2robot": RPG2RobotPlanner,
+    # Ablation variants
+    "rpg2robot_no_replan": RPG2Robot_NoReplan,
+    "rpg2robot_no_grasp": RPG2Robot_NoGrasp,
+    "rpg2robot_no_decompose": RPG2Robot_NoDecompose,
+    "rpg2robot_no_multitarget": RPG2Robot_NoMultitarget,
 }
 
 
@@ -708,7 +998,7 @@ Examples:
         type=str,
         default="rpg2robot",
         choices=sorted(PLANNER_REGISTRY.keys()),
-        help="Planner to evaluate (default: rpg2robot)",
+        help=f"Planner to evaluate (default: rpg2robot). Available: {sorted(PLANNER_REGISTRY.keys())}",
     )
     parser.add_argument(
         "--tasks",

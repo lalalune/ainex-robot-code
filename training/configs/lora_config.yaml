@@ -7,7 +7,7 @@
 # Usage:
 #   python -m training.train_planner --config training/configs/lora_config.yaml
 
-base_model: "microsoft/Phi-3-mini-4k-instruct"
+base_model: "Qwen/Qwen3-4B"
 
 lora:
   r: 16
@@ -18,20 +18,45 @@ lora:
     - "v_proj"
     - "k_proj"
     - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
 
 training:
   epochs: 3
-  batch_size: 4
+  batch_size: 1
   learning_rate: 2.0e-4
   warmup_ratio: 0.03
-  max_seq_length: 2048
-  gradient_accumulation_steps: 4
+  max_seq_length: 32768    # 32k training context
+  gradient_accumulation_steps: 16  # effective batch = 16
   weight_decay: 0.01
   lr_scheduler_type: "cosine"
-  fp16: true
+  bf16: true
   logging_steps: 10
   eval_strategy: "steps"
   eval_steps: 50
+  gradient_checkpointing: true
+  # QLoRA: load base model in 4-bit to fit on 16 GB GPU
+  quantization: "4bit"     # bitsandbytes nf4
+  bnb_4bit_compute_dtype: "bfloat16"
+  bnb_4bit_quant_type: "nf4"
+
+# YaRN rope scaling to extend inference context to 64k.
+# Qwen3-4B native context is ~40k; YaRN factor 2x reaches 64k.
+inference:
+  max_context: 65536
+  rope_scaling:
+    type: "yarn"
+    factor: 2.0
+    original_max_position_embeddings: 32768
+
+# TurboQuant KV cache compression.
+# At 32k training / 64k inference, keeps VRAM manageable.
+turboquant:
+  enabled: true
+  bits: 4                  # 4-bit key quantization
+  residual_window: 256     # recent tokens kept in full precision
+  value_dtype: "float16"
 
 data:
   format: "openai"
@@ -45,3 +70,21 @@ output:
   dir: "checkpoints/lora_planner"
   save_steps: 100
   save_total_limit: 3
+
+# ─── Full fine-tuning profile (alternative to LoRA) ───────────────────
+# Uses ProjectedAdamW with CPU-offloaded optimizer states.
+# Run with: python -m training.finetune.train_full --dataset ... --output ...
+full_finetune:
+  enabled: false             # set true to use full FT instead of LoRA
+  optimizer: "projected_adamw"
+  rank_ratio: 4              # 4x optimizer state compression (32 GB → 8 GB)
+  offload_to_cpu: true       # keep optimizer states in pinned CPU RAM
+  update_proj_every: 200     # re-randomize projection subspace every 200 steps
+  learning_rate: 2.0e-5      # lower LR than LoRA for full FT stability
+  batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  max_seq_length: 4096       # start short; increase to 32k if VRAM allows
+  # Memory estimate (RTX 5080 16 GB + 30 GB RAM):
+  #   GPU: model bf16 (8 GB) + activations w/ grad ckpt (~3-5 GB) = 11-13 GB
+  #   CPU: projected optimizer states (~2 GB at rank_ratio=4)
