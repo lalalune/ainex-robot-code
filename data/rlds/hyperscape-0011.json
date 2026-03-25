@@ -1,0 +1,661 @@
+{
+  "trajectory_id": "hyperscape-0011",
+  "agent_id": "eliza-agent-1",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_11_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -22.427852413482114,
+              14.093908675434898,
+              4.680908490066784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6740599369750647,
+            "distance_to_agent": 9.241935623741556,
+            "bearing_to_agent": -0.8450960622434258,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_11_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.046854168404158,
+              17.54596274590114,
+              3.643451136406542
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.904083158149233,
+            "distance_to_agent": 5.175175014067037,
+            "bearing_to_agent": 1.3339040434143576,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_11_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -19.15897317308407,
+              25.45534930329549,
+              2.939557060894948
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6909932653930219,
+            "distance_to_agent": 7.669075418221031,
+            "bearing_to_agent": -2.402284626694163,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_11_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -18.77359546297446,
+              26.806041668157327,
+              5.369526571375911
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6182062803932873,
+            "distance_to_agent": 8.491625520205128,
+            "bearing_to_agent": -2.532324495067509,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          -14.81894723858317,
+          4.537452628531785,
+          -19.337700865116958
+        ],
+        "task": "Explore the area near the Health Potion"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_11_0",
+          "target_label": "Health Potion"
+        }
+      },
+      "reward": 0.9440896147957406,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_11_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -22.427852413482114,
+              14.093908675434898,
+              4.680908490066784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6740599369750647,
+            "distance_to_agent": 9.241935623741556,
+            "bearing_to_agent": -0.8450960622434258,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_11_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.046854168404158,
+              17.54596274590114,
+              3.643451136406542
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.904083158149233,
+            "distance_to_agent": 5.175175014067037,
+            "bearing_to_agent": 1.3339040434143576,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_11_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -19.15897317308407,
+              25.45534930329549,
+              2.939557060894948
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6909932653930219,
+            "distance_to_agent": 7.669075418221031,
+            "bearing_to_agent": -2.402284626694163,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_11_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -18.77359546297446,
+              26.806041668157327,
+              5.369526571375911
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6182062803932873,
+            "distance_to_agent": 8.491625520205128,
+            "bearing_to_agent": -2.532324495067509,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          -14.81894723858317,
+          4.537452628531785,
+          -19.337700865116958
+        ],
+        "task": "Explore the area near the Health Potion"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_11_0",
+          "target_label": "Health Potion"
+        }
+      },
+      "reward": 0.478714208606398,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_11_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -22.427852413482114,
+              14.093908675434898,
+              4.680908490066784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6740599369750647,
+            "distance_to_agent": 9.241935623741556,
+            "bearing_to_agent": -0.8450960622434258,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_11_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.046854168404158,
+              17.54596274590114,
+              3.643451136406542
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.904083158149233,
+            "distance_to_agent": 5.175175014067037,
+            "bearing_to_agent": 1.3339040434143576,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_11_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -19.15897317308407,
+              25.45534930329549,
+              2.939557060894948
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6909932653930219,
+            "distance_to_agent": 7.669075418221031,
+            "bearing_to_agent": -2.402284626694163,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_11_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -18.77359546297446,
+              26.806041668157327,
+              5.369526571375911
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6182062803932873,
+            "distance_to_agent": 8.491625520205128,
+            "bearing_to_agent": -2.532324495067509,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          -14.81894723858317,
+          4.537452628531785,
+          -19.337700865116958
+        ],
+        "task": "Explore the area near the Health Potion"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_11_0",
+          "target_label": "Health Potion"
+        }
+      },
+      "reward": 0.06534343511393248,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_11_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -22.427852413482114,
+              14.093908675434898,
+              4.680908490066784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6740599369750647,
+            "distance_to_agent": 9.241935623741556,
+            "bearing_to_agent": -0.8450960622434258,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_11_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.046854168404158,
+              17.54596274590114,
+              3.643451136406542
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.904083158149233,
+            "distance_to_agent": 5.175175014067037,
+            "bearing_to_agent": 1.3339040434143576,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_11_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -19.15897317308407,
+              25.45534930329549,
+              2.939557060894948
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6909932653930219,
+            "distance_to_agent": 7.669075418221031,
+            "bearing_to_agent": -2.402284626694163,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_11_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -18.77359546297446,
+              26.806041668157327,
+              5.369526571375911
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6182062803932873,
+            "distance_to_agent": 8.491625520205128,
+            "bearing_to_agent": -2.532324495067509,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          -14.81894723858317,
+          4.537452628531785,
+          -19.337700865116958
+        ],
+        "task": "Explore the area near the Health Potion"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_11_0",
+          "target_label": "Health Potion"
+        }
+      },
+      "reward": 0.5628395970845642,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_11_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -22.427852413482114,
+              14.093908675434898,
+              4.680908490066784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6740599369750647,
+            "distance_to_agent": 9.241935623741556,
+            "bearing_to_agent": -0.8450960622434258,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_11_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.046854168404158,
+              17.54596274590114,
+              3.643451136406542
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.904083158149233,
+            "distance_to_agent": 5.175175014067037,
+            "bearing_to_agent": 1.3339040434143576,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_11_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -19.15897317308407,
+              25.45534930329549,
+              2.939557060894948
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6909932653930219,
+            "distance_to_agent": 7.669075418221031,
+            "bearing_to_agent": -2.402284626694163,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_11_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -18.77359546297446,
+              26.806041668157327,
+              5.369526571375911
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6182062803932873,
+            "distance_to_agent": 8.491625520205128,
+            "bearing_to_agent": -2.532324495067509,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          -14.81894723858317,
+          4.537452628531785,
+          -19.337700865116958
+        ],
+        "task": "Explore the area near the Health Potion"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_11_0",
+          "target_label": "Health Potion"
+        }
+      },
+      "reward": 0.7907408298434194,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.841727685444055,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

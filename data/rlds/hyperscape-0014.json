@@ -1,0 +1,473 @@
+{
+  "trajectory_id": "hyperscape-0014",
+  "agent_id": "eliza-agent-4",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_14_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              32.05947310851535,
+              -30.739372648594575,
+              1.9566974273074784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9995609332917355,
+            "distance_to_agent": 4.747220853789942,
+            "bearing_to_agent": -2.2263627526683307,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_14_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              43.707905336863675,
+              -28.68744591134576,
+              2.5486636003931875
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7329759822842997,
+            "distance_to_agent": 7.315046999024245,
+            "bearing_to_agent": 0.5772759877613267,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              33.946894527136536,
+              -36.39265186499272,
+              4.493883051081454
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9923098525330377,
+            "distance_to_agent": 7.979403938809595,
+            "bearing_to_agent": -1.3571141632150614,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              37.83864628255684,
+              -34.51150770229653,
+              1.6967238124519821
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6174589196389207,
+            "distance_to_agent": 5.793762782798211,
+            "bearing_to_agent": -0.7814652568584854,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_14_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              40.50725106335887,
+              -26.722193250131,
+              4.008109638479917
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8654755317938139,
+            "distance_to_agent": 4.856976589109316,
+            "bearing_to_agent": 1.0411800476154283,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          36.40269344285882,
+          2.7624740282204097,
+          29.00061820031135
+        ],
+        "task": "Talk to the Grand Exchange"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_14_1",
+          "target_label": "Grand Exchange"
+        }
+      },
+      "reward": 0.5022911501329659,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_14_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              32.05947310851535,
+              -30.739372648594575,
+              1.9566974273074784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9995609332917355,
+            "distance_to_agent": 4.747220853789942,
+            "bearing_to_agent": -2.2263627526683307,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_14_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              43.707905336863675,
+              -28.68744591134576,
+              2.5486636003931875
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7329759822842997,
+            "distance_to_agent": 7.315046999024245,
+            "bearing_to_agent": 0.5772759877613267,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              33.946894527136536,
+              -36.39265186499272,
+              4.493883051081454
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9923098525330377,
+            "distance_to_agent": 7.979403938809595,
+            "bearing_to_agent": -1.3571141632150614,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              37.83864628255684,
+              -34.51150770229653,
+              1.6967238124519821
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6174589196389207,
+            "distance_to_agent": 5.793762782798211,
+            "bearing_to_agent": -0.7814652568584854,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_14_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              40.50725106335887,
+              -26.722193250131,
+              4.008109638479917
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8654755317938139,
+            "distance_to_agent": 4.856976589109316,
+            "bearing_to_agent": 1.0411800476154283,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          36.40269344285882,
+          2.7624740282204097,
+          29.00061820031135
+        ],
+        "task": "Talk to the Grand Exchange"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_14_1",
+          "target_label": "Grand Exchange"
+        }
+      },
+      "reward": 0.4569280744742422,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_14_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              32.05947310851535,
+              -30.739372648594575,
+              1.9566974273074784
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9995609332917355,
+            "distance_to_agent": 4.747220853789942,
+            "bearing_to_agent": -2.2263627526683307,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_14_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              43.707905336863675,
+              -28.68744591134576,
+              2.5486636003931875
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7329759822842997,
+            "distance_to_agent": 7.315046999024245,
+            "bearing_to_agent": 0.5772759877613267,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              33.946894527136536,
+              -36.39265186499272,
+              4.493883051081454
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9923098525330377,
+            "distance_to_agent": 7.979403938809595,
+            "bearing_to_agent": -1.3571141632150614,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_14_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              37.83864628255684,
+              -34.51150770229653,
+              1.6967238124519821
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6174589196389207,
+            "distance_to_agent": 5.793762782798211,
+            "bearing_to_agent": -0.7814652568584854,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_14_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              40.50725106335887,
+              -26.722193250131,
+              4.008109638479917
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8654755317938139,
+            "distance_to_agent": 4.856976589109316,
+            "bearing_to_agent": 1.0411800476154283,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          36.40269344285882,
+          2.7624740282204097,
+          29.00061820031135
+        ],
+        "task": "Talk to the Grand Exchange"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_14_1",
+          "target_label": "Grand Exchange"
+        }
+      },
+      "reward": 0.7815252912730248,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.740744515880233,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

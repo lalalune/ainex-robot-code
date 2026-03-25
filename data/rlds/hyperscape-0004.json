@@ -1,0 +1,727 @@
+{
+  "trajectory_id": "hyperscape-0004",
+  "agent_id": "eliza-agent-4",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_4_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -27.67711975995523,
+              -14.220197581692581,
+              5.836718629658325
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8942948715156174,
+            "distance_to_agent": 10.849664464343922,
+            "bearing_to_agent": 0.402689096714695,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_4_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -16.515565897726688,
+              -24.73408363072602,
+              5.194576127631558
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8011401531678054,
+            "distance_to_agent": 5.528900425038385,
+            "bearing_to_agent": -2.107666690689547,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_4_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -28.326422546518305,
+              -14.65276104635833,
+              8.809030649099427
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6743299843922893,
+            "distance_to_agent": 10.993660089660825,
+            "bearing_to_agent": 0.4747161974631222,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -30.115859837792826,
+              -21.126042767912143,
+              8.413191843882142
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9766384508916357,
+            "distance_to_agent": 8.97002754724186,
+            "bearing_to_agent": 1.1420348860242173,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_4",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -26.550770149535474,
+              -25.438161948188654,
+              7.34399165013539
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.767689966134349,
+            "distance_to_agent": 5.621955158932159,
+            "bearing_to_agent": 1.8008720289287208,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -20.170538628426183,
+              -18.265845653619248,
+              6.2313944199085345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8678903899079317,
+            "distance_to_agent": 5.013438154912884,
+            "bearing_to_agent": -0.4757955870413302,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -21.47507710530797,
+          6.9659150360016255,
+          23.050531741546592
+        ],
+        "task": "Navigate to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_4_2",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.13087828212745645,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_4_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -27.67711975995523,
+              -14.220197581692581,
+              5.836718629658325
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8942948715156174,
+            "distance_to_agent": 10.849664464343922,
+            "bearing_to_agent": 0.402689096714695,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_4_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -16.515565897726688,
+              -24.73408363072602,
+              5.194576127631558
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8011401531678054,
+            "distance_to_agent": 5.528900425038385,
+            "bearing_to_agent": -2.107666690689547,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_4_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -28.326422546518305,
+              -14.65276104635833,
+              8.809030649099427
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6743299843922893,
+            "distance_to_agent": 10.993660089660825,
+            "bearing_to_agent": 0.4747161974631222,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -30.115859837792826,
+              -21.126042767912143,
+              8.413191843882142
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9766384508916357,
+            "distance_to_agent": 8.97002754724186,
+            "bearing_to_agent": 1.1420348860242173,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_4",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -26.550770149535474,
+              -25.438161948188654,
+              7.34399165013539
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.767689966134349,
+            "distance_to_agent": 5.621955158932159,
+            "bearing_to_agent": 1.8008720289287208,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -20.170538628426183,
+              -18.265845653619248,
+              6.2313944199085345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8678903899079317,
+            "distance_to_agent": 5.013438154912884,
+            "bearing_to_agent": -0.4757955870413302,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -21.47507710530797,
+          6.9659150360016255,
+          23.050531741546592
+        ],
+        "task": "Navigate to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_4_2",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.4582855226185861,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_4_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -27.67711975995523,
+              -14.220197581692581,
+              5.836718629658325
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8942948715156174,
+            "distance_to_agent": 10.849664464343922,
+            "bearing_to_agent": 0.402689096714695,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_4_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -16.515565897726688,
+              -24.73408363072602,
+              5.194576127631558
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8011401531678054,
+            "distance_to_agent": 5.528900425038385,
+            "bearing_to_agent": -2.107666690689547,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_4_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -28.326422546518305,
+              -14.65276104635833,
+              8.809030649099427
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6743299843922893,
+            "distance_to_agent": 10.993660089660825,
+            "bearing_to_agent": 0.4747161974631222,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -30.115859837792826,
+              -21.126042767912143,
+              8.413191843882142
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9766384508916357,
+            "distance_to_agent": 8.97002754724186,
+            "bearing_to_agent": 1.1420348860242173,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_4",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -26.550770149535474,
+              -25.438161948188654,
+              7.34399165013539
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.767689966134349,
+            "distance_to_agent": 5.621955158932159,
+            "bearing_to_agent": 1.8008720289287208,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -20.170538628426183,
+              -18.265845653619248,
+              6.2313944199085345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8678903899079317,
+            "distance_to_agent": 5.013438154912884,
+            "bearing_to_agent": -0.4757955870413302,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -21.47507710530797,
+          6.9659150360016255,
+          23.050531741546592
+        ],
+        "task": "Navigate to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_4_2",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.34900883496451507,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_4_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -27.67711975995523,
+              -14.220197581692581,
+              5.836718629658325
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8942948715156174,
+            "distance_to_agent": 10.849664464343922,
+            "bearing_to_agent": 0.402689096714695,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_4_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -16.515565897726688,
+              -24.73408363072602,
+              5.194576127631558
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8011401531678054,
+            "distance_to_agent": 5.528900425038385,
+            "bearing_to_agent": -2.107666690689547,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_4_2",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -28.326422546518305,
+              -14.65276104635833,
+              8.809030649099427
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6743299843922893,
+            "distance_to_agent": 10.993660089660825,
+            "bearing_to_agent": 0.4747161974631222,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -30.115859837792826,
+              -21.126042767912143,
+              8.413191843882142
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9766384508916357,
+            "distance_to_agent": 8.97002754724186,
+            "bearing_to_agent": 1.1420348860242173,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_4",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -26.550770149535474,
+              -25.438161948188654,
+              7.34399165013539
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.767689966134349,
+            "distance_to_agent": 5.621955158932159,
+            "bearing_to_agent": 1.8008720289287208,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_4_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -20.170538628426183,
+              -18.265845653619248,
+              6.2313944199085345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8678903899079317,
+            "distance_to_agent": 5.013438154912884,
+            "bearing_to_agent": -0.4757955870413302,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -21.47507710530797,
+          6.9659150360016255,
+          23.050531741546592
+        ],
+        "task": "Navigate to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_4_2",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.3025171429788899,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.2406897826894476,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

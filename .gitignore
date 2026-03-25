@@ -43,3 +43,9 @@ examples/
 
 # Local robot config (machine-specific)
 scripts/.robot-ip
+
+# Database files
+*.db
+
+# Calibration data (machine-specific)
+calibration_data/

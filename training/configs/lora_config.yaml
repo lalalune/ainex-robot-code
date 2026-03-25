@@ -1,0 +1,47 @@
+# LoRA fine-tuning configuration for the embodied robot planner.
+#
+# This config is designed for parameter-efficient fine-tuning of a small
+# language model on trajectory data exported by
+# training.datasets.format_for_finetuning.
+#
+# Usage:
+#   python -m training.train_planner --config training/configs/lora_config.yaml
+
+base_model: "microsoft/Phi-3-mini-4k-instruct"
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+
+training:
+  epochs: 3
+  batch_size: 4
+  learning_rate: 2.0e-4
+  warmup_ratio: 0.03
+  max_seq_length: 2048
+  gradient_accumulation_steps: 4
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  fp16: true
+  logging_steps: 10
+  eval_strategy: "steps"
+  eval_steps: 50
+
+data:
+  format: "openai"
+  train_split: 0.9
+  min_reward: 0.3
+  # Optional: path to pre-exported JSONL.  If not set, the training script
+  # should call export_dataset() on the fly.
+  # dataset_path: "data/finetune/openai.jsonl"
+
+output:
+  dir: "checkpoints/lora_planner"
+  save_steps: 100
+  save_total_limit: 3

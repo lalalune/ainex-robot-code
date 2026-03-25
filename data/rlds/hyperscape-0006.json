@@ -1,0 +1,911 @@
+{
+  "trajectory_id": "hyperscape-0006",
+  "agent_id": "eliza-agent-1",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_6_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              33.477734658221884,
+              -15.818359703567348,
+              1.3973616555237718
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9488667131624359,
+            "distance_to_agent": 9.192866353042719,
+            "bearing_to_agent": -3.12122317609216,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              32.59029481724573,
+              -22.862511869087047,
+              1.5142100413696031
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7220763469354402,
+            "distance_to_agent": 5.749015828338295,
+            "bearing_to_agent": -2.2292368037032855,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              32.60009141044862,
+              -21.625766746803876,
+              0.8879963499764032
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7114412244092015,
+            "distance_to_agent": 5.9364953629239805,
+            "bearing_to_agent": -2.4384345915593455,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              47.479402547299664,
+              -26.486081947660757,
+              -0.6356364101306271
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7598713537440244,
+            "distance_to_agent": 9.79701890560844,
+            "bearing_to_agent": 0.7601748605175027,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_6_4",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              34.76461783062058,
+              -31.19721540701941,
+              -1.6417342405395692
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.704486078556084,
+            "distance_to_agent": 8.475724888980384,
+            "bearing_to_agent": -0.9374366655653785,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              47.39230678156355,
+              -15.824498119802428,
+              -0.6902709309262383
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7738255034258578,
+            "distance_to_agent": 12.157085166589317,
+            "bearing_to_agent": 1.7569467014404727,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          38.14162046633244,
+          0.24786361898188725,
+          23.656447175508205
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_6_5",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.9842358493165899,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_6_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              33.477734658221884,
+              -15.818359703567348,
+              1.3973616555237718
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9488667131624359,
+            "distance_to_agent": 9.192866353042719,
+            "bearing_to_agent": -3.12122317609216,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              32.59029481724573,
+              -22.862511869087047,
+              1.5142100413696031
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7220763469354402,
+            "distance_to_agent": 5.749015828338295,
+            "bearing_to_agent": -2.2292368037032855,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              32.60009141044862,
+              -21.625766746803876,
+              0.8879963499764032
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7114412244092015,
+            "distance_to_agent": 5.9364953629239805,
+            "bearing_to_agent": -2.4384345915593455,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              47.479402547299664,
+              -26.486081947660757,
+              -0.6356364101306271
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7598713537440244,
+            "distance_to_agent": 9.79701890560844,
+            "bearing_to_agent": 0.7601748605175027,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_6_4",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              34.76461783062058,
+              -31.19721540701941,
+              -1.6417342405395692
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.704486078556084,
+            "distance_to_agent": 8.475724888980384,
+            "bearing_to_agent": -0.9374366655653785,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              47.39230678156355,
+              -15.824498119802428,
+              -0.6902709309262383
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7738255034258578,
+            "distance_to_agent": 12.157085166589317,
+            "bearing_to_agent": 1.7569467014404727,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          38.14162046633244,
+          0.24786361898188725,
+          23.656447175508205
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_6_5",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.5199203485665854,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_6_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              33.477734658221884,
+              -15.818359703567348,
+              1.3973616555237718
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9488667131624359,
+            "distance_to_agent": 9.192866353042719,
+            "bearing_to_agent": -3.12122317609216,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              32.59029481724573,
+              -22.862511869087047,
+              1.5142100413696031
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7220763469354402,
+            "distance_to_agent": 5.749015828338295,
+            "bearing_to_agent": -2.2292368037032855,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              32.60009141044862,
+              -21.625766746803876,
+              0.8879963499764032
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7114412244092015,
+            "distance_to_agent": 5.9364953629239805,
+            "bearing_to_agent": -2.4384345915593455,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              47.479402547299664,
+              -26.486081947660757,
+              -0.6356364101306271
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7598713537440244,
+            "distance_to_agent": 9.79701890560844,
+            "bearing_to_agent": 0.7601748605175027,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_6_4",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              34.76461783062058,
+              -31.19721540701941,
+              -1.6417342405395692
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.704486078556084,
+            "distance_to_agent": 8.475724888980384,
+            "bearing_to_agent": -0.9374366655653785,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              47.39230678156355,
+              -15.824498119802428,
+              -0.6902709309262383
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7738255034258578,
+            "distance_to_agent": 12.157085166589317,
+            "bearing_to_agent": 1.7569467014404727,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          38.14162046633244,
+          0.24786361898188725,
+          23.656447175508205
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_6_5",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.3642214717812642,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_6_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              33.477734658221884,
+              -15.818359703567348,
+              1.3973616555237718
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9488667131624359,
+            "distance_to_agent": 9.192866353042719,
+            "bearing_to_agent": -3.12122317609216,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              32.59029481724573,
+              -22.862511869087047,
+              1.5142100413696031
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7220763469354402,
+            "distance_to_agent": 5.749015828338295,
+            "bearing_to_agent": -2.2292368037032855,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              32.60009141044862,
+              -21.625766746803876,
+              0.8879963499764032
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7114412244092015,
+            "distance_to_agent": 5.9364953629239805,
+            "bearing_to_agent": -2.4384345915593455,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              47.479402547299664,
+              -26.486081947660757,
+              -0.6356364101306271
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7598713537440244,
+            "distance_to_agent": 9.79701890560844,
+            "bearing_to_agent": 0.7601748605175027,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_6_4",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              34.76461783062058,
+              -31.19721540701941,
+              -1.6417342405395692
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.704486078556084,
+            "distance_to_agent": 8.475724888980384,
+            "bearing_to_agent": -0.9374366655653785,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              47.39230678156355,
+              -15.824498119802428,
+              -0.6902709309262383
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7738255034258578,
+            "distance_to_agent": 12.157085166589317,
+            "bearing_to_agent": 1.7569467014404727,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          38.14162046633244,
+          0.24786361898188725,
+          23.656447175508205
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_6_5",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.9000468350970914,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_6_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              33.477734658221884,
+              -15.818359703567348,
+              1.3973616555237718
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9488667131624359,
+            "distance_to_agent": 9.192866353042719,
+            "bearing_to_agent": -3.12122317609216,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              32.59029481724573,
+              -22.862511869087047,
+              1.5142100413696031
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7220763469354402,
+            "distance_to_agent": 5.749015828338295,
+            "bearing_to_agent": -2.2292368037032855,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              32.60009141044862,
+              -21.625766746803876,
+              0.8879963499764032
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7114412244092015,
+            "distance_to_agent": 5.9364953629239805,
+            "bearing_to_agent": -2.4384345915593455,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_6_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              47.479402547299664,
+              -26.486081947660757,
+              -0.6356364101306271
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7598713537440244,
+            "distance_to_agent": 9.79701890560844,
+            "bearing_to_agent": 0.7601748605175027,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_6_4",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              34.76461783062058,
+              -31.19721540701941,
+              -1.6417342405395692
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.704486078556084,
+            "distance_to_agent": 8.475724888980384,
+            "bearing_to_agent": -0.9374366655653785,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_6_5",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              47.39230678156355,
+              -15.824498119802428,
+              -0.6902709309262383
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7738255034258578,
+            "distance_to_agent": 12.157085166589317,
+            "bearing_to_agent": 1.7569467014404727,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          38.14162046633244,
+          0.24786361898188725,
+          23.656447175508205
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_6_5",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.12728779905915322,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.8957123038206842,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

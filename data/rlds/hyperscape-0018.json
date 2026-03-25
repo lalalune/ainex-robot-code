@@ -1,0 +1,541 @@
+{
+  "trajectory_id": "hyperscape-0018",
+  "agent_id": "eliza-agent-3",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_18_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              15.806430885759713,
+              34.100289466528125,
+              6.709281732492622
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7002616786912496,
+            "distance_to_agent": 10.40020460325205,
+            "bearing_to_agent": -0.9225843985163484,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_18_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              0.8368353159448993,
+              34.064067504158906,
+              9.596321365237793
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7432969116866132,
+            "distance_to_agent": 10.82769925758129,
+            "bearing_to_agent": 0.6611289009816192,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_18_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              10.415366799165033,
+              31.39278192889739,
+              6.1936541452552305
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6507034174851121,
+            "distance_to_agent": 5.378697473179113,
+            "bearing_to_agent": -0.5151138881046171,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          8.638308358156188,
+          8.13052981121059,
+          -26.700132095396857
+        ],
+        "task": "Explore the area near the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_18_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.06355803814713623,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_18_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              15.806430885759713,
+              34.100289466528125,
+              6.709281732492622
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7002616786912496,
+            "distance_to_agent": 10.40020460325205,
+            "bearing_to_agent": -0.9225843985163484,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_18_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              0.8368353159448993,
+              34.064067504158906,
+              9.596321365237793
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7432969116866132,
+            "distance_to_agent": 10.82769925758129,
+            "bearing_to_agent": 0.6611289009816192,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_18_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              10.415366799165033,
+              31.39278192889739,
+              6.1936541452552305
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6507034174851121,
+            "distance_to_agent": 5.378697473179113,
+            "bearing_to_agent": -0.5151138881046171,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          8.638308358156188,
+          8.13052981121059,
+          -26.700132095396857
+        ],
+        "task": "Explore the area near the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_18_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.9454156429701063,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_18_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              15.806430885759713,
+              34.100289466528125,
+              6.709281732492622
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7002616786912496,
+            "distance_to_agent": 10.40020460325205,
+            "bearing_to_agent": -0.9225843985163484,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_18_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              0.8368353159448993,
+              34.064067504158906,
+              9.596321365237793
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7432969116866132,
+            "distance_to_agent": 10.82769925758129,
+            "bearing_to_agent": 0.6611289009816192,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_18_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              10.415366799165033,
+              31.39278192889739,
+              6.1936541452552305
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6507034174851121,
+            "distance_to_agent": 5.378697473179113,
+            "bearing_to_agent": -0.5151138881046171,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          8.638308358156188,
+          8.13052981121059,
+          -26.700132095396857
+        ],
+        "task": "Explore the area near the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_18_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.6433406842054887,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_18_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              15.806430885759713,
+              34.100289466528125,
+              6.709281732492622
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7002616786912496,
+            "distance_to_agent": 10.40020460325205,
+            "bearing_to_agent": -0.9225843985163484,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_18_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              0.8368353159448993,
+              34.064067504158906,
+              9.596321365237793
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7432969116866132,
+            "distance_to_agent": 10.82769925758129,
+            "bearing_to_agent": 0.6611289009816192,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_18_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              10.415366799165033,
+              31.39278192889739,
+              6.1936541452552305
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6507034174851121,
+            "distance_to_agent": 5.378697473179113,
+            "bearing_to_agent": -0.5151138881046171,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          8.638308358156188,
+          8.13052981121059,
+          -26.700132095396857
+        ],
+        "task": "Explore the area near the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_18_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.7124013148970963,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_18_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              15.806430885759713,
+              34.100289466528125,
+              6.709281732492622
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7002616786912496,
+            "distance_to_agent": 10.40020460325205,
+            "bearing_to_agent": -0.9225843985163484,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_18_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              0.8368353159448993,
+              34.064067504158906,
+              9.596321365237793
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7432969116866132,
+            "distance_to_agent": 10.82769925758129,
+            "bearing_to_agent": 0.6611289009816192,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_18_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              10.415366799165033,
+              31.39278192889739,
+              6.1936541452552305
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6507034174851121,
+            "distance_to_agent": 5.378697473179113,
+            "bearing_to_agent": -0.5151138881046171,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          8.638308358156188,
+          8.13052981121059,
+          -26.700132095396857
+        ],
+        "task": "Explore the area near the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_18_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.6243174942812079,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.9890331745010355,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

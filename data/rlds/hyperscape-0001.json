@@ -1,0 +1,482 @@
+{
+  "trajectory_id": "hyperscape-0001",
+  "agent_id": "eliza-agent-1",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_1_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -2.476349649816685,
+              29.152054325384533,
+              7.025658859199892
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6653609975047713,
+            "distance_to_agent": 5.243459067647132,
+            "bearing_to_agent": -0.2169342602336377,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_1_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -9.260013227470889,
+              29.971351115725252,
+              10.042668984892375
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6878460695881076,
+            "distance_to_agent": 6.182790024922978,
+            "bearing_to_agent": -1.5466650142345646,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_1_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              2.198068640639743,
+              39.15362884510943,
+              9.445103912592483
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6128400975616151,
+            "distance_to_agent": 8.809300188576847,
+            "bearing_to_agent": 1.578152186655323,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -6.635674022709871,
+              25.471867800680617,
+              6.605858687253693
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8268720205914009,
+            "distance_to_agent": 8.671275557409711,
+            "bearing_to_agent": -0.8962536134668344,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -10.406438882073637,
+              26.040927206657464,
+              8.338029304376613
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8571407480801696,
+            "distance_to_agent": 9.603429714533574,
+            "bearing_to_agent": -1.3030389199609376,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          -4.658969763156449,
+          8.341104266407504,
+          -33.734590284391516
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_1_1",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.7449889820916066,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_1_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -2.476349649816685,
+              29.152054325384533,
+              7.025658859199892
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6653609975047713,
+            "distance_to_agent": 5.243459067647132,
+            "bearing_to_agent": -0.2169342602336377,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_1_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -9.260013227470889,
+              29.971351115725252,
+              10.042668984892375
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6878460695881076,
+            "distance_to_agent": 6.182790024922978,
+            "bearing_to_agent": -1.5466650142345646,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_1_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              2.198068640639743,
+              39.15362884510943,
+              9.445103912592483
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6128400975616151,
+            "distance_to_agent": 8.809300188576847,
+            "bearing_to_agent": 1.578152186655323,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -6.635674022709871,
+              25.471867800680617,
+              6.605858687253693
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8268720205914009,
+            "distance_to_agent": 8.671275557409711,
+            "bearing_to_agent": -0.8962536134668344,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -10.406438882073637,
+              26.040927206657464,
+              8.338029304376613
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8571407480801696,
+            "distance_to_agent": 9.603429714533574,
+            "bearing_to_agent": -1.3030389199609376,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          -4.658969763156449,
+          8.341104266407504,
+          -33.734590284391516
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_1_1",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.21932075915728333,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_1_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -2.476349649816685,
+              29.152054325384533,
+              7.025658859199892
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6653609975047713,
+            "distance_to_agent": 5.243459067647132,
+            "bearing_to_agent": -0.2169342602336377,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_1_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -9.260013227470889,
+              29.971351115725252,
+              10.042668984892375
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6878460695881076,
+            "distance_to_agent": 6.182790024922978,
+            "bearing_to_agent": -1.5466650142345646,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_1_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              2.198068640639743,
+              39.15362884510943,
+              9.445103912592483
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6128400975616151,
+            "distance_to_agent": 8.809300188576847,
+            "bearing_to_agent": 1.578152186655323,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -6.635674022709871,
+              25.471867800680617,
+              6.605858687253693
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8268720205914009,
+            "distance_to_agent": 8.671275557409711,
+            "bearing_to_agent": -0.8962536134668344,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_1_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -10.406438882073637,
+              26.040927206657464,
+              8.338029304376613
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8571407480801696,
+            "distance_to_agent": 9.603429714533574,
+            "bearing_to_agent": -1.3030389199609376,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          -4.658969763156449,
+          8.341104266407504,
+          -33.734590284391516
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_1_1",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.62744604170309,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.59175578295198,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

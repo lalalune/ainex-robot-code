@@ -8,51 +8,52 @@ import numpy as np
 import pytest
 
 from perception.detectors.face_detector import FaceDetection
-from perception.detectors.face_tracker import FaceTrack, FaceTracker, _iou, _cosine_sim
+from perception.detectors.face_tracker import FaceTrack, FaceTracker
+from perception.detectors.utils import bbox_iou, cosine_similarity
 
 
 class TestIoU:
     def test_identical_boxes(self):
         box = np.array([0, 0, 100, 100], dtype=np.float32)
-        assert abs(_iou(box, box) - 1.0) < 1e-6
+        assert abs(bbox_iou(box, box) - 1.0) < 1e-6
 
     def test_no_overlap(self):
         a = np.array([0, 0, 50, 50], dtype=np.float32)
         b = np.array([100, 100, 200, 200], dtype=np.float32)
-        assert _iou(a, b) == 0.0
+        assert bbox_iou(a, b) == 0.0
 
     def test_partial_overlap(self):
         a = np.array([0, 0, 100, 100], dtype=np.float32)
         b = np.array([50, 50, 150, 150], dtype=np.float32)
         # Intersection: 50x50 = 2500, Union: 10000+10000-2500 = 17500
         expected = 2500 / 17500
-        assert abs(_iou(a, b) - expected) < 1e-4
+        assert abs(bbox_iou(a, b) - expected) < 1e-4
 
     def test_contained_box(self):
         outer = np.array([0, 0, 200, 200], dtype=np.float32)
         inner = np.array([50, 50, 100, 100], dtype=np.float32)
         # Intersection = inner area = 2500, Union = 40000+2500-2500 = 40000
         expected = 2500 / 40000
-        assert abs(_iou(outer, inner) - expected) < 1e-4
+        assert abs(bbox_iou(outer, inner) - expected) < 1e-4
 
 
 class TestCosineSim:
     def test_identical_embeddings(self):
         emb = np.random.randn(512).astype(np.float32)
-        assert abs(_cosine_sim(emb, emb) - 1.0) < 1e-4
+        assert abs(cosine_similarity(emb, emb) - 1.0) < 1e-4
 
     def test_orthogonal_embeddings(self):
         a = np.zeros(512, dtype=np.float32)
         b = np.zeros(512, dtype=np.float32)
         a[0] = 1.0
         b[1] = 1.0
-        assert abs(_cosine_sim(a, b)) < 1e-6
+        assert abs(cosine_similarity(a, b)) < 1e-6
 
     def test_none_embedding(self):
         emb = np.random.randn(512).astype(np.float32)
-        assert _cosine_sim(emb, None) == 0.0
-        assert _cosine_sim(None, emb) == 0.0
-        assert _cosine_sim(None, None) == 0.0
+        assert cosine_similarity(emb, None) == 0.0
+        assert cosine_similarity(None, emb) == 0.0
+        assert cosine_similarity(None, None) == 0.0
 
 
 def _make_det(bbox, emb=None, conf=0.9):

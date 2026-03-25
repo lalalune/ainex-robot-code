@@ -26,11 +26,11 @@ from training.mujoco.target import default_config as target_default_config
 from training.mujoco.randomize import domain_randomize
 
 
-def make_ppo_config(num_timesteps: int = 100_000_000) -> dict:
+def make_ppo_config(num_timesteps: int = 100_000_000, num_evals: int = 10) -> dict:
     """PPO hyperparameters following Playground locomotion defaults."""
     return {
         "num_timesteps": num_timesteps,
-        "num_evals": 10,
+        "num_evals": num_evals,
         "reward_scaling": 1.0,
         "normalize_observations": True,
         "action_repeat": 1,
@@ -56,6 +56,7 @@ def train(
     target: bool = False,
     domain_rand: bool = True,
     enable_entity_slots: bool = False,
+    num_evals: int = 10,
 ):
     """Run GPU-accelerated PPO training for AiNex locomotion."""
     from brax.training.agents.ppo.train import train as ppo_train
@@ -92,7 +93,7 @@ def train(
     print()
 
     # PPO config
-    ppo_cfg = make_ppo_config(num_timesteps)
+    ppo_cfg = make_ppo_config(num_timesteps, num_evals=num_evals)
     ppo_cfg["num_envs"] = num_envs
     print(f"PPO Config:")
     for k, v in ppo_cfg.items():
@@ -158,6 +159,10 @@ def train(
             best_reward = reward
             print(f"  New best reward: {reward:.2f}", flush=True)
 
+        # Save metrics incrementally
+        with open(ckpt_dir / "metrics.json", "w") as f:
+            json.dump(train_metrics, f, indent=2)
+
     # Run PPO training
     print("Starting training...")
     print()
@@ -195,6 +200,7 @@ def train(
         ),
         seed=seed,
         progress_fn=progress_callback,
+        save_checkpoint_path=str((ckpt_dir / "brax_ckpt").resolve()),
     )
 
     elapsed = time.time() - start_time
@@ -229,6 +235,8 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--target", action="store_true",
                         help="Use target-reaching task instead of velocity tracking")
+    parser.add_argument("--num-evals", type=int, default=10,
+                        help="Number of eval checkpoints during training")
     parser.add_argument("--no-domain-rand", action="store_true",
                         help="Disable domain randomization")
     parser.add_argument("--enable-entity-slots", action="store_true",
@@ -248,6 +256,7 @@ def main():
         target=args.target,
         domain_rand=not args.no_domain_rand,
         enable_entity_slots=args.enable_entity_slots,
+        num_evals=args.num_evals,
     )
 
 

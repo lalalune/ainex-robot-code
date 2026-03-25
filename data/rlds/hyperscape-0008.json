@@ -1,0 +1,566 @@
+{
+  "trajectory_id": "hyperscape-0008",
+  "agent_id": "eliza-agent-3",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_8_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              16.138341119367983,
+              4.338352548259416,
+              7.091437360051884
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6988958950038638,
+            "distance_to_agent": 6.8522212512634795,
+            "bearing_to_agent": -1.2975056987357914,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_8_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              16.581505962119593,
+              -3.0127852220758236,
+              7.277938864071599
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7098389787670153,
+            "distance_to_agent": 5.8903388125987455,
+            "bearing_to_agent": -2.5219692691778963,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_8_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              15.536129528397414,
+              2.8052327851335246,
+              6.130713924818212
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9572107331161267,
+            "distance_to_agent": 5.490616941127278,
+            "bearing_to_agent": -1.4216637140727921,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              4.032713506499399,
+              -4.356812728421243,
+              6.117785531672418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8825676566778209,
+            "distance_to_agent": 8.277165330383927,
+            "bearing_to_agent": 1.5568505648787934,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.562590194140647,
+              0.20369745053679011,
+              6.516265176912006
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6249062842334341,
+            "distance_to_agent": 1.9547554738933026,
+            "bearing_to_agent": 0.6838275121792221,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_5",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              9.054768529515108,
+              -9.399057154242207,
+              8.271922702018324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6078127826950909,
+            "distance_to_agent": 9.254151567791594,
+            "bearing_to_agent": 2.3924778258968953,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          11.265232276176285,
+          7.192739612759671,
+          0.4778164824401969
+        ],
+        "task": "Talk to the Adventurer_42"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_8_4",
+          "target_label": "Adventurer_42"
+        }
+      },
+      "reward": 0.9427416574340969,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_8_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              16.138341119367983,
+              4.338352548259416,
+              7.091437360051884
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6988958950038638,
+            "distance_to_agent": 6.8522212512634795,
+            "bearing_to_agent": -1.2975056987357914,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_8_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              16.581505962119593,
+              -3.0127852220758236,
+              7.277938864071599
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7098389787670153,
+            "distance_to_agent": 5.8903388125987455,
+            "bearing_to_agent": -2.5219692691778963,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_8_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              15.536129528397414,
+              2.8052327851335246,
+              6.130713924818212
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9572107331161267,
+            "distance_to_agent": 5.490616941127278,
+            "bearing_to_agent": -1.4216637140727921,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              4.032713506499399,
+              -4.356812728421243,
+              6.117785531672418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8825676566778209,
+            "distance_to_agent": 8.277165330383927,
+            "bearing_to_agent": 1.5568505648787934,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.562590194140647,
+              0.20369745053679011,
+              6.516265176912006
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6249062842334341,
+            "distance_to_agent": 1.9547554738933026,
+            "bearing_to_agent": 0.6838275121792221,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_5",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              9.054768529515108,
+              -9.399057154242207,
+              8.271922702018324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6078127826950909,
+            "distance_to_agent": 9.254151567791594,
+            "bearing_to_agent": 2.3924778258968953,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          11.265232276176285,
+          7.192739612759671,
+          0.4778164824401969
+        ],
+        "task": "Talk to the Adventurer_42"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_8_4",
+          "target_label": "Adventurer_42"
+        }
+      },
+      "reward": 0.7475156689780508,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_8_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              16.138341119367983,
+              4.338352548259416,
+              7.091437360051884
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6988958950038638,
+            "distance_to_agent": 6.8522212512634795,
+            "bearing_to_agent": -1.2975056987357914,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_8_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              16.581505962119593,
+              -3.0127852220758236,
+              7.277938864071599
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7098389787670153,
+            "distance_to_agent": 5.8903388125987455,
+            "bearing_to_agent": -2.5219692691778963,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_8_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              15.536129528397414,
+              2.8052327851335246,
+              6.130713924818212
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9572107331161267,
+            "distance_to_agent": 5.490616941127278,
+            "bearing_to_agent": -1.4216637140727921,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_3",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              4.032713506499399,
+              -4.356812728421243,
+              6.117785531672418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8825676566778209,
+            "distance_to_agent": 8.277165330383927,
+            "bearing_to_agent": 1.5568505648787934,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.562590194140647,
+              0.20369745053679011,
+              6.516265176912006
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6249062842334341,
+            "distance_to_agent": 1.9547554738933026,
+            "bearing_to_agent": 0.6838275121792221,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_8_5",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              9.054768529515108,
+              -9.399057154242207,
+              8.271922702018324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6078127826950909,
+            "distance_to_agent": 9.254151567791594,
+            "bearing_to_agent": 2.3924778258968953,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          11.265232276176285,
+          7.192739612759671,
+          0.4778164824401969
+        ],
+        "task": "Talk to the Adventurer_42"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_8_4",
+          "target_label": "Adventurer_42"
+        }
+      },
+      "reward": 0.38885720324612805,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.0791145296582756,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

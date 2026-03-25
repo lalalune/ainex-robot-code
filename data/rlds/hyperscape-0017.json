@@ -1,0 +1,796 @@
+{
+  "trajectory_id": "hyperscape-0017",
+  "agent_id": "eliza-agent-2",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_17_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -39.27851061009835,
+              14.748304329166533,
+              5.235414808194216
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6433384408796923,
+            "distance_to_agent": 9.059039147994795,
+            "bearing_to_agent": 0.9840096207097953,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -41.5401750835129,
+              14.690759443600637,
+              4.423933071465237
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7312025127269504,
+            "distance_to_agent": 8.894585102211686,
+            "bearing_to_agent": 0.7299923135503323,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_17_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -46.54236844166187,
+              17.077035136948666,
+              2.198613767927901
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9637550553711568,
+            "distance_to_agent": 8.721231563125757,
+            "bearing_to_agent": 0.08378639502622054,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_17_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -37.98492351744985,
+              32.647205944489976,
+              2.4124493501953372
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.614884851289882,
+            "distance_to_agent": 9.692459503808019,
+            "bearing_to_agent": -2.664494941385014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -48.64730282863948,
+              22.8032100471071,
+              2.8849457330124357
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.755458332460057,
+            "distance_to_agent": 7.786821529840161,
+            "bearing_to_agent": -0.6790327430978094,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.969712443141674,
+          3.9457456032871194,
+          -23.554142164757618
+        ],
+        "task": "Explore the area near the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_17_2",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.7422690147653158,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_17_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -39.27851061009835,
+              14.748304329166533,
+              5.235414808194216
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6433384408796923,
+            "distance_to_agent": 9.059039147994795,
+            "bearing_to_agent": 0.9840096207097953,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -41.5401750835129,
+              14.690759443600637,
+              4.423933071465237
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7312025127269504,
+            "distance_to_agent": 8.894585102211686,
+            "bearing_to_agent": 0.7299923135503323,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_17_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -46.54236844166187,
+              17.077035136948666,
+              2.198613767927901
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9637550553711568,
+            "distance_to_agent": 8.721231563125757,
+            "bearing_to_agent": 0.08378639502622054,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_17_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -37.98492351744985,
+              32.647205944489976,
+              2.4124493501953372
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.614884851289882,
+            "distance_to_agent": 9.692459503808019,
+            "bearing_to_agent": -2.664494941385014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -48.64730282863948,
+              22.8032100471071,
+              2.8849457330124357
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.755458332460057,
+            "distance_to_agent": 7.786821529840161,
+            "bearing_to_agent": -0.6790327430978094,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.969712443141674,
+          3.9457456032871194,
+          -23.554142164757618
+        ],
+        "task": "Explore the area near the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_17_2",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.9515215253810595,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_17_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -39.27851061009835,
+              14.748304329166533,
+              5.235414808194216
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6433384408796923,
+            "distance_to_agent": 9.059039147994795,
+            "bearing_to_agent": 0.9840096207097953,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -41.5401750835129,
+              14.690759443600637,
+              4.423933071465237
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7312025127269504,
+            "distance_to_agent": 8.894585102211686,
+            "bearing_to_agent": 0.7299923135503323,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_17_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -46.54236844166187,
+              17.077035136948666,
+              2.198613767927901
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9637550553711568,
+            "distance_to_agent": 8.721231563125757,
+            "bearing_to_agent": 0.08378639502622054,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_17_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -37.98492351744985,
+              32.647205944489976,
+              2.4124493501953372
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.614884851289882,
+            "distance_to_agent": 9.692459503808019,
+            "bearing_to_agent": -2.664494941385014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -48.64730282863948,
+              22.8032100471071,
+              2.8849457330124357
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.755458332460057,
+            "distance_to_agent": 7.786821529840161,
+            "bearing_to_agent": -0.6790327430978094,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.969712443141674,
+          3.9457456032871194,
+          -23.554142164757618
+        ],
+        "task": "Explore the area near the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_17_2",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.3626860387575225,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_17_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -39.27851061009835,
+              14.748304329166533,
+              5.235414808194216
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6433384408796923,
+            "distance_to_agent": 9.059039147994795,
+            "bearing_to_agent": 0.9840096207097953,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -41.5401750835129,
+              14.690759443600637,
+              4.423933071465237
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7312025127269504,
+            "distance_to_agent": 8.894585102211686,
+            "bearing_to_agent": 0.7299923135503323,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_17_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -46.54236844166187,
+              17.077035136948666,
+              2.198613767927901
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9637550553711568,
+            "distance_to_agent": 8.721231563125757,
+            "bearing_to_agent": 0.08378639502622054,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_17_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -37.98492351744985,
+              32.647205944489976,
+              2.4124493501953372
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.614884851289882,
+            "distance_to_agent": 9.692459503808019,
+            "bearing_to_agent": -2.664494941385014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -48.64730282863948,
+              22.8032100471071,
+              2.8849457330124357
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.755458332460057,
+            "distance_to_agent": 7.786821529840161,
+            "bearing_to_agent": -0.6790327430978094,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.969712443141674,
+          3.9457456032871194,
+          -23.554142164757618
+        ],
+        "task": "Explore the area near the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_17_2",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.27588144086158684,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_17_0",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -39.27851061009835,
+              14.748304329166533,
+              5.235414808194216
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6433384408796923,
+            "distance_to_agent": 9.059039147994795,
+            "bearing_to_agent": 0.9840096207097953,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_1",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -41.5401750835129,
+              14.690759443600637,
+              4.423933071465237
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7312025127269504,
+            "distance_to_agent": 8.894585102211686,
+            "bearing_to_agent": 0.7299923135503323,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_17_2",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -46.54236844166187,
+              17.077035136948666,
+              2.198613767927901
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9637550553711568,
+            "distance_to_agent": 8.721231563125757,
+            "bearing_to_agent": 0.08378639502622054,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_17_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -37.98492351744985,
+              32.647205944489976,
+              2.4124493501953372
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.614884851289882,
+            "distance_to_agent": 9.692459503808019,
+            "bearing_to_agent": -2.664494941385014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_17_4",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -48.64730282863948,
+              22.8032100471071,
+              2.8849457330124357
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.755458332460057,
+            "distance_to_agent": 7.786821529840161,
+            "bearing_to_agent": -0.6790327430978094,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.969712443141674,
+          3.9457456032871194,
+          -23.554142164757618
+        ],
+        "task": "Explore the area near the Castle Gate"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_17_2",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.9710933120649863,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 3.303451331830471,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

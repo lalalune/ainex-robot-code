@@ -1,0 +1,647 @@
+{
+  "trajectory_id": "hyperscape-0003",
+  "agent_id": "eliza-agent-3",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_3_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -4.423817239404931,
+              43.495232724142234,
+              4.096217340742214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.628397234403613,
+            "distance_to_agent": 5.966247196392118,
+            "bearing_to_agent": 2.9948370938399593,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -11.61115593232651,
+              30.706872408098494,
+              6.797438462380418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6283429399554613,
+            "distance_to_agent": 9.151716629288453,
+            "bearing_to_agent": -0.4868853859763522,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.620446329258659,
+              37.114901785278335,
+              5.117416406957869
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8893410263523883,
+            "distance_to_agent": 4.499783702656054,
+            "bearing_to_agent": -1.2365226014553183,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_3_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -4.665758614131599,
+              38.440121554281546,
+              4.147747379938804
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7628239845943746,
+            "distance_to_agent": 1.9163187691932049,
+            "bearing_to_agent": 2.070572613948962,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_3_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -14.25137532397313,
+              39.428007952775005,
+              4.899963139981416
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.78680986721467,
+            "distance_to_agent": 8.20963221967155,
+            "bearing_to_agent": -1.5991895669206944,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -6.189991608549597,
+          5.175758410355906,
+          -37.899580413173425
+        ],
+        "task": "Walk to the Town Guard and interact with it"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_3_0",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.7282135884411827,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_3_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -4.423817239404931,
+              43.495232724142234,
+              4.096217340742214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.628397234403613,
+            "distance_to_agent": 5.966247196392118,
+            "bearing_to_agent": 2.9948370938399593,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -11.61115593232651,
+              30.706872408098494,
+              6.797438462380418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6283429399554613,
+            "distance_to_agent": 9.151716629288453,
+            "bearing_to_agent": -0.4868853859763522,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.620446329258659,
+              37.114901785278335,
+              5.117416406957869
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8893410263523883,
+            "distance_to_agent": 4.499783702656054,
+            "bearing_to_agent": -1.2365226014553183,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_3_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -4.665758614131599,
+              38.440121554281546,
+              4.147747379938804
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7628239845943746,
+            "distance_to_agent": 1.9163187691932049,
+            "bearing_to_agent": 2.070572613948962,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_3_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -14.25137532397313,
+              39.428007952775005,
+              4.899963139981416
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.78680986721467,
+            "distance_to_agent": 8.20963221967155,
+            "bearing_to_agent": -1.5991895669206944,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -6.189991608549597,
+          5.175758410355906,
+          -37.899580413173425
+        ],
+        "task": "Walk to the Town Guard and interact with it"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_3_0",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.18348803578723327,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_3_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -4.423817239404931,
+              43.495232724142234,
+              4.096217340742214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.628397234403613,
+            "distance_to_agent": 5.966247196392118,
+            "bearing_to_agent": 2.9948370938399593,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -11.61115593232651,
+              30.706872408098494,
+              6.797438462380418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6283429399554613,
+            "distance_to_agent": 9.151716629288453,
+            "bearing_to_agent": -0.4868853859763522,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.620446329258659,
+              37.114901785278335,
+              5.117416406957869
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8893410263523883,
+            "distance_to_agent": 4.499783702656054,
+            "bearing_to_agent": -1.2365226014553183,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_3_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -4.665758614131599,
+              38.440121554281546,
+              4.147747379938804
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7628239845943746,
+            "distance_to_agent": 1.9163187691932049,
+            "bearing_to_agent": 2.070572613948962,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_3_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -14.25137532397313,
+              39.428007952775005,
+              4.899963139981416
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.78680986721467,
+            "distance_to_agent": 8.20963221967155,
+            "bearing_to_agent": -1.5991895669206944,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -6.189991608549597,
+          5.175758410355906,
+          -37.899580413173425
+        ],
+        "task": "Walk to the Town Guard and interact with it"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_3_0",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.05058832952488124,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_3_0",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -4.423817239404931,
+              43.495232724142234,
+              4.096217340742214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.628397234403613,
+            "distance_to_agent": 5.966247196392118,
+            "bearing_to_agent": 2.9948370938399593,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_1",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              -11.61115593232651,
+              30.706872408098494,
+              6.797438462380418
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6283429399554613,
+            "distance_to_agent": 9.151716629288453,
+            "bearing_to_agent": -0.4868853859763522,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_3_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.620446329258659,
+              37.114901785278335,
+              5.117416406957869
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8893410263523883,
+            "distance_to_agent": 4.499783702656054,
+            "bearing_to_agent": -1.2365226014553183,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_3_3",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -4.665758614131599,
+              38.440121554281546,
+              4.147747379938804
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7628239845943746,
+            "distance_to_agent": 1.9163187691932049,
+            "bearing_to_agent": 2.070572613948962,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_3_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -14.25137532397313,
+              39.428007952775005,
+              4.899963139981416
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.78680986721467,
+            "distance_to_agent": 8.20963221967155,
+            "bearing_to_agent": -1.5991895669206944,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -6.189991608549597,
+          5.175758410355906,
+          -37.899580413173425
+        ],
+        "task": "Walk to the Town Guard and interact with it"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_3_0",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.48564112545071847,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.4479310792040156,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

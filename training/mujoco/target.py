@@ -166,39 +166,36 @@ class TargetReaching(ainex_base.AiNexEnv):
         )
         targets_reached = state.info["targets_reached"] + jp.int32(reached)
 
-        # Build observation
-        info = {
-            "rng": rng,
-            "last_act": action,
-            "last_last_act": state.info["last_act"],
-            "last_vel": data.qvel[6:],
-            "target_pos": target_pos,
-            "prev_target_dist": new_dist,
-            "targets_reached": targets_reached,
-            "step": state.info["step"] + 1,
-            "motor_targets": motor_targets,
-        }
+        # Bookkeeping in-place to preserve wrapper-added pytree structure
+        state.info["rng"] = rng
+        state.info["last_last_act"] = state.info["last_act"]
+        state.info["last_act"] = action
+        state.info["last_vel"] = data.qvel[6:]
+        state.info["target_pos"] = target_pos
+        state.info["prev_target_dist"] = new_dist
+        state.info["targets_reached"] = targets_reached
+        state.info["step"] = state.info["step"] + 1
+        state.info["motor_targets"] = motor_targets
 
+        obs_history = (
+            state.obs[: self._config.obs_history_size * self._single_obs_size]
+            if self._config.enable_entity_slots
+            else state.obs
+        )
+        obs = self._get_obs(data, state.info, obs_history, noise_rng)
         if self._config.enable_entity_slots:
-            # Carry entity scene forward (static within episode)
-            info["entity_positions"] = state.info["entity_positions"]
-            info["entity_types"] = state.info["entity_types"]
-            info["entity_sizes"] = state.info["entity_sizes"]
-            info["entity_mask"] = state.info["entity_mask"]
-
-        obs_history = state.obs[:self._config.obs_history_size * self._single_obs_size] if self._config.enable_entity_slots else state.obs
-        obs = self._get_obs(data, info, obs_history, noise_rng)
-        if self._config.enable_entity_slots:
-            obs = jp.concatenate([obs, self._compute_entity_slots(data, info, entity_rng)])
+            obs = jp.concatenate(
+                [obs, self._compute_entity_slots(data, state.info, entity_rng)]
+            )
 
         # Update metrics
-        metrics = {}
         for k, v in rewards.items():
-            metrics[f"reward/{k}"] = v
-        metrics["targets_reached"] = jp.float32(targets_reached)
+            state.metrics[f"reward/{k}"] = v
+        state.metrics["targets_reached"] = jp.float32(targets_reached)
 
         done = jp.float32(done)
-        return mjx_env.State(data, obs, reward, done, metrics, info)
+        state = state.replace(data=data, obs=obs, reward=reward, done=done)
+        return state
 
     def _sample_target(self, rng: jax.Array, data: mjx.Data) -> jax.Array:
         """Sample a random target position around the robot."""

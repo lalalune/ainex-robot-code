@@ -1,0 +1,743 @@
+{
+  "trajectory_id": "hyperscape-0013",
+  "agent_id": "eliza-agent-3",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_13_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              11.277488820074467,
+              24.017380887157607,
+              4.302335624043435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7284233023826286,
+            "distance_to_agent": 9.55926485698526,
+            "bearing_to_agent": -2.9294349636094523,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.051045986767445,
+              18.310869276089264,
+              3.7415086985178903
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7152871181445823,
+            "distance_to_agent": 8.164340280530649,
+            "bearing_to_agent": 2.6645747804053532,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_13_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.167704793519846,
+              23.087824583723325,
+              4.62268048008916
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7258068628680672,
+            "distance_to_agent": 6.3392347640444315,
+            "bearing_to_agent": -2.9793193259022037,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -5.78518387262045,
+              14.886131074720332,
+              5.51248574836126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9299708813074804,
+            "distance_to_agent": 10.651708698232177,
+            "bearing_to_agent": 0.779004311047653,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_13_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              5.049591828422972,
+              23.919391339771483,
+              4.592668421630808
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6750330165578109,
+            "distance_to_agent": 3.6030736883632524,
+            "bearing_to_agent": -2.6193663435601997,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_13_5",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              4.3490615507946195,
+              23.343523641312686,
+              4.416266453730783
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6206447100745387,
+            "distance_to_agent": 2.7128146529019523,
+            "bearing_to_agent": -2.680897003965568,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          1.896384098760393,
+          4.422294044202029,
+          -22.184342755757914
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_13_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.43811609507237825,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_13_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              11.277488820074467,
+              24.017380887157607,
+              4.302335624043435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7284233023826286,
+            "distance_to_agent": 9.55926485698526,
+            "bearing_to_agent": -2.9294349636094523,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.051045986767445,
+              18.310869276089264,
+              3.7415086985178903
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7152871181445823,
+            "distance_to_agent": 8.164340280530649,
+            "bearing_to_agent": 2.6645747804053532,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_13_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.167704793519846,
+              23.087824583723325,
+              4.62268048008916
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7258068628680672,
+            "distance_to_agent": 6.3392347640444315,
+            "bearing_to_agent": -2.9793193259022037,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -5.78518387262045,
+              14.886131074720332,
+              5.51248574836126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9299708813074804,
+            "distance_to_agent": 10.651708698232177,
+            "bearing_to_agent": 0.779004311047653,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_13_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              5.049591828422972,
+              23.919391339771483,
+              4.592668421630808
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6750330165578109,
+            "distance_to_agent": 3.6030736883632524,
+            "bearing_to_agent": -2.6193663435601997,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_13_5",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              4.3490615507946195,
+              23.343523641312686,
+              4.416266453730783
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6206447100745387,
+            "distance_to_agent": 2.7128146529019523,
+            "bearing_to_agent": -2.680897003965568,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          1.896384098760393,
+          4.422294044202029,
+          -22.184342755757914
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_13_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.7097828251002591,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_13_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              11.277488820074467,
+              24.017380887157607,
+              4.302335624043435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7284233023826286,
+            "distance_to_agent": 9.55926485698526,
+            "bearing_to_agent": -2.9294349636094523,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.051045986767445,
+              18.310869276089264,
+              3.7415086985178903
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7152871181445823,
+            "distance_to_agent": 8.164340280530649,
+            "bearing_to_agent": 2.6645747804053532,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_13_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.167704793519846,
+              23.087824583723325,
+              4.62268048008916
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7258068628680672,
+            "distance_to_agent": 6.3392347640444315,
+            "bearing_to_agent": -2.9793193259022037,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -5.78518387262045,
+              14.886131074720332,
+              5.51248574836126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9299708813074804,
+            "distance_to_agent": 10.651708698232177,
+            "bearing_to_agent": 0.779004311047653,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_13_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              5.049591828422972,
+              23.919391339771483,
+              4.592668421630808
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6750330165578109,
+            "distance_to_agent": 3.6030736883632524,
+            "bearing_to_agent": -2.6193663435601997,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_13_5",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              4.3490615507946195,
+              23.343523641312686,
+              4.416266453730783
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6206447100745387,
+            "distance_to_agent": 2.7128146529019523,
+            "bearing_to_agent": -2.680897003965568,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          1.896384098760393,
+          4.422294044202029,
+          -22.184342755757914
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_13_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.912929878484168,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_13_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              11.277488820074467,
+              24.017380887157607,
+              4.302335624043435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7284233023826286,
+            "distance_to_agent": 9.55926485698526,
+            "bearing_to_agent": -2.9294349636094523,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              9.051045986767445,
+              18.310869276089264,
+              3.7415086985178903
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7152871181445823,
+            "distance_to_agent": 8.164340280530649,
+            "bearing_to_agent": 2.6645747804053532,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_13_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.167704793519846,
+              23.087824583723325,
+              4.62268048008916
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7258068628680672,
+            "distance_to_agent": 6.3392347640444315,
+            "bearing_to_agent": -2.9793193259022037,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_13_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              -5.78518387262045,
+              14.886131074720332,
+              5.51248574836126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9299708813074804,
+            "distance_to_agent": 10.651708698232177,
+            "bearing_to_agent": 0.779004311047653,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_13_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              5.049591828422972,
+              23.919391339771483,
+              4.592668421630808
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6750330165578109,
+            "distance_to_agent": 3.6030736883632524,
+            "bearing_to_agent": -2.6193663435601997,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_13_5",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              4.3490615507946195,
+              23.343523641312686,
+              4.416266453730783
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6206447100745387,
+            "distance_to_agent": 2.7128146529019523,
+            "bearing_to_agent": -2.680897003965568,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          1.896384098760393,
+          4.422294044202029,
+          -22.184342755757914
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_13_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.5088720150695117,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.569700813726317,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

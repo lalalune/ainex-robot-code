@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 from pathlib import Path
 
@@ -17,9 +18,11 @@ import jax.numpy as jp
 import mujoco
 import numpy as np
 from training.mujoco.inference import load_policy_jax
+from training.schema.canonical import adapt_state_vector
+from training.schema.canonical import AINEX_SCHEMA_VERSION
 
 
-def rollout_mjx(env, policy_fn, n_steps=500, cmd=None):
+def rollout_mjx(env, policy_fn, n_steps=500, cmd=None, obs_size=None, action_size=None):
     """Roll out policy in MJX for n_steps. Returns trajectory data.
 
     Args:
@@ -48,9 +51,23 @@ def rollout_mjx(env, policy_fn, n_steps=500, cmd=None):
         "command": [],
     }
 
+    def _command_for_state(current_state) -> np.ndarray:
+        if "command" in current_state.info:
+            return np.array(current_state.info["command"])
+        if "target_pos" in current_state.info:
+            return np.array(current_state.info["target_pos"])
+        return np.zeros(3, dtype=np.float32)
+
     for i in range(n_steps):
         act_rng, rng = jax.random.split(rng)
-        action, _ = policy_fn(state.obs, act_rng)
+        obs = state.obs
+        if obs_size is not None and obs.shape[0] != obs_size:
+            obs = jp.array(adapt_state_vector(np.array(obs).tolist(), obs_size))
+        action, _ = policy_fn(obs, act_rng)
+        if action_size is not None and action.shape[0] != action_size:
+            action = jp.array(
+                adapt_state_vector(np.array(action).tolist(), action_size)
+            )
         state = step_fn(state, action)
 
         trajectory["qpos"].append(np.array(state.data.qpos))
@@ -59,7 +76,7 @@ def rollout_mjx(env, policy_fn, n_steps=500, cmd=None):
         trajectory["done"].append(float(state.done))
         trajectory["torso_z"].append(float(state.data.xpos[env._torso_body_id, 2]))
         trajectory["torso_xy"].append(np.array(state.data.xpos[env._torso_body_id, :2]))
-        trajectory["command"].append(np.array(state.info["command"]))
+        trajectory["command"].append(_command_for_state(state))
 
         if i % 100 == 0:
             total_r = sum(trajectory["reward"])
@@ -69,7 +86,7 @@ def rollout_mjx(env, policy_fn, n_steps=500, cmd=None):
                   f"torso_z={trajectory['torso_z'][-1]:.4f}  "
                   f"xy=({xy[0]:.3f}, {xy[1]:.3f})  "
                   f"done={float(state.done):.0f}  "
-                  f"cmd={np.array(state.info['command'])}")
+                  f"cmd={_command_for_state(state)}")
 
     return trajectory
 
@@ -225,6 +242,26 @@ def render_trajectory_topdown(trajectory, output_path, width=400, height=400):
     print(f"Saved trajectory plot: {output_path}")
 
 
+def export_rollout_trace(trajectory, output_path, command_name: str) -> None:
+    """Export a lightweight JSON trace for downstream analysis."""
+    reward_total = float(sum(trajectory["reward"]))
+    payload = {
+        "schema_version": AINEX_SCHEMA_VERSION,
+        "command_name": command_name,
+        "num_steps": len(trajectory["reward"]),
+        "reward_total": reward_total,
+        "trajectory": {
+            "reward": trajectory["reward"],
+            "done": trajectory["done"],
+            "torso_z": trajectory["torso_z"],
+            "torso_xy": [xy.tolist() for xy in trajectory["torso_xy"]],
+            "command": [cmd.tolist() for cmd in trajectory["command"]],
+        },
+    }
+    output_path.write_text(json.dumps(payload, indent=2))
+    print(f"Saved rollout trace: {output_path}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluate trained AiNex policy")
     parser.add_argument("--checkpoint", type=str,
@@ -236,6 +273,8 @@ def main():
                         help="Output directory for renders")
     parser.add_argument("--forward-cmd", type=float, default=0.5,
                         help="Forward velocity command (m/s)")
+    parser.add_argument("--export-trace", action="store_true",
+                        help="Export lightweight JSON traces alongside renders")
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -259,7 +298,14 @@ def main():
     print("=== Rollout: Forward walking ===")
     cmd_forward = [args.forward_cmd, 0.0, 0.0]  # forward, no lateral, no yaw
     print(f"Command: vx={cmd_forward[0]}, vy={cmd_forward[1]}, vyaw={cmd_forward[2]}")
-    traj_fwd = rollout_mjx(env, policy_fn, n_steps=args.n_steps, cmd=cmd_forward)
+    traj_fwd = rollout_mjx(
+        env,
+        policy_fn,
+        n_steps=args.n_steps,
+        cmd=cmd_forward,
+        obs_size=config["obs_size"],
+        action_size=env.action_size,
+    )
 
     total_r = sum(traj_fwd["reward"])
     final_xy = traj_fwd["torso_xy"][-1]
@@ -280,11 +326,20 @@ def main():
 
     # Render trajectory plot
     render_trajectory_topdown(traj_fwd, output_dir / "ainex_trajectory_forward.png")
+    if args.export_trace:
+        export_rollout_trace(traj_fwd, output_dir / "ainex_trace_forward.json", "forward")
     print()
 
     # Rollout 2: Random commands (as in training)
     print("=== Rollout: Random commands ===")
-    traj_rand = rollout_mjx(env, policy_fn, n_steps=args.n_steps, cmd=None)
+    traj_rand = rollout_mjx(
+        env,
+        policy_fn,
+        n_steps=args.n_steps,
+        cmd=None,
+        obs_size=config["obs_size"],
+        action_size=env.action_size,
+    )
     total_r2 = sum(traj_rand["reward"])
     dist2 = np.linalg.norm(traj_rand["torso_xy"][-1])
     falls2 = sum(1 for d in traj_rand["done"] if d > 0.5)
@@ -297,12 +352,21 @@ def main():
     print("Rendering random commands GIF...")
     render_trajectory_gif(traj_rand, output_dir / "ainex_walking_random.gif", env_config)
     render_trajectory_topdown(traj_rand, output_dir / "ainex_trajectory_random.png")
+    if args.export_trace:
+        export_rollout_trace(traj_rand, output_dir / "ainex_trace_random.json", "random")
 
     # Rollout 3: Turning
     print("\n=== Rollout: Turning in place ===")
     cmd_turn = [0.0, 0.0, 0.5]  # yaw only
     print(f"Command: vx={cmd_turn[0]}, vy={cmd_turn[1]}, vyaw={cmd_turn[2]}")
-    traj_turn = rollout_mjx(env, policy_fn, n_steps=args.n_steps, cmd=cmd_turn)
+    traj_turn = rollout_mjx(
+        env,
+        policy_fn,
+        n_steps=args.n_steps,
+        cmd=cmd_turn,
+        obs_size=config["obs_size"],
+        action_size=env.action_size,
+    )
     total_r3 = sum(traj_turn["reward"])
     falls3 = sum(1 for d in traj_turn["done"] if d > 0.5)
     print(f"\nSummary:")
@@ -311,6 +375,8 @@ def main():
 
     print("\nRendering turning GIF...")
     render_trajectory_gif(traj_turn, output_dir / "ainex_turning.gif", env_config)
+    if args.export_trace:
+        export_rollout_trace(traj_turn, output_dir / "ainex_trace_turning.json", "turn")
 
     print(f"\nAll outputs saved to {output_dir}/")
     print("=" * 60)

@@ -1,0 +1,407 @@
+{
+  "trajectory_id": "hyperscape-0000",
+  "agent_id": "eliza-agent-0",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_0_0",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              5.681456498376699,
+              31.901123774326667,
+              -0.06220516903224893
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6874551899214414,
+            "distance_to_agent": 12.521246438392147,
+            "bearing_to_agent": -2.252476266431544,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              15.983054426787984,
+              18.176675904640003,
+              0.4950878039811213
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8805299894360943,
+            "distance_to_agent": 4.78423797708653,
+            "bearing_to_agent": 0.6095372117167441,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.35149228660231,
+              16.30845902953154,
+              0.6071702877303042
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6025995038712244,
+            "distance_to_agent": 8.347919209421095,
+            "bearing_to_agent": -0.5664039020855447,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          13.942679845788376,
+          0.25010755222666936,
+          -22.497068163088073
+        ],
+        "task": "Talk to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_0_0",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.15547949981178155,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_0_0",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              5.681456498376699,
+              31.901123774326667,
+              -0.06220516903224893
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6874551899214414,
+            "distance_to_agent": 12.521246438392147,
+            "bearing_to_agent": -2.252476266431544,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              15.983054426787984,
+              18.176675904640003,
+              0.4950878039811213
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8805299894360943,
+            "distance_to_agent": 4.78423797708653,
+            "bearing_to_agent": 0.6095372117167441,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.35149228660231,
+              16.30845902953154,
+              0.6071702877303042
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6025995038712244,
+            "distance_to_agent": 8.347919209421095,
+            "bearing_to_agent": -0.5664039020855447,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          13.942679845788376,
+          0.25010755222666936,
+          -22.497068163088073
+        ],
+        "task": "Talk to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_0_0",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.3439557224789711,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_0_0",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              5.681456498376699,
+              31.901123774326667,
+              -0.06220516903224893
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6874551899214414,
+            "distance_to_agent": 12.521246438392147,
+            "bearing_to_agent": -2.252476266431544,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              15.983054426787984,
+              18.176675904640003,
+              0.4950878039811213
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8805299894360943,
+            "distance_to_agent": 4.78423797708653,
+            "bearing_to_agent": 0.6095372117167441,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.35149228660231,
+              16.30845902953154,
+              0.6071702877303042
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6025995038712244,
+            "distance_to_agent": 8.347919209421095,
+            "bearing_to_agent": -0.5664039020855447,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          13.942679845788376,
+          0.25010755222666936,
+          -22.497068163088073
+        ],
+        "task": "Talk to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_0_0",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.07880019807845817,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_0_0",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              5.681456498376699,
+              31.901123774326667,
+              -0.06220516903224893
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6874551899214414,
+            "distance_to_agent": 12.521246438392147,
+            "bearing_to_agent": -2.252476266431544,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              15.983054426787984,
+              18.176675904640003,
+              0.4950878039811213
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8805299894360943,
+            "distance_to_agent": 4.78423797708653,
+            "bearing_to_agent": 0.6095372117167441,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_0_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              8.35149228660231,
+              16.30845902953154,
+              0.6071702877303042
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6025995038712244,
+            "distance_to_agent": 8.347919209421095,
+            "bearing_to_agent": -0.5664039020855447,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          13.942679845788376,
+          0.25010755222666936,
+          -22.497068163088073
+        ],
+        "task": "Talk to the Treasure Chest"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_0_0",
+          "target_label": "Treasure Chest"
+        }
+      },
+      "reward": 0.06955514882374092,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 0.6477905691929517,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

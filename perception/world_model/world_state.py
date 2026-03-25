@@ -223,6 +223,61 @@ class WorldState:
                     # Better height estimate from skeleton
                     entity.size[1] = skel.height_pixels / self._intrinsics.fy * d
 
+    def update_from_aruco(
+        self,
+        detections: list,  # list[ArucoDetection]
+        object_markers: dict[int, str],
+        robot_marker_ids: list[int] | None = None,
+        robot_head_marker_id: int = -1,
+    ) -> None:
+        """Update entities from ArUco marker detections.
+
+        Parameters
+        ----------
+        detections : list[ArucoDetection]
+            ArUco detections from the ego camera with 6-DOF poses.
+        object_markers : dict[int, str]
+            Mapping of marker_id -> object label (e.g. {6: "red_ball"}).
+        robot_marker_ids : list[int], optional
+            Marker IDs on the robot body (skip these).
+        robot_head_marker_id : int, optional
+            Head marker ID (skip).
+        """
+        now = time.monotonic()
+        skip_ids = set(robot_marker_ids or [])
+        if robot_head_marker_id >= 0:
+            skip_ids.add(robot_head_marker_id)
+
+        for det in detections:
+            mid = det.marker_id
+            if mid in skip_ids:
+                continue
+            if mid not in object_markers:
+                continue
+
+            label = object_markers[mid]
+            eid = f"aruco_{mid}_{label}"
+
+            # Transform from camera frame to robot frame
+            cam_pos = det.tvec.astype(np.float32)
+            robot_pos = self.camera_to_robot(cam_pos)
+
+            entity = self._entities.get(eid)
+            if entity is None:
+                entity = PersistentEntity(
+                    entity_id=eid,
+                    entity_type=EntityType.OBJECT,
+                    label=label,
+                    source="aruco",
+                    marker_id=mid,
+                )
+                self._entities[eid] = entity
+
+            entity_dt = now - entity.last_seen if entity.last_seen > 0 else 0.033
+            entity.update_position(robot_pos, entity_dt)
+            entity.confidence = det.confidence
+            entity.size = np.array([0.05, 0.05, 0.05], dtype=np.float32)
+
     def prune_stale(self) -> int:
         """Remove entities not seen within stale_timeout. Returns count removed."""
         now = time.monotonic()

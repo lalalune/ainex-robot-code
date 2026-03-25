@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+
+from training.schema.canonical import AINEX_SCHEMA_VERSION
+
+JsonPrimitive = str | int | float | bool | None
+JsonValue = JsonPrimitive | list["JsonValue"] | dict[str, "JsonValue"]
 
 
 # ---------------------------------------------------------------------------
@@ -82,6 +86,8 @@ class AinexPerceptionObservation:
     camera_frame: str = ""
     # Task/language instruction conditioning
     language_instruction: str = ""
+    # Schema version for downstream consumers and trace readers
+    schema_version: str = AINEX_SCHEMA_VERSION
 
 
 # ---------------------------------------------------------------------------
@@ -102,7 +108,9 @@ class OpenPIObservationPayload:
     # Optional image observation (base64 JPEG or numpy-compatible)
     image: str = ""
     # Extra metadata
-    metadata: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, JsonValue] = field(default_factory=dict)
+    # Schema version for downstream consumers and trace readers
+    schema_version: str = AINEX_SCHEMA_VERSION
 
 
 @dataclass(frozen=True)
@@ -125,6 +133,8 @@ class OpenPIActionChunk:
     action_name: str = ""
     # Confidence from the policy (0..1)
     confidence: float = 1.0
+    # Schema version for downstream consumers and trace readers
+    schema_version: str = AINEX_SCHEMA_VERSION
 
 
 # ---------------------------------------------------------------------------
@@ -139,6 +149,62 @@ class PolicyState(Enum):
     FAILED = "failed"
 
 
+class CanonicalIntentType(Enum):
+    NAVIGATE_TO_ENTITY = "NAVIGATE_TO_ENTITY"
+    NAVIGATE_TO_POSITION = "NAVIGATE_TO_POSITION"
+    FACE_ENTITY = "FACE_ENTITY"
+    PICKUP_ENTITY = "PICKUP_ENTITY"
+    EMOTE = "EMOTE"
+    SPEAK = "SPEAK"
+    IDLE = "IDLE"
+    ABORT = "ABORT"
+
+
+@dataclass(frozen=True)
+class PlannerTraceContext:
+    """Identifiers that link planner and executor traces."""
+    trace_id: str = ""
+    planner_step_id: str = ""
+    source: str = ""
+
+
+@dataclass(frozen=True)
+class CanonicalIntent:
+    """Planner output shared across Hyperscape and robot execution."""
+    intent: CanonicalIntentType
+    target_entity_id: str = ""
+    target_entity_label: str = ""
+    target_position: tuple[float, float, float] = ()
+    source_action_name: str = ""
+    reasoning: str = ""
+    constraints: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class ExecutorRequest:
+    """Request sent from the planner layer to the embodied executor."""
+    planner: PlannerTraceContext = field(default_factory=PlannerTraceContext)
+    task_text: str = ""
+    canonical_intent: CanonicalIntent = field(
+        default_factory=lambda: CanonicalIntent(intent=CanonicalIntentType.IDLE)
+    )
+    entity_slots: tuple[float, ...] = ()
+    metadata: dict[str, JsonValue] = field(default_factory=dict)
+    schema_version: str = AINEX_SCHEMA_VERSION
+
+
+@dataclass(frozen=True)
+class ExecutorResult:
+    """Result emitted by the embodied executor back to the planner layer."""
+    planner: PlannerTraceContext = field(default_factory=PlannerTraceContext)
+    success: bool = False
+    status: str = ""
+    steps_completed: int = 0
+    target_entity_id: str = ""
+    metadata: dict[str, JsonValue] = field(default_factory=dict)
+    schema_version: str = AINEX_SCHEMA_VERSION
+
+
 @dataclass(frozen=True)
 class PolicyTransitionRecord:
     """Record of a policy state transition, for trace logging and training datasets."""
@@ -146,12 +212,17 @@ class PolicyTransitionRecord:
     from_state: PolicyState
     to_state: PolicyState
     reason: str
+    trace_id: str = ""
+    planner_step_id: str = ""
+    canonical_action: str = ""
+    target_entity_id: str = ""
+    target_label: str = ""
     task: str = ""
     step: int = 0
     # Snapshot of observation at transition
-    observation_summary: dict[str, Any] = field(default_factory=dict)
+    observation_summary: dict[str, JsonValue] = field(default_factory=dict)
     # Snapshot of last action at transition
-    action_summary: dict[str, Any] = field(default_factory=dict)
+    action_summary: dict[str, JsonValue] = field(default_factory=dict)
     # Latency metrics
     tick_latency_ms: float = 0.0
     inference_latency_ms: float = 0.0

@@ -1,0 +1,473 @@
+{
+  "trajectory_id": "hyperscape-0005",
+  "agent_id": "eliza-agent-0",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_5_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -29.340814755148372,
+              -27.991610974126488,
+              8.268648221230126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.941165126156759,
+            "distance_to_agent": 6.924675707769971,
+            "bearing_to_agent": -0.40177621751766024,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -23.782770808299702,
+              -31.163742663996985,
+              10.518473034374384
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6369193870850933,
+            "distance_to_agent": 7.113120429505779,
+            "bearing_to_agent": 0.5609654189173414,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -16.96644606384285,
+              -20.912799170201637,
+              7.0734741172532924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6523278642806809,
+            "distance_to_agent": 7.602311886391556,
+            "bearing_to_agent": 2.63282098269693,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -30.321768325809508,
+              -28.355017333299692,
+              8.664469117500495
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8243627459098986,
+            "distance_to_agent": 7.923665357564811,
+            "bearing_to_agent": -0.43062265032345914,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_5_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -32.048530649811894,
+              -32.32023982929773,
+              10.429552643257663
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8182361156822089,
+            "distance_to_agent": 11.82280659862026,
+            "bearing_to_agent": -0.2164378534569673,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -23.553407851287233,
+          8.897127070057092,
+          24.241668398099876
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "emote",
+        "name": "wave",
+        "params": {
+          "target_entity": "entity_5_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.42978671288077175,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_5_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -29.340814755148372,
+              -27.991610974126488,
+              8.268648221230126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.941165126156759,
+            "distance_to_agent": 6.924675707769971,
+            "bearing_to_agent": -0.40177621751766024,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -23.782770808299702,
+              -31.163742663996985,
+              10.518473034374384
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6369193870850933,
+            "distance_to_agent": 7.113120429505779,
+            "bearing_to_agent": 0.5609654189173414,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -16.96644606384285,
+              -20.912799170201637,
+              7.0734741172532924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6523278642806809,
+            "distance_to_agent": 7.602311886391556,
+            "bearing_to_agent": 2.63282098269693,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -30.321768325809508,
+              -28.355017333299692,
+              8.664469117500495
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8243627459098986,
+            "distance_to_agent": 7.923665357564811,
+            "bearing_to_agent": -0.43062265032345914,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_5_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -32.048530649811894,
+              -32.32023982929773,
+              10.429552643257663
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8182361156822089,
+            "distance_to_agent": 11.82280659862026,
+            "bearing_to_agent": -0.2164378534569673,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -23.553407851287233,
+          8.897127070057092,
+          24.241668398099876
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "emote",
+        "name": "wave",
+        "params": {
+          "target_entity": "entity_5_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.8989246365264746,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_5_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              -29.340814755148372,
+              -27.991610974126488,
+              8.268648221230126
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.941165126156759,
+            "distance_to_agent": 6.924675707769971,
+            "bearing_to_agent": -0.40177621751766024,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -23.782770808299702,
+              -31.163742663996985,
+              10.518473034374384
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6369193870850933,
+            "distance_to_agent": 7.113120429505779,
+            "bearing_to_agent": 0.5609654189173414,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -16.96644606384285,
+              -20.912799170201637,
+              7.0734741172532924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6523278642806809,
+            "distance_to_agent": 7.602311886391556,
+            "bearing_to_agent": 2.63282098269693,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_5_3",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              -30.321768325809508,
+              -28.355017333299692,
+              8.664469117500495
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8243627459098986,
+            "distance_to_agent": 7.923665357564811,
+            "bearing_to_agent": -0.43062265032345914,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_5_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -32.048530649811894,
+              -32.32023982929773,
+              10.429552643257663
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8182361156822089,
+            "distance_to_agent": 11.82280659862026,
+            "bearing_to_agent": -0.2164378534569673,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -23.553407851287233,
+          8.897127070057092,
+          24.241668398099876
+        ],
+        "task": "Explore the area near the Oak Tree"
+      },
+      "action": {
+        "type": "emote",
+        "name": "wave",
+        "params": {
+          "target_entity": "entity_5_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.8747127235410912,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.2034240729483376,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

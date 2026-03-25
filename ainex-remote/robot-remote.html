@@ -284,6 +284,41 @@
     overflow-y: auto;
     word-break: break-all;
   }
+
+  /* Terminal panel */
+  .term-panel {
+    position: relative;
+    background: #0c0c1a;
+    display: none;
+    overflow: hidden;
+  }
+  .term-panel.active { display: flex; align-items: center; justify-content: center; }
+  .video-panel.hidden { display: none; }
+  .term-panel canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: text;
+  }
+  .term-status {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(20,20,50,0.95);
+    color: var(--text-dim);
+    font-family: monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .term-btn-row {
+    display: flex;
+    gap: 6px;
+  }
+  .term-btn-row button {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
 </style>
 </head>
 <body>
@@ -298,7 +333,7 @@
 
 <div class="main">
   <!-- Video feed -->
-  <div class="video-panel">
+  <div class="video-panel" id="videoPanel">
     <img id="videoFeed" alt="Camera feed" />
     <div class="video-overlay">
       <select id="videoTopic">
@@ -308,6 +343,19 @@
         <option value="/face_detect/image_result">Face Detection</option>
         <option value="/app/image_result">App Result</option>
       </select>
+    </div>
+  </div>
+
+  <!-- Terminal panel (hidden by default, toggles with video) -->
+  <div class="term-panel" id="termPanel">
+    <canvas id="termCanvas" width="1920" height="1080" tabindex="0"></canvas>
+    <div class="term-status">
+      <span id="termStatusText">PTY: disconnected</span>
+      <div class="term-btn-row">
+        <button onclick="termSendCtrlC()">Ctrl+C</button>
+        <button onclick="termRestart()">Restart</button>
+        <button onclick="toggleTerminal()">Camera</button>
+      </div>
     </div>
   </div>
 
@@ -321,6 +369,16 @@
         <input type="text" id="robotIp" value="192.168.1.218" placeholder="Robot IP" />
         <button id="connectBtn" class="success" onclick="toggleConnection()">Connect</button>
       </div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="card">
+      <h3>Terminal</h3>
+      <div class="action-grid">
+        <button id="termToggleBtn" onclick="toggleTerminal()">Show Terminal</button>
+        <button onclick="termSendCtrlC()">Send Ctrl+C</button>
+      </div>
+      <div class="keyhint">Click terminal to focus. All keys go to Claude Code.</div>
     </div>
 
     <!-- Walking controls -->
@@ -506,16 +564,37 @@ function updateConnectionUI(isConnected) {
 }
 
 // ---- Video ----
+let videoTimer = null;
+
 function updateVideoFeed() {
-  const ip = document.getElementById('robotIp').value.trim();
+  // Stop previous polling
+  if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
+
   const topic = document.getElementById('videoTopic').value;
   const img = document.getElementById('videoFeed');
-  // Use web_video_server's stream endpoint
-  img.src = `http://${ip}:8080/stream?topic=${encodeURIComponent(topic)}&type=mjpeg&quality=70`;
+  log(`Camera: starting feed for ${topic}`);
+
+  let loading = false;
+  function fetchFrame() {
+    if (loading) return;
+    loading = true;
+    const frame = new Image();
+    frame.onload = () => {
+      img.src = frame.src;
+      loading = false;
+    };
+    frame.onerror = () => {
+      loading = false;
+    };
+    frame.src = `/camera_proxy/snapshot?topic=${encodeURIComponent(topic)}&quality=70&_t=${Date.now()}`;
+  }
+
+  fetchFrame();
+  videoTimer = setInterval(fetchFrame, 100);
 }
 
 document.getElementById('videoTopic').addEventListener('change', () => {
-  if (connected) updateVideoFeed();
+  updateVideoFeed();
 });
 
 // ---- ROS Publishers & Subscribers ----
@@ -780,8 +859,8 @@ const headKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Ho
 const activeKeys = new Set();
 
 document.addEventListener('keydown', (e) => {
-  // Don't capture when typing in input
-  if (e.target.tagName === 'INPUT') return;
+  // Don't capture when typing in input or terminal
+  if (e.target.tagName === 'INPUT' || e.target.id === 'termCanvas') return;
 
   if (keyMap[e.key] !== undefined) {
     e.preventDefault();
@@ -863,9 +942,428 @@ document.addEventListener('keyup', (e) => {
   }
 });
 
+// ===========================================================================
+// Terminal — VT100 emulator + PTY WebSocket
+// ===========================================================================
+let termShowing = false;
+let ptyWs = null;
+let ptyReconnectTimer = null;
+
+const TERM_COLS = 120, TERM_ROWS = 40;
+let termGrid = [];
+let termAltGrid = [];
+let termCurX = 0, termCurY = 0;
+let termSavedX = 0, termSavedY = 0;
+let termFg = 7, termBg = 0, termBold = false, termReverse = false;
+let termFgRGB = null, termBgRGB = null;
+let termScrollTop = 0, termScrollBot = TERM_ROWS - 1;
+let termEscBuf = '';
+let termInEsc = false;
+let termUseAlt = false;
+let termCursorVisible = true;
+let termBlinkOn = true, termBlinkTimer = 0;
+let termAnimFrame = null;
+
+const TERM_COLORS = [
+  '#000000','#aa0000','#00aa00','#aa5500','#0000aa','#aa00aa','#00aaaa','#aaaaaa',
+  '#555555','#ff5555','#55ff55','#ffff55','#5555ff','#ff55ff','#55ffff','#ffffff'
+];
+
+function termInitGrid(grid) {
+  grid.length = 0;
+  for (let r = 0; r < TERM_ROWS; r++) {
+    const row = [];
+    for (let c = 0; c < TERM_COLS; c++)
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    grid.push(row);
+  }
+}
+termInitGrid(termGrid);
+termInitGrid(termAltGrid);
+
+function termClearRegion(r1, c1, r2, c2) {
+  const grid = termUseAlt ? termAltGrid : termGrid;
+  for (let r = r1; r <= r2 && r < TERM_ROWS; r++)
+    for (let c = c1; c <= c2 && c < TERM_COLS; c++)
+      grid[r][c] = { ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null };
+}
+
+function termScrollUp(n) {
+  const grid = termUseAlt ? termAltGrid : termGrid;
+  for (let i = 0; i < n; i++) {
+    grid.splice(termScrollTop, 1);
+    const row = [];
+    for (let c = 0; c < TERM_COLS; c++)
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    grid.splice(termScrollBot, 0, row);
+  }
+}
+
+function termScrollDown(n) {
+  const grid = termUseAlt ? termAltGrid : termGrid;
+  for (let i = 0; i < n; i++) {
+    grid.splice(termScrollBot, 1);
+    const row = [];
+    for (let c = 0; c < TERM_COLS; c++)
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    grid.splice(termScrollTop, 0, row);
+  }
+}
+
+function termProcessCSI(buf) {
+  const match = buf.match(/^(\??)([0-9;]*)([A-Za-z@`])/);
+  if (!match) return;
+  const priv = match[1], paramStr = match[2], cmd = match[3];
+  const params = paramStr ? paramStr.split(';').map(s => parseInt(s, 10) || 0) : [];
+  const p0 = params[0] || 0, p1 = params[1] || 0;
+  const grid = termUseAlt ? termAltGrid : termGrid;
+
+  switch (cmd) {
+    case 'A': termCurY = Math.max(termScrollTop, termCurY - (p0 || 1)); break;
+    case 'B': termCurY = Math.min(termScrollBot, termCurY + (p0 || 1)); break;
+    case 'C': termCurX = Math.min(TERM_COLS - 1, termCurX + (p0 || 1)); break;
+    case 'D': termCurX = Math.max(0, termCurX - (p0 || 1)); break;
+    case 'E': termCurY = Math.min(termScrollBot, termCurY + (p0 || 1)); termCurX = 0; break;
+    case 'F': termCurY = Math.max(termScrollTop, termCurY - (p0 || 1)); termCurX = 0; break;
+    case 'G': termCurX = Math.max(0, Math.min(TERM_COLS - 1, (p0 || 1) - 1)); break;
+    case 'd': termCurY = Math.max(0, Math.min(TERM_ROWS - 1, (p0 || 1) - 1)); break;
+    case 'H': case 'f':
+      termCurY = Math.max(0, Math.min(TERM_ROWS - 1, (p0 || 1) - 1));
+      termCurX = Math.max(0, Math.min(TERM_COLS - 1, (p1 || 1) - 1));
+      break;
+    case 'J':
+      if (p0 === 0) { termClearRegion(termCurY, termCurX, termCurY, TERM_COLS - 1); termClearRegion(termCurY + 1, 0, TERM_ROWS - 1, TERM_COLS - 1); }
+      else if (p0 === 1) { termClearRegion(0, 0, termCurY - 1, TERM_COLS - 1); termClearRegion(termCurY, 0, termCurY, termCurX); }
+      else if (p0 === 2 || p0 === 3) termClearRegion(0, 0, TERM_ROWS - 1, TERM_COLS - 1);
+      break;
+    case 'K':
+      if (p0 === 0) termClearRegion(termCurY, termCurX, termCurY, TERM_COLS - 1);
+      else if (p0 === 1) termClearRegion(termCurY, 0, termCurY, termCurX);
+      else if (p0 === 2) termClearRegion(termCurY, 0, termCurY, TERM_COLS - 1);
+      break;
+    case 'X': termClearRegion(termCurY, termCurX, termCurY, Math.min(TERM_COLS - 1, termCurX + (p0 || 1) - 1)); break;
+    case 'P': {
+      const n = p0 || 1, row = grid[termCurY];
+      row.splice(termCurX, n);
+      for (let i = 0; i < n; i++) row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+      break;
+    }
+    case '@': {
+      const n = p0 || 1, row = grid[termCurY];
+      for (let i = 0; i < n; i++) row.splice(termCurX, 0, { ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+      row.length = TERM_COLS;
+      break;
+    }
+    case 'S': termScrollUp(p0 || 1); break;
+    case 'T': termScrollDown(p0 || 1); break;
+    case 'L': {
+      const n = p0 || 1;
+      for (let i = 0; i < n; i++) {
+        grid.splice(termScrollBot, 1);
+        const nr = [];
+        for (let c = 0; c < TERM_COLS; c++) nr.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+        grid.splice(termCurY, 0, nr);
+      }
+      break;
+    }
+    case 'M': {
+      const n = p0 || 1;
+      for (let i = 0; i < n; i++) {
+        grid.splice(termCurY, 1);
+        const nr = [];
+        for (let c = 0; c < TERM_COLS; c++) nr.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+        grid.splice(termScrollBot, 0, nr);
+      }
+      break;
+    }
+    case 'r':
+      termScrollTop = Math.max(0, (p0 || 1) - 1);
+      termScrollBot = Math.min(TERM_ROWS - 1, (p1 || TERM_ROWS) - 1);
+      termCurX = 0; termCurY = 0;
+      break;
+    case 's': termSavedX = termCurX; termSavedY = termCurY; break;
+    case 'u': termCurX = termSavedX; termCurY = termSavedY; break;
+    case 'm': termProcessSGR(params); break;
+    case 'h':
+      if (priv === '?') {
+        if (p0 === 1049) { termUseAlt = true; termInitGrid(termAltGrid); termCurX = 0; termCurY = 0; }
+        else if (p0 === 25) termCursorVisible = true;
+      }
+      break;
+    case 'l':
+      if (priv === '?') {
+        if (p0 === 1049) { termUseAlt = false; termCurX = 0; termCurY = 0; }
+        else if (p0 === 25) termCursorVisible = false;
+      }
+      break;
+    case 'n':
+      if (p0 === 6 && ptyWs && ptyWs.readyState === 1)
+        termSend('\x1b[' + (termCurY + 1) + ';' + (termCurX + 1) + 'R');
+      break;
+  }
+}
+
+function termProcessSGR(params) {
+  if (params.length === 0) params = [0];
+  for (let i = 0; i < params.length; i++) {
+    const p = params[i];
+    if (p === 0) { termFg = 7; termBg = 0; termBold = false; termReverse = false; termFgRGB = null; termBgRGB = null; }
+    else if (p === 1) termBold = true;
+    else if (p === 7) termReverse = true;
+    else if (p === 22) termBold = false;
+    else if (p === 27) termReverse = false;
+    else if (p >= 30 && p <= 37) { termFg = p - 30; termFgRGB = null; }
+    else if (p === 38) {
+      if (i + 1 < params.length && params[i + 1] === 5 && i + 2 < params.length) { termFgRGB = term256Color(params[i + 2]); i += 2; }
+      else if (i + 1 < params.length && params[i + 1] === 2 && i + 4 < params.length) { termFgRGB = `rgb(${params[i+2]},${params[i+3]},${params[i+4]})`; i += 4; }
+    }
+    else if (p === 39) { termFg = 7; termFgRGB = null; }
+    else if (p >= 40 && p <= 47) { termBg = p - 40; termBgRGB = null; }
+    else if (p === 48) {
+      if (i + 1 < params.length && params[i + 1] === 5 && i + 2 < params.length) { termBgRGB = term256Color(params[i + 2]); i += 2; }
+      else if (i + 1 < params.length && params[i + 1] === 2 && i + 4 < params.length) { termBgRGB = `rgb(${params[i+2]},${params[i+3]},${params[i+4]})`; i += 4; }
+    }
+    else if (p === 49) { termBg = 0; termBgRGB = null; }
+    else if (p >= 90 && p <= 97) { termFg = p - 90 + 8; termFgRGB = null; }
+    else if (p >= 100 && p <= 107) { termBg = p - 100 + 8; termBgRGB = null; }
+  }
+}
+
+function term256Color(n) {
+  if (n < 16) return TERM_COLORS[n];
+  if (n < 232) {
+    n -= 16;
+    return `rgb(${Math.floor(n/36)*51},${Math.floor((n%36)/6)*51},${(n%6)*51})`;
+  }
+  const v = (n - 232) * 10 + 8;
+  return `rgb(${v},${v},${v})`;
+}
+
+function termWrite(text) {
+  const grid = termUseAlt ? termAltGrid : termGrid;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const code = text.charCodeAt(i);
+
+    if (termInEsc) {
+      termEscBuf += ch;
+      if (termEscBuf.length === 1) {
+        if (ch === '[' || ch === ']' || ch === '(' || ch === ')') continue;
+        if (ch === '7') { termSavedX = termCurX; termSavedY = termCurY; termInEsc = false; termEscBuf = ''; continue; }
+        if (ch === '8') { termCurX = termSavedX; termCurY = termSavedY; termInEsc = false; termEscBuf = ''; continue; }
+        if (ch === 'M') { if (termCurY === termScrollTop) termScrollDown(1); else termCurY--; termInEsc = false; termEscBuf = ''; continue; }
+        if (ch === 'D') { if (termCurY === termScrollBot) termScrollUp(1); else termCurY++; termInEsc = false; termEscBuf = ''; continue; }
+        termInEsc = false; termEscBuf = ''; continue;
+      }
+      if (termEscBuf[0] === '[') {
+        const last = termEscBuf[termEscBuf.length - 1];
+        if ((last >= 'A' && last <= 'Z') || (last >= 'a' && last <= 'z') || last === '@' || last === '`') {
+          termProcessCSI(termEscBuf.substring(1)); termInEsc = false; termEscBuf = '';
+        } else if (termEscBuf.length > 64) { termInEsc = false; termEscBuf = ''; }
+        continue;
+      }
+      if (termEscBuf[0] === ']') {
+        if (ch === '\x07' || (termEscBuf.length >= 2 && termEscBuf.slice(-2) === '\x1b\\')) { termInEsc = false; termEscBuf = ''; }
+        else if (termEscBuf.length > 256) { termInEsc = false; termEscBuf = ''; }
+        continue;
+      }
+      if (termEscBuf[0] === '(' || termEscBuf[0] === ')') { termInEsc = false; termEscBuf = ''; continue; }
+      termInEsc = false; termEscBuf = ''; continue;
+    }
+
+    if (ch === '\x1b') { termInEsc = true; termEscBuf = ''; continue; }
+    if (ch === '\r') { termCurX = 0; continue; }
+    if (ch === '\n') { if (termCurY >= termScrollBot) termScrollUp(1); else termCurY++; continue; }
+    if (ch === '\b') { if (termCurX > 0) termCurX--; continue; }
+    if (ch === '\t') { termCurX = Math.min(TERM_COLS - 1, (Math.floor(termCurX / 8) + 1) * 8); continue; }
+    if (ch === '\x07' || code < 32) continue;
+
+    if (termCurX >= TERM_COLS) {
+      termCurX = 0;
+      if (termCurY >= termScrollBot) termScrollUp(1); else termCurY++;
+    }
+    grid[termCurY][termCurX] = { ch, fg: termFg, bg: termBg, bold: termBold, rev: termReverse, fgRGB: termFgRGB, bgRGB: termBgRGB };
+    termCurX++;
+  }
+}
+
+function renderTerminal() {
+  const canvas = document.getElementById('termCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const statusBarH = 0; // status bar is separate HTML element
+  const charW = Math.floor(w / TERM_COLS);
+  const charH = Math.floor(h / TERM_ROWS);
+  const fontSize = Math.floor(charH * 0.85);
+  const grid = termUseAlt ? termAltGrid : termGrid;
+
+  ctx.fillStyle = '#0c0c1a';
+  ctx.fillRect(0, 0, w, h);
+  ctx.textBaseline = 'top';
+
+  for (let r = 0; r < TERM_ROWS; r++) {
+    for (let c = 0; c < TERM_COLS; c++) {
+      const cell = grid[r][c];
+      const x = c * charW, y = r * charH;
+      let fg = cell.fgRGB || TERM_COLORS[cell.fg] || TERM_COLORS[7];
+      let bg = cell.bgRGB || TERM_COLORS[cell.bg] || TERM_COLORS[0];
+      if (cell.rev) { const t = fg; fg = bg; bg = t; }
+      if (cell.bold && !cell.fgRGB && cell.fg < 8) fg = TERM_COLORS[cell.fg + 8];
+      if (bg !== '#000000') { ctx.fillStyle = bg; ctx.fillRect(x, y, charW, charH); }
+      if (cell.ch !== ' ') {
+        ctx.fillStyle = fg;
+        ctx.font = (cell.bold ? 'bold ' : '') + fontSize + 'px monospace';
+        ctx.fillText(cell.ch, x + 1, y + 1);
+      }
+    }
+  }
+
+  // Blinking cursor
+  termBlinkTimer++;
+  if (termBlinkTimer > 30) { termBlinkOn = !termBlinkOn; termBlinkTimer = 0; }
+  if (termCursorVisible && termBlinkOn && termCurY < TERM_ROWS && termCurX < TERM_COLS) {
+    ctx.fillStyle = '#00ff88';
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(termCurX * charW, termCurY * charH, charW, charH);
+    ctx.globalAlpha = 1.0;
+  }
+
+  // Update status
+  const statusEl = document.getElementById('termStatusText');
+  if (statusEl) {
+    const ptyStat = ptyWs && ptyWs.readyState === 1 ? 'PTY: connected' : 'PTY: disconnected';
+    statusEl.textContent = `${ptyStat}  |  ${TERM_COLS}x${TERM_ROWS}`;
+  }
+
+  if (termShowing) termAnimFrame = requestAnimationFrame(renderTerminal);
+}
+
+// ---- PTY WebSocket ----
+function termConnect() {
+  if (ptyWs && (ptyWs.readyState === 0 || ptyWs.readyState === 1)) return;
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const url = `${proto}//${location.host}/ws_pty`;
+  log('PTY connecting...');
+  ptyWs = new WebSocket(url);
+  ptyWs.onopen = () => {
+    log('PTY connected');
+    ptyWs.send(JSON.stringify({ type: 'resize', cols: TERM_COLS, rows: TERM_ROWS }));
+  };
+  ptyWs.onmessage = (ev) => {
+    try {
+      const msg = JSON.parse(ev.data);
+      if (msg.type === 'output') termWrite(msg.data);
+      else if (msg.type === 'exit') termWrite('\r\n\x1b[1;31m[Process exited. Press Enter to restart]\x1b[0m\r\n');
+    } catch(e) {}
+  };
+  ptyWs.onclose = () => {
+    log('PTY disconnected');
+    schedulePtyReconnect();
+  };
+  ptyWs.onerror = () => {};
+}
+
+function schedulePtyReconnect() {
+  if (ptyReconnectTimer) return;
+  ptyReconnectTimer = setInterval(() => {
+    if (!ptyWs || ptyWs.readyState > 1) {
+      if (termShowing) termConnect();
+    }
+    if (ptyWs && ptyWs.readyState === 1) {
+      clearInterval(ptyReconnectTimer);
+      ptyReconnectTimer = null;
+    }
+  }, 3000);
+}
+
+function termSend(data) {
+  if (ptyWs && ptyWs.readyState === 1)
+    ptyWs.send(JSON.stringify({ type: 'input', data }));
+}
+
+function termSendCtrlC() { termSend('\x03'); }
+
+function termRestart() {
+  if (ptyWs && ptyWs.readyState === 1)
+    ptyWs.send(JSON.stringify({ type: 'restart' }));
+}
+
+// ---- Terminal Toggle ----
+function toggleTerminal() {
+  termShowing = !termShowing;
+  const vp = document.getElementById('videoPanel');
+  const tp = document.getElementById('termPanel');
+  const btn = document.getElementById('termToggleBtn');
+
+  if (termShowing) {
+    vp.classList.add('hidden');
+    tp.classList.add('active');
+    btn.textContent = 'Show Camera';
+    btn.className = 'danger';
+    termConnect();
+    document.getElementById('termCanvas').focus();
+    renderTerminal();
+    log('Terminal opened');
+  } else {
+    vp.classList.remove('hidden');
+    tp.classList.remove('active');
+    btn.textContent = 'Show Terminal';
+    btn.className = '';
+    if (termAnimFrame) { cancelAnimationFrame(termAnimFrame); termAnimFrame = null; }
+    log('Terminal closed');
+  }
+}
+
+// ---- Terminal keyboard input ----
+document.getElementById('termCanvas').addEventListener('keydown', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (e.ctrlKey && e.key.length === 1) {
+    const upper = e.key.toUpperCase();
+    if (upper >= 'A' && upper <= 'Z') {
+      termSend(String.fromCharCode(upper.charCodeAt(0) - 64));
+      return;
+    }
+  }
+
+  switch (e.key) {
+    case 'Enter': termSend('\r'); break;
+    case 'Backspace': termSend('\x7f'); break;
+    case 'Tab': termSend('\t'); break;
+    case 'Escape': termSend('\x1b'); break;
+    case 'ArrowUp': termSend('\x1b[A'); break;
+    case 'ArrowDown': termSend('\x1b[B'); break;
+    case 'ArrowRight': termSend('\x1b[C'); break;
+    case 'ArrowLeft': termSend('\x1b[D'); break;
+    case 'Home': termSend('\x1b[H'); break;
+    case 'End': termSend('\x1b[F'); break;
+    case 'PageUp': termSend('\x1b[5~'); break;
+    case 'PageDown': termSend('\x1b[6~'); break;
+    case 'Delete': termSend('\x1b[3~'); break;
+    case 'Insert': termSend('\x1b[2~'); break;
+    default:
+      if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey)
+        termSend(e.key);
+      break;
+  }
+});
+
+// Override the global keyboard handler: skip robot controls when terminal is focused
+const origKeydown = document.onkeydown;
+document.addEventListener('keydown', (e) => {
+  if (document.activeElement && document.activeElement.id === 'termCanvas') {
+    // Already handled by the canvas handler above
+    return;
+  }
+}, true);
+
 // ---- Init ----
 log('Ready. Enter robot IP and click Connect.');
 log('Keyboard: WASD=move, QE=turn, Space=stop, Arrows=head');
+// Start video feed immediately (web_video_server works independently of ROSBridge)
+updateVideoFeed();
 </script>
 </body>
 </html>

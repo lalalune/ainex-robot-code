@@ -139,5 +139,23 @@ class MockBackend(BridgeBackend):
                 "joint_positions": dict(self._joint_positions),
             },
         )
-        return [telemetry]
+        perception = EventEnvelope(
+            event="telemetry.perception",
+            timestamp=utc_now_iso(),
+            backend=self.backend_name,
+            data={
+                "entities": [
+                    {
+                        "entity_id": "mock-red-ball-01",
+                        "label": "red ball",
+                        "confidence": 0.98,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.4,
+                        "source": "mock",
+                    }
+                ]
+            },
+        )
+        return [telemetry, perception]
 

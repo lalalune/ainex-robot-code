@@ -13,6 +13,7 @@ from bridge.openpi_adapter import (
     default_perception,
     observation_to_dict,
 )
+from training.schema.canonical import AINEX_SCHEMA_VERSION
 from training.interfaces import AinexPerceptionObservation, OpenPIActionChunk, TrackedEntity
 
 
@@ -24,6 +25,7 @@ class ObservationBuilderTests(unittest.TestCase):
         obs = build_observation(perception)
         self.assertEqual(len(obs.state), AINEX_STATE_DIM)
         self.assertEqual(obs.prompt, "")
+        self.assertEqual(obs.schema_version, AINEX_SCHEMA_VERSION)
 
     def test_observation_state_normalized(self) -> None:
         perception = AinexPerceptionObservation(
@@ -73,6 +75,28 @@ class ObservationBuilderTests(unittest.TestCase):
         self.assertEqual(len(obs.metadata["entities"]), 1)
         self.assertEqual(obs.metadata["entities"][0]["label"], "cup")
 
+    def test_observation_partial_entity_slots_are_padded(self) -> None:
+        perception = AinexPerceptionObservation(
+            timestamp=1.0,
+            battery_mv=12000,
+            imu_roll=0.0,
+            imu_pitch=0.0,
+            is_walking=False,
+            walk_x=0.0,
+            walk_y=0.0,
+            walk_yaw=0.0,
+            walk_height=0.036,
+            walk_speed=2,
+            head_pan=0.0,
+            head_tilt=0.0,
+            entity_slots=(0.25, -0.25),
+        )
+        obs = build_observation(perception)
+        entity_part = obs.state[11:]
+        self.assertEqual(entity_part[0], 0.25)
+        self.assertEqual(entity_part[1], -0.25)
+        self.assertTrue(all(v == 0.0 for v in entity_part[2:]))
+
     def test_observation_to_dict(self) -> None:
         perception = default_perception()
         obs = build_observation(perception)
@@ -81,6 +105,7 @@ class ObservationBuilderTests(unittest.TestCase):
         self.assertIsInstance(d["state"], list)
         self.assertEqual(len(d["state"]), AINEX_STATE_DIM)
         self.assertIn("prompt", d)
+        self.assertEqual(d["schema_version"], AINEX_SCHEMA_VERSION)
 
 
 class ActionDecoderTests(unittest.TestCase):
@@ -102,6 +127,7 @@ class ActionDecoderTests(unittest.TestCase):
         self.assertAlmostEqual(action.walk_y, -0.01)
         self.assertEqual(action.walk_speed, 3)
         self.assertAlmostEqual(action.confidence, 0.95)
+        self.assertEqual(action.schema_version, AINEX_SCHEMA_VERSION)
 
     def test_decode_named_fields_clamped(self) -> None:
         raw = {"walk_x": 1.0, "walk_y": -1.0}
@@ -124,6 +150,10 @@ class ActionDecoderTests(unittest.TestCase):
         self.assertAlmostEqual(action.walk_x, 0.05, places=3)
         self.assertAlmostEqual(action.walk_y, 0.05, places=3)
         self.assertEqual(action.walk_speed, 4)
+
+    def test_decode_action_vector_short_raises(self) -> None:
+        with self.assertRaises(ValueError):
+            decode_action({"action": [0.0, 0.0, 0.0]})
 
     def test_action_to_bridge_commands_basic(self) -> None:
         action = OpenPIActionChunk(walk_x=0.01, walk_y=0.0, walk_yaw=0.0, walk_speed=2, walk_height=0.036)

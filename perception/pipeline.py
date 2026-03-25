@@ -15,6 +15,7 @@ import numpy as np
 
 from perception.calibration import CameraIntrinsics
 from perception.config import PipelineConfig
+from perception.detectors.aruco_detector import ArucoDetector
 from perception.detectors.depth_estimator import DepthEstimator, DepthResult
 from perception.detectors.face_detector import FaceDetector
 from perception.detectors.face_recognizer import FaceRecognizer
@@ -79,6 +80,21 @@ class PerceptionPipeline:
         )
         self._depth_estimator = DepthEstimator() if self._config.detector.depth_enabled else None
 
+        # ArUco detector (for object markers in ego camera)
+        self._aruco_detector: ArucoDetector | None = None
+        if self._config.markers.object_markers:
+            try:
+                self._aruco_detector = ArucoDetector(
+                    intrinsics=self._intrinsics,
+                    marker_size_m=self._config.markers.marker_size_m,
+                )
+                logger.info(
+                    "ArUco detector enabled for %d object markers",
+                    len(self._config.markers.object_markers),
+                )
+            except Exception as e:
+                logger.warning("ArUco detector init failed: %s", e)
+
         # World model
         self._world = WorldState(
             intrinsics=self._intrinsics,
@@ -104,7 +120,7 @@ class PerceptionPipeline:
             # Also update entities batch for the scene_summary / Eliza path
             entities_batch = []
             for e in result.entities:
-                entities_batch.append({
+                entry = {
                     "entity_id": e.entity_id,
                     "label": e.label,
                     "confidence": e.confidence,
@@ -112,7 +128,10 @@ class PerceptionPipeline:
                     "y": float(e.position[1]),
                     "z": float(e.position[2]),
                     "source": e.source,
-                })
+                }
+                if e.marker_id >= 0:
+                    entry["marker_id"] = e.marker_id
+                entities_batch.append(entry)
             if entities_batch:
                 aggregator.update_entities_batch(entities_batch)
 
@@ -151,6 +170,17 @@ class PerceptionPipeline:
         skeletons = self._skeleton_estimator.estimate(frame)
         if skeletons:
             self._world.update_from_skeletons(skeletons, depth)
+
+        # ArUco marker detection (ego camera)
+        if self._aruco_detector is not None:
+            aruco_dets = self._aruco_detector.detect(frame)
+            if aruco_dets:
+                self._world.update_from_aruco(
+                    aruco_dets,
+                    object_markers=self._config.markers.object_markers,
+                    robot_marker_ids=self._config.markers.robot_marker_ids,
+                    robot_head_marker_id=self._config.markers.robot_head_marker_id,
+                )
 
         # Prune stale
         self._world.prune_stale()

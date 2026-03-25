@@ -15,6 +15,7 @@ import jax
 import jax.numpy as jp
 import numpy as np
 
+from training.schema.canonical import adapt_state_vector
 from training.mujoco.joystick import Joystick, default_config as joystick_default_config
 from training.mujoco.target import TargetReaching, default_config as target_default_config
 
@@ -33,9 +34,31 @@ def _load_checkpoint(checkpoint_dir: str):
     from brax.training.acme import running_statistics
 
     ckpt_path = Path(checkpoint_dir)
-    params = brax_model.load_params(str(ckpt_path / "final_params"))
 
-    with open(ckpt_path / "config.json") as f:
+    # Support both old (final_params) and new (orbax) checkpoint formats
+    final_params_path = ckpt_path / "final_params"
+    config_path = ckpt_path / "config.json"
+
+    # If this is an orbax checkpoint dir (inside brax_ckpt/NNNN/), walk up
+    # to find the config.json in the parent checkpoint root.
+    if not config_path.exists():
+        for parent in [ckpt_path.parent, ckpt_path.parent.parent]:
+            if (parent / "config.json").exists():
+                config_path = parent / "config.json"
+                break
+
+    if final_params_path.exists():
+        params = brax_model.load_params(str(final_params_path))
+    elif (ckpt_path / "_METADATA").exists() or (ckpt_path / "_CHECKPOINT_METADATA").exists():
+        # Orbax checkpoint — load via brax checkpoint utility
+        from brax.training import checkpoint as brax_checkpoint
+        params = brax_checkpoint.load(str(ckpt_path))
+    else:
+        raise FileNotFoundError(
+            f"No final_params or orbax checkpoint found in {ckpt_path}"
+        )
+
+    with open(config_path) as f:
         config = json.load(f)
 
     ppo_cfg = config["ppo"]
@@ -83,10 +106,10 @@ def _load_checkpoint(checkpoint_dir: str):
         from perception.entity_slots.slot_config import TOTAL_ENTITY_DIMS
         env_obs_size += TOTAL_ENTITY_DIMS
 
-    if "obs_size" in config:
-        obs_size = config["obs_size"]
-    elif ckpt_obs_size is not None and ckpt_obs_size != env_obs_size:
+    if ckpt_obs_size is not None:
         obs_size = ckpt_obs_size
+    elif "obs_size" in config:
+        obs_size = config["obs_size"]
     else:
         obs_size = env_obs_size
 
@@ -163,6 +186,7 @@ def run_episode(
     policy_fn: InferenceFn,
     max_steps: int = 1000,
     seed: int = 0,
+    obs_size: int | None = None,
 ) -> dict:
     """Run one episode in MJX and return metrics.
 
@@ -181,7 +205,14 @@ def run_episode(
     rewards = []
     for step in range(max_steps):
         obs_np = np.array(state.obs)
+        if obs_size is not None and obs_np.shape[0] != obs_size:
+            obs_np = np.array(adapt_state_vector(obs_np.tolist(), obs_size), dtype=np.float32)
         action_np = policy_fn(obs_np)
+        if action_np.shape[0] != env.action_size:
+            action_np = np.array(
+                adapt_state_vector(action_np.tolist(), env.action_size),
+                dtype=np.float32,
+            )
         action = jp.array(action_np)
         state = env.step(state, action)
         rewards.append(float(state.reward))
@@ -222,7 +253,13 @@ def main():
     print(f"Environment: {env_name}")
 
     for ep in range(args.episodes):
-        result = run_episode(env, policy_fn, max_steps=args.max_steps, seed=ep)
+        result = run_episode(
+            env,
+            policy_fn,
+            max_steps=args.max_steps,
+            seed=ep,
+            obs_size=config["obs_size"],
+        )
         print(f"Episode {ep+1}: reward={result['total_reward']:.2f}, "
               f"length={result['episode_length']}, "
               f"mean_reward={result['mean_reward']:.4f}")

@@ -33,6 +33,7 @@ from bridge.openpi_adapter import (
 from bridge.perception import PerceptionAggregator
 from bridge.protocol import utc_now_iso
 from training.interfaces import AinexPerceptionObservation, PolicyState, PolicyTransitionRecord
+from training.schema.canonical import AINEX_SCHEMA_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +135,11 @@ async def run_openpi_loop(
     max_steps: int = 500,
     confidence_threshold: float = 0.1,
     trace_path: str = "",
+    trace_id: str = "",
+    planner_step_id: str = "",
+    canonical_action: str = "",
+    target_entity_id: str = "",
+    target_label: str = "",
 ) -> list[PolicyTransitionRecord]:
     """Run the full OpenPI policy loop.
 
@@ -154,6 +160,7 @@ async def run_openpi_loop(
     perception = PerceptionAggregator()
     openpi = OpenPIInferenceClient(url=openpi_url, timeout=2.0)
     await openpi.connect()
+    active_trace_id = trace_id or str(uuid.uuid4())
 
     trace_file = None
     if trace_path:
@@ -169,6 +176,11 @@ async def run_openpi_loop(
             from_state=from_state,
             to_state=to_state,
             reason=reason,
+            trace_id=active_trace_id,
+            planner_step_id=planner_step_id,
+            canonical_action=canonical_action,
+            target_entity_id=target_entity_id,
+            target_label=target_label,
             task=task,
             step=step,
         )
@@ -186,6 +198,11 @@ async def run_openpi_loop(
             _record_transition(PolicyState.IDLE, PolicyState.STARTING, "loop_start")
             await ws.send(_command_envelope("policy.start", {
                 "task": task,
+                "trace_id": active_trace_id,
+                "planner_step_id": planner_step_id,
+                "canonical_action": canonical_action,
+                "target_entity_id": target_entity_id,
+                "target_label": target_label,
                 "hz": hz,
                 "max_steps": max_steps,
             }))
@@ -249,6 +266,7 @@ async def run_openpi_loop(
 
                 # Send policy tick
                 await ws.send(_command_envelope("policy.tick", {
+                    "trace_id": active_trace_id,
                     "action": {
                         "walk_x": action.walk_x,
                         "walk_y": action.walk_y,
@@ -274,11 +292,22 @@ async def run_openpi_loop(
                 if trace_file is not None:
                     trace_record = {
                         "step": step,
+                        "trace_id": active_trace_id,
+                        "planner_step_id": planner_step_id,
+                        "canonical_action": canonical_action,
+                        "target_entity_id": target_entity_id,
+                        "target_label": target_label,
+                        "schema_version": AINEX_SCHEMA_VERSION,
                         "timestamp": utc_now_iso(),
                         "observation_summary": {
                             "state_dim": len(obs.state),
                             "prompt": obs.prompt[:100],
                             "has_image": bool(obs.image),
+                        },
+                        "observation": {
+                            "state": list(obs.state),
+                            "prompt": obs.prompt,
+                            "schema_version": obs.schema_version,
                         },
                         "action_summary": {
                             "walk_x": action.walk_x,
@@ -304,6 +333,7 @@ async def run_openpi_loop(
                 _record_transition(PolicyState.RUNNING, PolicyState.STOPPING, "loop_complete")
 
             await ws.send(_command_envelope("policy.stop", {
+                "trace_id": active_trace_id,
                 "reason": "loop_complete" if step >= max_steps else "loop_exit",
             }))
             stop_resp = await _wait_for_response(ws)
@@ -339,6 +369,16 @@ def _parse_args() -> argparse.Namespace:
                         help="Minimum confidence to continue policy")
     parser.add_argument("--trace-path", type=str, default="",
                         help="JSONL path for per-tick trace logging")
+    parser.add_argument("--trace-id", type=str, default="",
+                        help="Optional external trace/session identifier")
+    parser.add_argument("--planner-step-id", type=str, default="",
+                        help="Planner step identifier for trace linking")
+    parser.add_argument("--canonical-action", type=str, default="",
+                        help="Canonical planner intent name")
+    parser.add_argument("--target-entity-id", type=str, default="",
+                        help="Target entity identifier from planner layer")
+    parser.add_argument("--target-label", type=str, default="",
+                        help="Human-readable target label")
     return parser.parse_args()
 
 
@@ -356,6 +396,11 @@ def main() -> None:
         max_steps=args.max_steps,
         confidence_threshold=args.confidence_threshold,
         trace_path=args.trace_path,
+        trace_id=args.trace_id,
+        planner_step_id=args.planner_step_id,
+        canonical_action=args.canonical_action,
+        target_entity_id=args.target_entity_id,
+        target_label=args.target_label,
     ))
     logger.info(f"Session complete: {len(transitions)} transitions")
     for t in transitions:

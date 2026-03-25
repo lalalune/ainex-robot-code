@@ -28,6 +28,11 @@ DEFAULT_ALIASES: dict[str, str] = {
     "greet": "wave",
     "bow down": "bow",
     "take a bow": "bow",
+    # Target-reaching aliases
+    "walk to target": "walk_to_target",
+    "go to": "walk_to_target",
+    "navigate to": "walk_to_target",
+    "approach": "walk_to_target",
 }
 
 

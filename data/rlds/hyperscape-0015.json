@@ -1,0 +1,415 @@
+{
+  "trajectory_id": "hyperscape-0015",
+  "agent_id": "eliza-agent-0",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_15_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              36.78237420589864,
+              -47.16245026653826,
+              6.792635857498439
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9989703691824862,
+            "distance_to_agent": 12.068638467648563,
+            "bearing_to_agent": -2.292958384561698,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_15_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              44.093388700730124,
+              -41.41882486654815,
+              4.661764295612669
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9490316930428363,
+            "distance_to_agent": 3.3881065587451893,
+            "bearing_to_agent": -1.953646381157982,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_15_2",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              38.74125499685211,
+              -29.322813278883686,
+              5.465856111056136
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7297498667125208,
+            "distance_to_agent": 11.572583177549594,
+            "bearing_to_agent": 2.2627830632498864,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          45.41395926226761,
+          6.267991790079877,
+          38.743868290932326
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_15_0",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.43068678785540004,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_15_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              36.78237420589864,
+              -47.16245026653826,
+              6.792635857498439
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9989703691824862,
+            "distance_to_agent": 12.068638467648563,
+            "bearing_to_agent": -2.292958384561698,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_15_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              44.093388700730124,
+              -41.41882486654815,
+              4.661764295612669
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9490316930428363,
+            "distance_to_agent": 3.3881065587451893,
+            "bearing_to_agent": -1.953646381157982,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_15_2",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              38.74125499685211,
+              -29.322813278883686,
+              5.465856111056136
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7297498667125208,
+            "distance_to_agent": 11.572583177549594,
+            "bearing_to_agent": 2.2627830632498864,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          45.41395926226761,
+          6.267991790079877,
+          38.743868290932326
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_15_0",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.07896835065999463,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_15_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              36.78237420589864,
+              -47.16245026653826,
+              6.792635857498439
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9989703691824862,
+            "distance_to_agent": 12.068638467648563,
+            "bearing_to_agent": -2.292958384561698,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_15_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              44.093388700730124,
+              -41.41882486654815,
+              4.661764295612669
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9490316930428363,
+            "distance_to_agent": 3.3881065587451893,
+            "bearing_to_agent": -1.953646381157982,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_15_2",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              38.74125499685211,
+              -29.322813278883686,
+              5.465856111056136
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7297498667125208,
+            "distance_to_agent": 11.572583177549594,
+            "bearing_to_agent": 2.2627830632498864,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          45.41395926226761,
+          6.267991790079877,
+          38.743868290932326
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_15_0",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.23218844429515229,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_15_0",
+            "entity_type": "door",
+            "label": "Castle Gate",
+            "position": [
+              36.78237420589864,
+              -47.16245026653826,
+              6.792635857498439
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9989703691824862,
+            "distance_to_agent": 12.068638467648563,
+            "bearing_to_agent": -2.292958384561698,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_15_1",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              44.093388700730124,
+              -41.41882486654815,
+              4.661764295612669
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9490316930428363,
+            "distance_to_agent": 3.3881065587451893,
+            "bearing_to_agent": -1.953646381157982,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_15_2",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              38.74125499685211,
+              -29.322813278883686,
+              5.465856111056136
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7297498667125208,
+            "distance_to_agent": 11.572583177549594,
+            "bearing_to_agent": 2.2627830632498864,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          45.41395926226761,
+          6.267991790079877,
+          38.743868290932326
+        ],
+        "task": "Collect the Castle Gate"
+      },
+      "action": {
+        "type": "interact",
+        "name": "talk_to",
+        "params": {
+          "target_entity": "entity_15_0",
+          "target_label": "Castle Gate"
+        }
+      },
+      "reward": 0.901209423598883,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.64305300640943,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

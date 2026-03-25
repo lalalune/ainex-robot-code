@@ -7,8 +7,11 @@ Supports both:
 1. Brax/JAX checkpoints (from training/mujoco/ pipeline) via BraxWalkSkill
 2. Walk-parameter or direct-joint deployment modes
 
-Direct joint mode outputs servo.set commands with per-joint radians→pulse
+Direct joint mode outputs servo.set commands with per-joint radians->pulse
 conversion, bypassing the Hiwonder walking engine entirely.
+
+When a wave_checkpoint is provided, the RL-trained RLWaveSkill replaces
+the scripted WaveSkill, enabling the trained wave-while-walking policy.
 """
 
 from __future__ import annotations
@@ -23,14 +26,17 @@ from training.rl.skills.base_skill import SkillParams, SkillStatus
 from training.rl.skills.registry import SkillRegistry
 from training.rl.skills.stand_skill import StandSkill
 from training.rl.skills.brax_walk_skill import BraxWalkSkill
+from training.rl.skills.brax_target_skill import BraxTargetSkill
 from training.rl.skills.turn_skill import TurnSkill
 from training.rl.skills.wave_skill import WaveSkill
 from training.rl.skills.bow_skill import BowSkill
+from training.rl.skills.rl_wave_skill import RLWaveSkill
 from training.rl.meta.text_encoder import TextEncoder
 from training.rl.meta.command_parser import CommandParser
 from training.rl.meta.meta_policy import MetaPolicy
 
 NUM_LEG_JOINTS = 12
+NUM_TOTAL_JOINTS = 24
 OBS_DIM = 48
 
 
@@ -39,6 +45,7 @@ class RLPolicyRuntime(PolicyRuntime):
 
     Integrates:
     - BraxWalkSkill (Brax/JAX checkpoint for direct joint control)
+    - RLWaveSkill (trained wave-while-walking, optional)
     - Command parser (text -> skill selection)
     - Skill registry (skill execution)
     - Meta-policy (learned skill selection, optional)
@@ -52,6 +59,8 @@ class RLPolicyRuntime(PolicyRuntime):
         self,
         locomotion_checkpoint: str | None = None,
         meta_checkpoint: str | None = None,
+        wave_checkpoint: str | None = None,
+        target_checkpoint: str | None = None,
         device: str = "cpu",
         use_meta_policy: bool = False,
         deploy_mode: str = "walk_params",  # "walk_params" or "direct_joint"
@@ -67,8 +76,23 @@ class RLPolicyRuntime(PolicyRuntime):
         self.registry.register(self._brax_walk)
 
         self.registry.register(TurnSkill(device=device))
-        self.registry.register(WaveSkill())
+
+        # Register wave skill: RL-trained if checkpoint provided, scripted otherwise.
+        if wave_checkpoint is not None:
+            rl_wave = RLWaveSkill(
+                walking_checkpoint=locomotion_checkpoint,
+                wave_checkpoint=wave_checkpoint,
+            )
+            self.registry.register(rl_wave)
+        else:
+            self.registry.register(WaveSkill())
+
         self.registry.register(BowSkill())
+
+        # Register target-reaching skill (uses dedicated checkpoint or
+        # falls back to BraxWalkSkill with velocity commands).
+        self._brax_target = BraxTargetSkill(checkpoint_path=target_checkpoint)
+        self.registry.register(self._brax_target)
 
         # Command parser.
         self._encoder = TextEncoder(prefer_transformer=False)
@@ -94,9 +118,11 @@ class RLPolicyRuntime(PolicyRuntime):
         # Observation buffer for RL.
         self._last_obs = np.zeros(OBS_DIM, dtype=np.float32)
         self._last_action = np.zeros(NUM_LEG_JOINTS, dtype=np.float32)
+        # Full 24-dim action buffer for skills that control all joints.
+        self._last_full_action = np.zeros(NUM_TOTAL_JOINTS, dtype=np.float32)
 
         # Joint position feedback buffer (for direct_joint mode)
-        self._joint_positions = np.zeros(NUM_LEG_JOINTS, dtype=np.float32)
+        self._joint_positions_feedback = np.zeros(NUM_TOTAL_JOINTS, dtype=np.float32)
 
     def infer(self, obs: RobotObservation, z: PolicyVector) -> PolicyOutput:
         """Run one inference step.
@@ -107,18 +133,47 @@ class RLPolicyRuntime(PolicyRuntime):
         """
         # Get action from active skill.
         if self._active_skill is not None:
-            if isinstance(self._active_skill, BraxWalkSkill):
+            if isinstance(self._active_skill, RLWaveSkill):
+                # Use structured telemetry for RLWaveSkill
+                action, status = self._active_skill.get_action_from_telemetry(
+                    imu_roll=obs.imu_roll,
+                    imu_pitch=obs.imu_pitch,
+                    joint_positions=self._joint_positions_feedback,
+                )
+                # Store full 24-dim action
+                self._last_full_action = action.copy()
+                self._last_action = action[:NUM_LEG_JOINTS]
+            elif isinstance(self._active_skill, BraxTargetSkill):
+                # Use structured telemetry for BraxTargetSkill
+                action, status = self._active_skill.get_action_from_telemetry(
+                    imu_roll=obs.imu_roll,
+                    imu_pitch=obs.imu_pitch,
+                    joint_positions=self._joint_positions_feedback[:NUM_LEG_JOINTS],
+                )
+                self._last_action = action[:NUM_LEG_JOINTS] if len(action) >= NUM_LEG_JOINTS else action
+                self._last_full_action = np.zeros(NUM_TOTAL_JOINTS, dtype=np.float32)
+                self._last_full_action[:NUM_LEG_JOINTS] = self._last_action
+            elif isinstance(self._active_skill, BraxWalkSkill):
                 # Use structured telemetry for BraxWalkSkill
                 action, status = self._active_skill.get_action_from_telemetry(
                     imu_roll=obs.imu_roll,
                     imu_pitch=obs.imu_pitch,
-                    joint_positions=self._joint_positions,
+                    joint_positions=self._joint_positions_feedback[:NUM_LEG_JOINTS],
                 )
+                self._last_action = action[:NUM_LEG_JOINTS] if len(action) >= NUM_LEG_JOINTS else action
+                # Pad to 24-dim with zeros for upper body
+                self._last_full_action = np.zeros(NUM_TOTAL_JOINTS, dtype=np.float32)
+                self._last_full_action[:NUM_LEG_JOINTS] = self._last_action
             else:
                 rl_obs = self._bridge_obs_to_rl(obs)
                 action, status = self._active_skill.get_action(rl_obs)
-
-            self._last_action = action[:NUM_LEG_JOINTS] if len(action) >= NUM_LEG_JOINTS else action
+                if len(action) >= NUM_TOTAL_JOINTS:
+                    self._last_full_action = action[:NUM_TOTAL_JOINTS].copy()
+                    self._last_action = action[:NUM_LEG_JOINTS]
+                else:
+                    self._last_action = action[:NUM_LEG_JOINTS] if len(action) >= NUM_LEG_JOINTS else action
+                    self._last_full_action = np.zeros(NUM_TOTAL_JOINTS, dtype=np.float32)
+                    self._last_full_action[:len(action)] = action
 
             if status == SkillStatus.COMPLETED:
                 self._switch_skill("stand")
@@ -131,8 +186,14 @@ class RLPolicyRuntime(PolicyRuntime):
         """Update joint position feedback from servo telemetry.
 
         Called by the bridge when servo position data is available.
+        Accepts 12-dim (legs only) or 24-dim (full body) feedback.
         """
-        self._joint_positions = joint_positions[:NUM_LEG_JOINTS].astype(np.float32)
+        if len(joint_positions) >= NUM_TOTAL_JOINTS:
+            self._joint_positions_feedback = joint_positions[:NUM_TOTAL_JOINTS].astype(np.float32)
+        else:
+            self._joint_positions_feedback[:NUM_LEG_JOINTS] = (
+                joint_positions[:NUM_LEG_JOINTS].astype(np.float32)
+            )
 
     def set_velocity_command(self, vx: float, vy: float, vyaw: float) -> None:
         """Set velocity command on the BraxWalkSkill."""
@@ -210,9 +271,10 @@ class RLPolicyRuntime(PolicyRuntime):
             )
         else:
             # Legacy walk_params mode.
-            walk_x = float(np.clip(np.mean(action[2:4]) * 0.02, -0.05, 0.05))
-            walk_y = float(np.clip(np.mean(action[0:2]) * 0.01, -0.03, 0.03))
-            walk_yaw = float(np.clip(np.mean(action[6:8]) * 5.0, -10.0, 10.0))
+            act = action[:NUM_LEG_JOINTS] if len(action) >= NUM_LEG_JOINTS else action
+            walk_x = float(np.clip(np.mean(act[2:4]) * 0.02, -0.05, 0.05)) if len(act) > 3 else 0.0
+            walk_y = float(np.clip(np.mean(act[0:2]) * 0.01, -0.03, 0.03)) if len(act) > 1 else 0.0
+            walk_yaw = float(np.clip(np.mean(act[6:8]) * 5.0, -10.0, 10.0)) if len(act) > 7 else 0.0
 
             action_name = ""
             if self._active_skill_name in ("wave", "bow"):
@@ -232,7 +294,10 @@ class RLPolicyRuntime(PolicyRuntime):
         """Current joint position targets (radians) from the active skill.
 
         Used in direct_joint mode to get servo.set targets.
+        Returns 24-dim for full-body skills (RLWaveSkill), 12-dim otherwise.
         """
+        if isinstance(self._active_skill, RLWaveSkill):
+            return self._last_full_action.copy()
         return self._last_action.copy()
 
     @property

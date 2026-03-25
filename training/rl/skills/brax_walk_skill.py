@@ -1,12 +1,12 @@
 """Walk skill backed by Brax/JAX checkpoint from MuJoCo Playground training.
 
-Loads the v12 (domain-randomized) walking policy via training.mujoco.inference,
-maintains a 3-frame observation history, and outputs 12-dim joint targets in
-radians. Designed for direct joint control mode (servo.set) rather than the
-legacy walk.set parameter mode.
+Loads the v13 (domain-randomized, flat-feet) walking policy via
+training.mujoco.inference, maintains a 3-frame observation history, and
+outputs 12-dim joint targets in radians. Designed for direct joint control
+mode (servo.set) rather than the legacy walk.set parameter mode.
 
 Usage:
-    skill = BraxWalkSkill(checkpoint_path="checkpoints/mujoco_locomotion_v12_dr")
+    skill = BraxWalkSkill(checkpoint_path="checkpoints/mujoco_locomotion_v13_flat_feet")
     skill.set_command(vx=0.5, vy=0.0, vyaw=0.0)
     action, status = skill.get_action(bridge_obs)
 """

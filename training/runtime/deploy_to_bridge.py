@@ -37,14 +37,24 @@ from typing import Any
 import numpy as np
 from websockets.asyncio.client import connect
 
-from bridge.openpi_adapter import (
+from training.schema.canonical import (
     AINEX_ACTION_DIM,
     AINEX_STATE_DIM,
-    _WALK_X_RANGE,
-    _WALK_Y_RANGE,
-    _clamp,
-    _denorm,
-    _norm,
+    BATTERY_MAX,
+    BATTERY_MIN,
+    HEAD_PAN_RANGE,
+    HEAD_TILT_RANGE,
+    IMU_RANGE,
+    WALK_HEIGHT_MAX,
+    WALK_HEIGHT_MIN,
+    WALK_SPEED_MAX,
+    WALK_SPEED_MIN,
+    WALK_X_RANGE,
+    WALK_Y_RANGE,
+    adapt_state_vector,
+    clamp_value,
+    denormalize_value,
+    normalize_value,
 )
 from bridge.protocol import utc_now_iso
 
@@ -78,6 +88,11 @@ async def deploy_policy(
     max_speed: int = 4,
     max_stride: float = 0.05,
     device: str = "cpu",
+    trace_id: str = "",
+    planner_step_id: str = "",
+    canonical_action: str = "",
+    target_entity_id: str = "",
+    target_label: str = "",
 ) -> dict[str, Any]:
     """Deploy a trained policy through the bridge.
 
@@ -98,12 +113,13 @@ async def deploy_policy(
     ckpt_path = Path(checkpoint_path)
     if (ckpt_path / "config.json").exists():
         from training.mujoco.inference import load_policy
-        inference_fn, _ = load_policy(str(ckpt_path))
+        inference_fn, config = load_policy(str(ckpt_path))
 
         class _BraxPolicy:
             def __init__(self, fn):
                 self._fn = fn
-                self.obs_dim = AINEX_STATE_DIM
+                self.obs_dim = int(config.get("obs_size", AINEX_STATE_DIM))
+                self.action_dim = int(config.get("action_size", AINEX_ACTION_DIM))
             def get_action(self, obs):
                 return self._fn(obs)
             def get_deterministic_action(self, obs_t):
@@ -113,10 +129,8 @@ async def deploy_policy(
                 return _torch.from_numpy(action_np).unsqueeze(0)
 
         policy = _BraxPolicy(inference_fn)
-        has_torch = True
     else:
         import torch
-        has_torch = True
         ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
         if hasattr(ckpt, "eval"):
             policy = ckpt
@@ -131,6 +145,11 @@ async def deploy_policy(
     # Detect policy input dimension
     policy_obs_dim = getattr(policy, "obs_dim", AINEX_STATE_DIM)
     logger.info(f"Policy obs_dim: {policy_obs_dim}")
+    policy_action_dim = int(getattr(policy, "action_dim", AINEX_ACTION_DIM))
+    if policy_action_dim != AINEX_ACTION_DIM:
+        raise RuntimeError(
+            f"Checkpoint is not bridge-compatible: expected {AINEX_ACTION_DIM} actions, got {policy_action_dim}"
+        )
 
     has_torch = False
     try:
@@ -141,7 +160,7 @@ async def deploy_policy(
 
     interval = 1.0 / hz
     step = 0
-    total_reward_proxy = 0.0  # rough proxy from telemetry
+    active_trace_id = trace_id or str(uuid.uuid4())
 
     async with connect(bridge_uri) as ws:
         # Receive hello
@@ -151,6 +170,11 @@ async def deploy_policy(
         # Start policy
         await ws.send(_command_envelope("policy.start", {
             "task": task,
+            "trace_id": active_trace_id,
+            "planner_step_id": planner_step_id,
+            "canonical_action": canonical_action,
+            "target_entity_id": target_entity_id,
+            "target_label": target_label,
             "hz": hz,
             "max_steps": max_steps,
         }))
@@ -200,22 +224,23 @@ async def deploy_policy(
                 action_np = np.clip(action_np, -1.0, 1.0)
 
                 # Denormalize and apply safety caps
-                walk_x = _clamp(
-                    _denorm(float(action_np[0]), -_WALK_X_RANGE, _WALK_X_RANGE),
+                walk_x = clamp_value(
+                    denormalize_value(float(action_np[0]), -WALK_X_RANGE, WALK_X_RANGE),
                     -max_stride, max_stride,
                 )
-                walk_y = _clamp(
-                    _denorm(float(action_np[1]), -_WALK_Y_RANGE, _WALK_Y_RANGE),
+                walk_y = clamp_value(
+                    denormalize_value(float(action_np[1]), -WALK_Y_RANGE, WALK_Y_RANGE),
                     -max_stride, max_stride,
                 )
-                walk_yaw = _denorm(float(action_np[2]), -10.0, 10.0)
-                walk_height = _denorm(float(action_np[3]), 0.015, 0.06)
-                walk_speed = min(max_speed, max(1, int(round(_denorm(float(action_np[4]), 1.0, 4.0)))))
-                head_pan = _denorm(float(action_np[5]), -1.5, 1.5)
-                head_tilt = _denorm(float(action_np[6]), -1.0, 1.0)
+                walk_yaw = denormalize_value(float(action_np[2]), -10.0, 10.0)
+                walk_height = denormalize_value(float(action_np[3]), WALK_HEIGHT_MIN, WALK_HEIGHT_MAX)
+                walk_speed = min(max_speed, max(1, int(round(denormalize_value(float(action_np[4]), float(WALK_SPEED_MIN), float(WALK_SPEED_MAX))))))
+                head_pan = denormalize_value(float(action_np[5]), -HEAD_PAN_RANGE, HEAD_PAN_RANGE)
+                head_tilt = denormalize_value(float(action_np[6]), -HEAD_TILT_RANGE, HEAD_TILT_RANGE)
 
                 # Send policy tick
                 await ws.send(_command_envelope("policy.tick", {
+                    "trace_id": active_trace_id,
                     "action": {
                         "walk_x": walk_x,
                         "walk_y": walk_y,
@@ -242,7 +267,12 @@ async def deploy_policy(
         except KeyboardInterrupt:
             logger.info("Interrupted")
         finally:
-            await ws.send(_command_envelope("policy.stop", {"reason": "deploy_complete"}))
+            await ws.send(
+                _command_envelope(
+                    "policy.stop",
+                    {"reason": "deploy_complete", "trace_id": active_trace_id},
+                )
+            )
             await _wait_for_response(ws)
             logger.info(f"Policy stopped after {step} steps")
 
@@ -254,34 +284,25 @@ def _telemetry_to_obs(telemetry: dict[str, Any], obs_dim: int = AINEX_STATE_DIM)
 
     Args:
         telemetry: Telemetry dict from bridge
-        obs_dim: Expected observation dimension (11 for proprio-only, 16 for target-aware)
+        obs_dim: Expected observation dimension for the target policy
     """
-    obs = np.zeros(obs_dim, dtype=np.float32)
+    canonical = [0.0] * AINEX_STATE_DIM
     if not telemetry:
-        return obs
+        return np.array(adapt_state_vector(canonical, obs_dim), dtype=np.float32)
 
-    obs[0] = _norm(float(telemetry.get("walk_x", 0.0)), -0.05, 0.05)
-    obs[1] = _norm(float(telemetry.get("walk_y", 0.0)), -0.05, 0.05)
-    obs[2] = _norm(float(telemetry.get("walk_yaw", 0.0)), -10.0, 10.0)
-    obs[3] = _norm(float(telemetry.get("walk_height", 0.036)), 0.015, 0.06)
-    obs[4] = _norm(float(telemetry.get("walk_speed", 2)), 1.0, 4.0)
-    obs[5] = _norm(float(telemetry.get("head_pan", 0.0)), -1.5, 1.5)
-    obs[6] = _norm(float(telemetry.get("head_tilt", 0.0)), -1.0, 1.0)
-    obs[7] = _norm(float(telemetry.get("imu_roll", 0.0)), -3.14159, 3.14159)
-    obs[8] = _norm(float(telemetry.get("imu_pitch", 0.0)), -3.14159, 3.14159)
-    obs[9] = 1.0 if telemetry.get("is_walking", False) else -1.0
-    obs[10] = _norm(float(telemetry.get("battery_mv", 12000)), 10400.0, 12600.0)
+    canonical[0] = normalize_value(float(telemetry.get("walk_x", 0.0)), -WALK_X_RANGE, WALK_X_RANGE)
+    canonical[1] = normalize_value(float(telemetry.get("walk_y", 0.0)), -WALK_Y_RANGE, WALK_Y_RANGE)
+    canonical[2] = normalize_value(float(telemetry.get("walk_yaw", 0.0)), -10.0, 10.0)
+    canonical[3] = normalize_value(float(telemetry.get("walk_height", 0.036)), WALK_HEIGHT_MIN, WALK_HEIGHT_MAX)
+    canonical[4] = normalize_value(float(telemetry.get("walk_speed", 2)), float(WALK_SPEED_MIN), float(WALK_SPEED_MAX))
+    canonical[5] = normalize_value(float(telemetry.get("head_pan", 0.0)), -HEAD_PAN_RANGE, HEAD_PAN_RANGE)
+    canonical[6] = normalize_value(float(telemetry.get("head_tilt", 0.0)), -HEAD_TILT_RANGE, HEAD_TILT_RANGE)
+    canonical[7] = normalize_value(float(telemetry.get("imu_roll", 0.0)), -IMU_RANGE, IMU_RANGE)
+    canonical[8] = normalize_value(float(telemetry.get("imu_pitch", 0.0)), -IMU_RANGE, IMU_RANGE)
+    canonical[9] = 1.0 if telemetry.get("is_walking", False) else -1.0
+    canonical[10] = normalize_value(float(telemetry.get("battery_mv", 12000)), float(BATTERY_MIN), float(BATTERY_MAX))
 
-    # Target observations (dims 11-15) from perception data if available
-    if obs_dim > AINEX_STATE_DIM:
-        target = telemetry.get("target", {})
-        obs[11] = _norm(float(target.get("distance", 2.0)), 0.0, 5.0)
-        obs[12] = _norm(float(target.get("angle", 0.0)), -3.14159, 3.14159)
-        obs[13] = 1.0 if target.get("visible", False) else -1.0
-        obs[14] = _norm(float(target.get("pixel_x", 0.5)), 0.0, 1.0)
-        obs[15] = _norm(float(target.get("pixel_y", 0.5)), 0.0, 1.0)
-
-    return obs
+    return np.array(adapt_state_vector(canonical, obs_dim), dtype=np.float32)
 
 
 # ---------------------------------------------------------------------------
@@ -298,6 +319,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--max-speed", type=int, default=4)
     parser.add_argument("--max-stride", type=float, default=0.05)
     parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--trace-id", type=str, default="")
+    parser.add_argument("--planner-step-id", type=str, default="")
+    parser.add_argument("--canonical-action", type=str, default="")
+    parser.add_argument("--target-entity-id", type=str, default="")
+    parser.add_argument("--target-label", type=str, default="")
     return parser.parse_args()
 
 
@@ -316,6 +342,11 @@ def main() -> None:
         max_speed=args.max_speed,
         max_stride=args.max_stride,
         device=args.device,
+        trace_id=args.trace_id,
+        planner_step_id=args.planner_step_id,
+        canonical_action=args.canonical_action,
+        target_entity_id=args.target_entity_id,
+        target_label=args.target_label,
     ))
     logger.info(f"Deployment result: {result}")
 

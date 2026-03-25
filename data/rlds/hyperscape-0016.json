@@ -1,0 +1,569 @@
+{
+  "trajectory_id": "hyperscape-0016",
+  "agent_id": "eliza-agent-1",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_16_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              13.775465284564396,
+              18.291594342595737,
+              4.85604889608082
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.997076817450759,
+            "distance_to_agent": 5.472278609260767,
+            "bearing_to_agent": 0.2812779415108313,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_16_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              9.470143203204204,
+              21.871718127941293,
+              5.888508372649241
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.603239186304596,
+            "distance_to_agent": 9.874313817203689,
+            "bearing_to_agent": -0.2106600871869957,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_16_2",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              27.243690320387113,
+              13.131054952704872,
+              5.549046743213745
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9611739673799102,
+            "distance_to_agent": 10.616824218633367,
+            "bearing_to_agent": 2.4643682242456055,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_16_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              21.172651209298223,
+              17.0554753860508,
+              3.9776419500191307
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8483564652521216,
+            "distance_to_agent": 3.5213476071619403,
+            "bearing_to_agent": 2.2394438910924173,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_16_4",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              21.59631331975087,
+              16.86102076835818,
+              6.181972942969736
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7235731535810545,
+            "distance_to_agent": 4.212957718663981,
+            "bearing_to_agent": 2.294336126283899,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_16_5",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              9.698641870925552,
+              27.15959681775893,
+              4.0278030587917435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9638511249277307,
+            "distance_to_agent": 11.905232741939344,
+            "bearing_to_agent": -0.664606535503494,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          19.031351246012903,
+          4.568358126677865,
+          -19.78783294616864
+        ],
+        "task": "Talk to the Town Guard"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_16_2",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.13215979774678355,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_16_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              13.775465284564396,
+              18.291594342595737,
+              4.85604889608082
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.997076817450759,
+            "distance_to_agent": 5.472278609260767,
+            "bearing_to_agent": 0.2812779415108313,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_16_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              9.470143203204204,
+              21.871718127941293,
+              5.888508372649241
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.603239186304596,
+            "distance_to_agent": 9.874313817203689,
+            "bearing_to_agent": -0.2106600871869957,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_16_2",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              27.243690320387113,
+              13.131054952704872,
+              5.549046743213745
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9611739673799102,
+            "distance_to_agent": 10.616824218633367,
+            "bearing_to_agent": 2.4643682242456055,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_16_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              21.172651209298223,
+              17.0554753860508,
+              3.9776419500191307
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8483564652521216,
+            "distance_to_agent": 3.5213476071619403,
+            "bearing_to_agent": 2.2394438910924173,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_16_4",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              21.59631331975087,
+              16.86102076835818,
+              6.181972942969736
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7235731535810545,
+            "distance_to_agent": 4.212957718663981,
+            "bearing_to_agent": 2.294336126283899,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_16_5",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              9.698641870925552,
+              27.15959681775893,
+              4.0278030587917435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9638511249277307,
+            "distance_to_agent": 11.905232741939344,
+            "bearing_to_agent": -0.664606535503494,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          19.031351246012903,
+          4.568358126677865,
+          -19.78783294616864
+        ],
+        "task": "Talk to the Town Guard"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_16_2",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.9140489535383121,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_16_0",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              13.775465284564396,
+              18.291594342595737,
+              4.85604889608082
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.997076817450759,
+            "distance_to_agent": 5.472278609260767,
+            "bearing_to_agent": 0.2812779415108313,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_16_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              9.470143203204204,
+              21.871718127941293,
+              5.888508372649241
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.603239186304596,
+            "distance_to_agent": 9.874313817203689,
+            "bearing_to_agent": -0.2106600871869957,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_16_2",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              27.243690320387113,
+              13.131054952704872,
+              5.549046743213745
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9611739673799102,
+            "distance_to_agent": 10.616824218633367,
+            "bearing_to_agent": 2.4643682242456055,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_16_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              21.172651209298223,
+              17.0554753860508,
+              3.9776419500191307
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8483564652521216,
+            "distance_to_agent": 3.5213476071619403,
+            "bearing_to_agent": 2.2394438910924173,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_16_4",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              21.59631331975087,
+              16.86102076835818,
+              6.181972942969736
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7235731535810545,
+            "distance_to_agent": 4.212957718663981,
+            "bearing_to_agent": 2.294336126283899,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_16_5",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              9.698641870925552,
+              27.15959681775893,
+              4.0278030587917435
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9638511249277307,
+            "distance_to_agent": 11.905232741939344,
+            "bearing_to_agent": -0.664606535503494,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          19.031351246012903,
+          4.568358126677865,
+          -19.78783294616864
+        ],
+        "task": "Talk to the Town Guard"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_16_2",
+          "target_label": "Town Guard"
+        }
+      },
+      "reward": 0.9628932928688776,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.0091020441539733,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

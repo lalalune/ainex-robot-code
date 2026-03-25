@@ -1,0 +1,926 @@
+{
+  "trajectory_id": "hyperscape-0009",
+  "agent_id": "eliza-agent-4",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_9_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              48.029913370579436,
+              -11.50310196200222,
+              4.645843862332837
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7309410667766937,
+            "distance_to_agent": 8.857917754355663,
+            "bearing_to_agent": -3.090015300665745,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_9_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              37.229802356303004,
+              -13.88249999489885,
+              6.963846587855217
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9008039294219139,
+            "distance_to_agent": 4.350746394011286,
+            "bearing_to_agent": -1.1368870860525018,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              35.73831689432445,
+              -6.68764142461634,
+              4.2465526873256785
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8157676191690135,
+            "distance_to_agent": 10.942648941832008,
+            "bearing_to_agent": -1.6223316162510066,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              35.1773295730718,
+              -25.44568773914349,
+              4.193401238090186
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6161032550163066,
+            "distance_to_agent": 10.81863467909487,
+            "bearing_to_agent": 0.5006608911509871,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_9_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              49.68512091299661,
+              -6.707576030022771,
+              4.71637048572924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6609529383139161,
+            "distance_to_agent": 13.203051131521065,
+            "bearing_to_agent": -2.851369556496556,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_9_5",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              40.1641074775994,
+              -25.25511612794916,
+              4.3764855407163346
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7860135933740883,
+            "distance_to_agent": 9.102377456763548,
+            "bearing_to_agent": 0.9843598339193014,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          40.692886258676836,
+          5.918927756279109,
+          16.299975683616125
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_9_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.6072474938909317,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_9_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              48.029913370579436,
+              -11.50310196200222,
+              4.645843862332837
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7309410667766937,
+            "distance_to_agent": 8.857917754355663,
+            "bearing_to_agent": -3.090015300665745,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_9_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              37.229802356303004,
+              -13.88249999489885,
+              6.963846587855217
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9008039294219139,
+            "distance_to_agent": 4.350746394011286,
+            "bearing_to_agent": -1.1368870860525018,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              35.73831689432445,
+              -6.68764142461634,
+              4.2465526873256785
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8157676191690135,
+            "distance_to_agent": 10.942648941832008,
+            "bearing_to_agent": -1.6223316162510066,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              35.1773295730718,
+              -25.44568773914349,
+              4.193401238090186
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6161032550163066,
+            "distance_to_agent": 10.81863467909487,
+            "bearing_to_agent": 0.5006608911509871,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_9_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              49.68512091299661,
+              -6.707576030022771,
+              4.71637048572924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6609529383139161,
+            "distance_to_agent": 13.203051131521065,
+            "bearing_to_agent": -2.851369556496556,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_9_5",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              40.1641074775994,
+              -25.25511612794916,
+              4.3764855407163346
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7860135933740883,
+            "distance_to_agent": 9.102377456763548,
+            "bearing_to_agent": 0.9843598339193014,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          40.692886258676836,
+          5.918927756279109,
+          16.299975683616125
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_9_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.5786847325092436,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_9_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              48.029913370579436,
+              -11.50310196200222,
+              4.645843862332837
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7309410667766937,
+            "distance_to_agent": 8.857917754355663,
+            "bearing_to_agent": -3.090015300665745,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_9_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              37.229802356303004,
+              -13.88249999489885,
+              6.963846587855217
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9008039294219139,
+            "distance_to_agent": 4.350746394011286,
+            "bearing_to_agent": -1.1368870860525018,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              35.73831689432445,
+              -6.68764142461634,
+              4.2465526873256785
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8157676191690135,
+            "distance_to_agent": 10.942648941832008,
+            "bearing_to_agent": -1.6223316162510066,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              35.1773295730718,
+              -25.44568773914349,
+              4.193401238090186
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6161032550163066,
+            "distance_to_agent": 10.81863467909487,
+            "bearing_to_agent": 0.5006608911509871,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_9_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              49.68512091299661,
+              -6.707576030022771,
+              4.71637048572924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6609529383139161,
+            "distance_to_agent": 13.203051131521065,
+            "bearing_to_agent": -2.851369556496556,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_9_5",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              40.1641074775994,
+              -25.25511612794916,
+              4.3764855407163346
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7860135933740883,
+            "distance_to_agent": 9.102377456763548,
+            "bearing_to_agent": 0.9843598339193014,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          40.692886258676836,
+          5.918927756279109,
+          16.299975683616125
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_9_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.7150147050494684,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_9_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              48.029913370579436,
+              -11.50310196200222,
+              4.645843862332837
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7309410667766937,
+            "distance_to_agent": 8.857917754355663,
+            "bearing_to_agent": -3.090015300665745,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_9_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              37.229802356303004,
+              -13.88249999489885,
+              6.963846587855217
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9008039294219139,
+            "distance_to_agent": 4.350746394011286,
+            "bearing_to_agent": -1.1368870860525018,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              35.73831689432445,
+              -6.68764142461634,
+              4.2465526873256785
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8157676191690135,
+            "distance_to_agent": 10.942648941832008,
+            "bearing_to_agent": -1.6223316162510066,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              35.1773295730718,
+              -25.44568773914349,
+              4.193401238090186
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6161032550163066,
+            "distance_to_agent": 10.81863467909487,
+            "bearing_to_agent": 0.5006608911509871,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_9_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              49.68512091299661,
+              -6.707576030022771,
+              4.71637048572924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6609529383139161,
+            "distance_to_agent": 13.203051131521065,
+            "bearing_to_agent": -2.851369556496556,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_9_5",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              40.1641074775994,
+              -25.25511612794916,
+              4.3764855407163346
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7860135933740883,
+            "distance_to_agent": 9.102377456763548,
+            "bearing_to_agent": 0.9843598339193014,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          40.692886258676836,
+          5.918927756279109,
+          16.299975683616125
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_9_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.301582685487667,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_9_0",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              48.029913370579436,
+              -11.50310196200222,
+              4.645843862332837
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7309410667766937,
+            "distance_to_agent": 8.857917754355663,
+            "bearing_to_agent": -3.090015300665745,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_9_1",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              37.229802356303004,
+              -13.88249999489885,
+              6.963846587855217
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9008039294219139,
+            "distance_to_agent": 4.350746394011286,
+            "bearing_to_agent": -1.1368870860525018,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_2",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              35.73831689432445,
+              -6.68764142461634,
+              4.2465526873256785
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8157676191690135,
+            "distance_to_agent": 10.942648941832008,
+            "bearing_to_agent": -1.6223316162510066,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_9_3",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              35.1773295730718,
+              -25.44568773914349,
+              4.193401238090186
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6161032550163066,
+            "distance_to_agent": 10.81863467909487,
+            "bearing_to_agent": 0.5006608911509871,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_9_4",
+            "entity_type": "person",
+            "label": "Town Guard",
+            "position": [
+              49.68512091299661,
+              -6.707576030022771,
+              4.71637048572924
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6609529383139161,
+            "distance_to_agent": 13.203051131521065,
+            "bearing_to_agent": -2.851369556496556,
+            "source": "game",
+            "properties": {
+              "level": 50,
+              "health": 200
+            }
+          },
+          {
+            "entity_id": "entity_9_5",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              40.1641074775994,
+              -25.25511612794916,
+              4.3764855407163346
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7860135933740883,
+            "distance_to_agent": 9.102377456763548,
+            "bearing_to_agent": 0.9843598339193014,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          }
+        ],
+        "agent_position": [
+          40.692886258676836,
+          5.918927756279109,
+          16.299975683616125
+        ],
+        "task": "Collect the Oak Tree"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_9_2",
+          "target_label": "Oak Tree"
+        }
+      },
+      "reward": 0.5327452453105003,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.735274862247811,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

@@ -62,7 +62,7 @@ class DeployWalking:
 
     def __init__(
         self,
-        checkpoint: str = "checkpoints/mujoco_locomotion_v12_dr",
+        checkpoint: str = "checkpoints/mujoco_locomotion_v13_flat_feet",
         hz: float = 50.0,
         duration: float = 30.0,
         ramp_seconds: float = 3.0,
@@ -391,7 +391,7 @@ def main():
     )
     parser.add_argument(
         "--checkpoint", type=str,
-        default="checkpoints/mujoco_locomotion_v12_dr",
+        default="checkpoints/mujoco_locomotion_v13_flat_feet",
         help="Path to Brax checkpoint directory",
     )
     parser.add_argument(

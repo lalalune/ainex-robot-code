@@ -50,11 +50,65 @@ class EntitySlotConfig:
 
 
 @dataclass
+class ExternalCameraConfig:
+    """External / room camera configuration."""
+    enabled: bool = False
+    device: int = 1  # second USB camera
+    width: int = 1280
+    height: int = 720
+    fps: int = 30
+    fx: float = 800.0
+    fy: float = 800.0
+    cx: float = 640.0
+    cy: float = 360.0
+    dist_coeffs: tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0)
+    extrinsics_file: str = ""  # path to calibrated extrinsics YAML
+
+
+@dataclass
+class MarkerConfig:
+    """ArUco marker configuration for multi-camera localization.
+
+    Default marker assignment (DICT_6X6_250):
+        ID 0  — robot body (back/chest)
+        ID 1  — robot head (forehead, tracks head pose)
+        ID 2  — ground corner: origin       (0, 0, 0)
+        ID 3  — ground corner: +X           (1, 0, 0)
+        ID 4  — ground corner: +X +Y        (1, 1, 0)
+        ID 5  — ground corner: +Y           (0, 1, 0)
+        ID 6  — object: "red_ball"
+        ID 7  — object: "blue_cube"
+        ID 8  — object: "green_cylinder"
+    """
+    dictionary: str = "DICT_6X6_250"
+    marker_size_m: float = 0.0508  # 2 inches (matches printables/aruco)
+    # Markers fixed in the world (ground plane): id → [x, y, z] meters
+    world_markers: dict[int, list[float]] = field(default_factory=lambda: {
+        2: [0.0, 0.0, 0.0],
+        3: [1.0, 0.0, 0.0],
+        4: [1.0, 1.0, 0.0],
+        5: [0.0, 1.0, 0.0],
+    })
+    # Markers attached to the robot (for external pose estimation)
+    robot_marker_ids: list[int] = field(default_factory=lambda: [0])
+    # Marker on the robot head (tracks head pan/tilt independently)
+    robot_head_marker_id: int = 1
+    # Markers attached to movable objects: id → label
+    object_markers: dict[int, str] = field(default_factory=lambda: {
+        6: "red_ball",
+        7: "blue_cube",
+        8: "green_cylinder",
+    })
+
+
+@dataclass
 class PipelineConfig:
     """Full pipeline configuration."""
     camera: CameraConfig = field(default_factory=CameraConfig)
     detector: DetectorConfig = field(default_factory=DetectorConfig)
     entity_slots: EntitySlotConfig = field(default_factory=EntitySlotConfig)
+    external_camera: ExternalCameraConfig = field(default_factory=ExternalCameraConfig)
+    markers: MarkerConfig = field(default_factory=MarkerConfig)
     stale_timeout_sec: float = 5.0
     data_dir: Path = field(default_factory=lambda: _ROOT / "data")
 
@@ -96,6 +150,29 @@ def load_config(path: Path | None = None) -> PipelineConfig:
         cfg.entity_slots = EntitySlotConfig(**{
             k: es[k] for k in es if k in valid_fields
         })
+    if "external_camera" in raw:
+        ec = raw["external_camera"]
+        valid_fields = {f.name for f in dataclasses.fields(ExternalCameraConfig)}
+        cfg.external_camera = ExternalCameraConfig(**{
+            k: ec[k] for k in ec if k in valid_fields
+        })
+    if "markers" in raw:
+        mk = raw["markers"]
+        defaults = MarkerConfig()
+        cfg.markers = MarkerConfig(
+            dictionary=mk.get("dictionary", defaults.dictionary),
+            marker_size_m=float(mk.get("marker_size_m", defaults.marker_size_m)),
+            world_markers={
+                int(k): [float(x) for x in v]
+                for k, v in mk.get("world_markers", {}).items()
+            } if "world_markers" in mk else defaults.world_markers,
+            robot_marker_ids=[int(x) for x in mk.get("robot_marker_ids", defaults.robot_marker_ids)],
+            robot_head_marker_id=int(mk.get("robot_head_marker_id", defaults.robot_head_marker_id)),
+            object_markers={
+                int(k): str(v)
+                for k, v in mk.get("object_markers", {}).items()
+            } if "object_markers" in mk else defaults.object_markers,
+        )
     if "stale_timeout_sec" in raw:
         cfg.stale_timeout_sec = float(raw["stale_timeout_sec"])
     return cfg

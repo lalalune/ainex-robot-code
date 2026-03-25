@@ -56,16 +56,39 @@ class PolicyLifecycleIntegrationTest(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(hello["event"], "session.hello")
 
                 # Start policy
-                await ws.send(_cmd("policy.start", {"task": "test_walk"}))
+                await ws.send(_cmd("policy.start", {
+                    "task": "test_walk",
+                    "trace_id": "trace-123",
+                    "planner_step_id": "planner-step-9",
+                    "canonical_action": "NAVIGATE_TO_ENTITY",
+                    "target_entity_id": "red-ball-01",
+                    "target_label": "Red Ball",
+                }))
                 resp = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
                 # May get events before response, collect until we get a response
                 messages = [resp]
+                policy_events: list[dict] = []
                 while resp.get("type") != "response":
+                    if resp.get("event") == "policy.status":
+                        policy_events.append(resp)
                     resp = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
                     messages.append(resp)
 
                 self.assertTrue(resp["ok"])
                 self.assertIn("policy started", resp["message"])
+                self.assertEqual(resp["data"]["trace_id"], "trace-123")
+                self.assertEqual(resp["data"]["planner_step_id"], "planner-step-9")
+                self.assertEqual(resp["data"]["canonical_action"], "NAVIGATE_TO_ENTITY")
+                self.assertEqual(resp["data"]["target_entity_id"], "red-ball-01")
+                self.assertEqual(resp["data"]["target_label"], "Red Ball")
+                self.assertTrue(
+                    any(
+                        event.get("data", {}).get("trace_id") == "trace-123"
+                        and event.get("data", {}).get("planner_step_id")
+                        == "planner-step-9"
+                        for event in policy_events
+                    )
+                )
 
                 # Check policy status
                 await ws.send(_cmd("policy.status"))
@@ -73,6 +96,8 @@ class PolicyLifecycleIntegrationTest(unittest.IsolatedAsyncioTestCase):
                 while resp.get("type") != "response":
                     resp = json.loads(await asyncio.wait_for(ws.recv(), timeout=2))
                 self.assertTrue(resp["data"]["active"])
+                self.assertEqual(resp["data"]["trace_id"], "trace-123")
+                self.assertEqual(resp["data"]["planner_step_id"], "planner-step-9")
 
                 # Send a policy tick
                 await ws.send(_cmd("policy.tick", {

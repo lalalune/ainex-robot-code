@@ -37,6 +37,11 @@ class PolicyLoopState:
     """Tracks the state of an active policy loop within a session."""
     active: bool = False
     task: str = ""
+    trace_id: str = ""
+    planner_step_id: str = ""
+    canonical_action: str = ""
+    target_entity_id: str = ""
+    target_label: str = ""
     hz: float = 10.0
     max_steps: int = 10000
     step: int = 0
@@ -224,6 +229,11 @@ async def _handle_policy_command(
             )
         policy_state.active = True
         policy_state.task = str(command.payload.get("task", ""))
+        policy_state.trace_id = str(command.payload.get("trace_id", ""))
+        policy_state.planner_step_id = str(command.payload.get("planner_step_id", ""))
+        policy_state.canonical_action = str(command.payload.get("canonical_action", ""))
+        policy_state.target_entity_id = str(command.payload.get("target_entity_id", ""))
+        policy_state.target_label = str(command.payload.get("target_label", ""))
         policy_state.hz = float(command.payload.get("hz", 10.0))
         policy_state.max_steps = int(command.payload.get("max_steps", 10000))
         policy_state.step = 0
@@ -245,7 +255,16 @@ async def _handle_policy_command(
                 event="policy.status",
                 timestamp=utc_now_iso(),
                 backend=backend.backend_name,
-                data={"state": "running", "task": policy_state.task, "step": 0},
+                data={
+                    "state": "running",
+                    "task": policy_state.task,
+                    "step": 0,
+                    "trace_id": policy_state.trace_id,
+                    "planner_step_id": policy_state.planner_step_id,
+                    "canonical_action": policy_state.canonical_action,
+                    "target_entity_id": policy_state.target_entity_id,
+                    "target_label": policy_state.target_label,
+                },
             ).to_json(),
         )
 
@@ -254,6 +273,11 @@ async def _handle_policy_command(
                 "kind": "policy_start",
                 "timestamp": utc_now_iso(),
                 "task": policy_state.task,
+                "trace_id": policy_state.trace_id,
+                "planner_step_id": policy_state.planner_step_id,
+                "canonical_action": policy_state.canonical_action,
+                "target_entity_id": policy_state.target_entity_id,
+                "target_label": policy_state.target_label,
                 "hz": policy_state.hz,
                 "max_steps": policy_state.max_steps,
             })
@@ -264,7 +288,15 @@ async def _handle_policy_command(
             ok=True,
             backend=backend.backend_name,
             message="policy started",
-            data={"task": policy_state.task, "hz": policy_state.hz},
+            data={
+                "task": policy_state.task,
+                "trace_id": policy_state.trace_id,
+                "planner_step_id": policy_state.planner_step_id,
+                "canonical_action": policy_state.canonical_action,
+                "target_entity_id": policy_state.target_entity_id,
+                "target_label": policy_state.target_label,
+                "hz": policy_state.hz,
+            },
         )
 
     if command.command == "policy.stop":
@@ -292,6 +324,11 @@ async def _handle_policy_command(
                     "state": "idle",
                     "reason": reason,
                     "steps_completed": policy_state.step,
+                    "trace_id": policy_state.trace_id,
+                    "planner_step_id": policy_state.planner_step_id,
+                    "canonical_action": policy_state.canonical_action,
+                    "target_entity_id": policy_state.target_entity_id,
+                    "target_label": policy_state.target_label,
                 },
             ).to_json(),
         )
@@ -300,6 +337,11 @@ async def _handle_policy_command(
             trace_logger.write({
                 "kind": "policy_stop",
                 "timestamp": utc_now_iso(),
+                "trace_id": policy_state.trace_id,
+                "planner_step_id": policy_state.planner_step_id,
+                "canonical_action": policy_state.canonical_action,
+                "target_entity_id": policy_state.target_entity_id,
+                "target_label": policy_state.target_label,
                 "reason": reason,
                 "steps_completed": policy_state.step,
             })
@@ -310,7 +352,15 @@ async def _handle_policy_command(
             ok=True,
             backend=backend.backend_name,
             message="policy stopped" if was_active else "policy was not active",
-            data={"reason": reason, "steps_completed": policy_state.step},
+            data={
+                "reason": reason,
+                "steps_completed": policy_state.step,
+                "trace_id": policy_state.trace_id,
+                "planner_step_id": policy_state.planner_step_id,
+                "canonical_action": policy_state.canonical_action,
+                "target_entity_id": policy_state.target_entity_id,
+                "target_label": policy_state.target_label,
+            },
         )
 
     if command.command == "policy.tick":
@@ -342,6 +392,11 @@ async def _handle_policy_command(
                         "state": "idle",
                         "reason": "max_steps_reached",
                         "steps_completed": policy_state.step,
+                        "trace_id": policy_state.trace_id,
+                        "planner_step_id": policy_state.planner_step_id,
+                        "canonical_action": policy_state.canonical_action,
+                        "target_entity_id": policy_state.target_entity_id,
+                        "target_label": policy_state.target_label,
                     },
                 ).to_json(),
             )
@@ -453,6 +508,7 @@ async def _handle_policy_command(
                 trace_logger.write({
                     "kind": "policy_tick_clamped",
                     "timestamp": utc_now_iso(),
+                    "trace_id": policy_state.trace_id,
                     "step": policy_state.step,
                     "reason": guard.reason,
                 })
@@ -466,6 +522,11 @@ async def _handle_policy_command(
                     backend=backend.backend_name,
                     data={
                         "step": policy_state.step,
+                    "trace_id": policy_state.trace_id,
+                    "planner_step_id": policy_state.planner_step_id,
+                    "canonical_action": policy_state.canonical_action,
+                    "target_entity_id": policy_state.target_entity_id,
+                    "target_label": policy_state.target_label,
                         "clamped": clamped,
                         "guard_reason": guard.reason,
                     },
@@ -476,6 +537,11 @@ async def _handle_policy_command(
                 trace_logger.write({
                     "kind": "policy_tick",
                     "timestamp": utc_now_iso(),
+                    "trace_id": policy_state.trace_id,
+                    "planner_step_id": policy_state.planner_step_id,
+                    "canonical_action": policy_state.canonical_action,
+                    "target_entity_id": policy_state.target_entity_id,
+                    "target_label": policy_state.target_label,
                     "step": policy_state.step,
                     "action": safe_to_record(action_payload),
                     "clamped": safe_to_record(clamped),
@@ -490,6 +556,11 @@ async def _handle_policy_command(
                 message="policy tick applied",
                 data={
                     "step": policy_state.step,
+                    "trace_id": policy_state.trace_id,
+                    "planner_step_id": policy_state.planner_step_id,
+                    "canonical_action": policy_state.canonical_action,
+                    "target_entity_id": policy_state.target_entity_id,
+                    "target_label": policy_state.target_label,
                     "clamped": clamped,
                     **response.data,
                 },
@@ -514,6 +585,11 @@ async def _handle_policy_command(
             data={
                 "active": policy_state.active,
                 "task": policy_state.task,
+                "trace_id": policy_state.trace_id,
+                "planner_step_id": policy_state.planner_step_id,
+                "canonical_action": policy_state.canonical_action,
+                "target_entity_id": policy_state.target_entity_id,
+                "target_label": policy_state.target_label,
                 "step": policy_state.step,
                 "hz": policy_state.hz,
             },
@@ -573,6 +649,11 @@ async def _policy_heartbeat_pump(
                         "state": "idle",
                         "reason": "heartbeat_timeout",
                         "steps_completed": policy_state.step,
+                        "trace_id": policy_state.trace_id,
+                        "planner_step_id": policy_state.planner_step_id,
+                        "canonical_action": policy_state.canonical_action,
+                        "target_entity_id": policy_state.target_entity_id,
+                        "target_label": policy_state.target_label,
                     },
                 ).to_json(),
             )
@@ -682,6 +763,11 @@ async def _handler(
                                 "state": "idle",
                                 "reason": "manual_preempt",
                                 "steps_completed": policy_state.step,
+                                "trace_id": policy_state.trace_id,
+                                "planner_step_id": policy_state.planner_step_id,
+                                "canonical_action": policy_state.canonical_action,
+                                "target_entity_id": policy_state.target_entity_id,
+                                "target_label": policy_state.target_label,
                             },
                         ).to_json(),
                     )

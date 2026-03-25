@@ -40,8 +40,10 @@ class PersistentEntity:
     bbox: np.ndarray | None = None
     # Number of frames this entity has been observed
     frames_seen: int = 0
-    # Source detector ("face", "object", "skeleton", "slam")
+    # Source detector ("face", "object", "skeleton", "slam", "aruco")
     source: str = ""
+    # ArUco marker ID (if entity tracked via marker; -1 means not marker-based)
+    marker_id: int = -1
 
     def update_position(self, new_pos: np.ndarray, dt: float) -> None:
         """Update position and estimate velocity."""

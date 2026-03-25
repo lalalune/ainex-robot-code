@@ -1,0 +1,523 @@
+{
+  "trajectory_id": "hyperscape-0010",
+  "agent_id": "eliza-agent-0",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_10_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -13.12492064569397,
+              -42.16664976084515,
+              3.7088673727046393
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8463649416214204,
+            "distance_to_agent": 7.142649879345172,
+            "bearing_to_agent": -2.4537225328356285,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -1.1548308599836652,
+              -45.67219344892543,
+              3.481375471488751
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8369898476254807,
+            "distance_to_agent": 8.522448215091723,
+            "bearing_to_agent": -0.6173303757291555,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              0.38660333297147886,
+              -30.890759441623807,
+              4.944804460513133
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9526524736011088,
+            "distance_to_agent": 10.934807306007265,
+            "bearing_to_agent": 1.1187386546079159,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_10_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -1.6381342308750337,
+              -42.521270889420194,
+              3.9012789636640086
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7345586479565501,
+            "distance_to_agent": 6.0405591881263465,
+            "bearing_to_agent": -0.338358676646767,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -6.6476598674151575,
+          3.6218803849507197,
+          39.15750148051032
+        ],
+        "task": "Collect the Gold Ore"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_10_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.212119850179739,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_10_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -13.12492064569397,
+              -42.16664976084515,
+              3.7088673727046393
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8463649416214204,
+            "distance_to_agent": 7.142649879345172,
+            "bearing_to_agent": -2.4537225328356285,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -1.1548308599836652,
+              -45.67219344892543,
+              3.481375471488751
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8369898476254807,
+            "distance_to_agent": 8.522448215091723,
+            "bearing_to_agent": -0.6173303757291555,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              0.38660333297147886,
+              -30.890759441623807,
+              4.944804460513133
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9526524736011088,
+            "distance_to_agent": 10.934807306007265,
+            "bearing_to_agent": 1.1187386546079159,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_10_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -1.6381342308750337,
+              -42.521270889420194,
+              3.9012789636640086
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7345586479565501,
+            "distance_to_agent": 6.0405591881263465,
+            "bearing_to_agent": -0.338358676646767,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -6.6476598674151575,
+          3.6218803849507197,
+          39.15750148051032
+        ],
+        "task": "Collect the Gold Ore"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_10_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.5557910279195838,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_10_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -13.12492064569397,
+              -42.16664976084515,
+              3.7088673727046393
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8463649416214204,
+            "distance_to_agent": 7.142649879345172,
+            "bearing_to_agent": -2.4537225328356285,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -1.1548308599836652,
+              -45.67219344892543,
+              3.481375471488751
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8369898476254807,
+            "distance_to_agent": 8.522448215091723,
+            "bearing_to_agent": -0.6173303757291555,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              0.38660333297147886,
+              -30.890759441623807,
+              4.944804460513133
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9526524736011088,
+            "distance_to_agent": 10.934807306007265,
+            "bearing_to_agent": 1.1187386546079159,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_10_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -1.6381342308750337,
+              -42.521270889420194,
+              3.9012789636640086
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7345586479565501,
+            "distance_to_agent": 6.0405591881263465,
+            "bearing_to_agent": -0.338358676646767,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -6.6476598674151575,
+          3.6218803849507197,
+          39.15750148051032
+        ],
+        "task": "Collect the Gold Ore"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_10_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.24032393612421554,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_10_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -13.12492064569397,
+              -42.16664976084515,
+              3.7088673727046393
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8463649416214204,
+            "distance_to_agent": 7.142649879345172,
+            "bearing_to_agent": -2.4537225328356285,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_1",
+            "entity_type": "object",
+            "label": "Treasure Chest",
+            "position": [
+              -1.1548308599836652,
+              -45.67219344892543,
+              3.481375471488751
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8369898476254807,
+            "distance_to_agent": 8.522448215091723,
+            "bearing_to_agent": -0.6173303757291555,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_10_2",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              0.38660333297147886,
+              -30.890759441623807,
+              4.944804460513133
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9526524736011088,
+            "distance_to_agent": 10.934807306007265,
+            "bearing_to_agent": 1.1187386546079159,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_10_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -1.6381342308750337,
+              -42.521270889420194,
+              3.9012789636640086
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7345586479565501,
+            "distance_to_agent": 6.0405591881263465,
+            "bearing_to_agent": -0.338358676646767,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -6.6476598674151575,
+          3.6218803849507197,
+          39.15750148051032
+        ],
+        "task": "Collect the Gold Ore"
+      },
+      "action": {
+        "type": "interact",
+        "name": "pickup",
+        "params": {
+          "target_entity": "entity_10_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.22159640047253015,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 1.2298312146960684,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

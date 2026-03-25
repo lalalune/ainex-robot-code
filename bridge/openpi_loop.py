@@ -6,7 +6,7 @@ policy server at a fixed rate, sending actions to the AiNex bridge server.
 Usage:
     python3 -m bridge.openpi_loop --backend mock
     python3 -m bridge.openpi_loop --backend ros_real --camera-device 0
-    python3 -m bridge.openpi_loop --policy-url http://localhost:8000/act
+    python3 -m bridge.openpi_loop --policy-url http://localhost:8000/infer
 """
 
 from __future__ import annotations
@@ -28,7 +28,6 @@ from bridge.openpi_adapter import (
 )
 from bridge.perception import PerceptionAggregator
 from perception.config import PipelineConfig
-from perception.entity_slots.slot_config import TOTAL_ENTITY_DIMS
 from perception.frame_source import FrameSource, OpenCVSource
 from perception.pipeline import PerceptionPipeline
 from training.interfaces import AinexPerceptionObservation
@@ -48,7 +47,7 @@ class OpenPIPolicyLoop:
 
     def __init__(
         self,
-        policy_url: str = "http://localhost:8000/act",
+        policy_url: str = "http://localhost:8000/infer",
         hz: float = 10.0,
         camera_device: int = 0,
         camera_width: int = 640,
@@ -267,7 +266,7 @@ class OpenPIPolicyLoop:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="AiNex OpenPI autonomous policy loop")
-    parser.add_argument("--policy-url", type=str, default="http://localhost:8000/act")
+    parser.add_argument("--policy-url", type=str, default="http://localhost:8000/infer")
     parser.add_argument("--hz", type=float, default=10.0)
     parser.add_argument("--camera-device", type=int, default=0)
     parser.add_argument("--task", type=str, default="walk forward")

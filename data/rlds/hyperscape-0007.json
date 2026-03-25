@@ -1,0 +1,482 @@
+{
+  "trajectory_id": "hyperscape-0007",
+  "agent_id": "eliza-agent-2",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_7_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -20.77678473640556,
+              -28.799362685249744,
+              2.8043357815868184
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9174941596424008,
+            "distance_to_agent": 1.3780454336871137,
+            "bearing_to_agent": 2.6610586346886764,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_7_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -16.435490173196186,
+              -31.852959473857975,
+              1.2369724687985286
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8477043221449502,
+            "distance_to_agent": 4.645495521687755,
+            "bearing_to_agent": -1.4710749604180013,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_7_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -13.244035782431336,
+              -32.031796158901344,
+              3.106379398989348
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6898562663989153,
+            "distance_to_agent": 7.315043707208601,
+            "bearing_to_agent": -1.1673648301034065,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_7_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -26.665425828249166,
+              -38.25460320339503,
+              0.2866817211974526
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.844509589224272,
+            "distance_to_agent": 12.112641027877618,
+            "bearing_to_agent": -2.870702413248791,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_7_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -20.504181705562836,
+              -30.089300735944363,
+              3.646374485030345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8873383661995955,
+            "distance_to_agent": 2.33904865794498,
+            "bearing_to_agent": -2.773396869014804,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -19.61250507316462,
+          2.101826848826419,
+          28.575882747758
+        ],
+        "task": "Talk to the Gold Ore"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_7_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.1475713450912982,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_7_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -20.77678473640556,
+              -28.799362685249744,
+              2.8043357815868184
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9174941596424008,
+            "distance_to_agent": 1.3780454336871137,
+            "bearing_to_agent": 2.6610586346886764,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_7_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -16.435490173196186,
+              -31.852959473857975,
+              1.2369724687985286
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8477043221449502,
+            "distance_to_agent": 4.645495521687755,
+            "bearing_to_agent": -1.4710749604180013,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_7_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -13.244035782431336,
+              -32.031796158901344,
+              3.106379398989348
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6898562663989153,
+            "distance_to_agent": 7.315043707208601,
+            "bearing_to_agent": -1.1673648301034065,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_7_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -26.665425828249166,
+              -38.25460320339503,
+              0.2866817211974526
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.844509589224272,
+            "distance_to_agent": 12.112641027877618,
+            "bearing_to_agent": -2.870702413248791,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_7_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -20.504181705562836,
+              -30.089300735944363,
+              3.646374485030345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8873383661995955,
+            "distance_to_agent": 2.33904865794498,
+            "bearing_to_agent": -2.773396869014804,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -19.61250507316462,
+          2.101826848826419,
+          28.575882747758
+        ],
+        "task": "Talk to the Gold Ore"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_7_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.21884113681231943,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_7_0",
+            "entity_type": "landmark",
+            "label": "Grand Exchange",
+            "position": [
+              -20.77678473640556,
+              -28.799362685249744,
+              2.8043357815868184
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9174941596424008,
+            "distance_to_agent": 1.3780454336871137,
+            "bearing_to_agent": 2.6610586346886764,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_7_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -16.435490173196186,
+              -31.852959473857975,
+              1.2369724687985286
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8477043221449502,
+            "distance_to_agent": 4.645495521687755,
+            "bearing_to_agent": -1.4710749604180013,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_7_2",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -13.244035782431336,
+              -32.031796158901344,
+              3.106379398989348
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6898562663989153,
+            "distance_to_agent": 7.315043707208601,
+            "bearing_to_agent": -1.1673648301034065,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          },
+          {
+            "entity_id": "entity_7_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -26.665425828249166,
+              -38.25460320339503,
+              0.2866817211974526
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.844509589224272,
+            "distance_to_agent": 12.112641027877618,
+            "bearing_to_agent": -2.870702413248791,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_7_4",
+            "entity_type": "person",
+            "label": "Adventurer_42",
+            "position": [
+              -20.504181705562836,
+              -30.089300735944363,
+              3.646374485030345
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8873383661995955,
+            "distance_to_agent": 2.33904865794498,
+            "bearing_to_agent": -2.773396869014804,
+            "source": "game",
+            "properties": {
+              "level": 12
+            }
+          }
+        ],
+        "agent_position": [
+          -19.61250507316462,
+          2.101826848826419,
+          28.575882747758
+        ],
+        "task": "Talk to the Gold Ore"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_7_3",
+          "target_label": "Gold Ore"
+        }
+      },
+      "reward": 0.12135859918938441,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 0.48777108109300205,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiNex VR Remote</title>
+<script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<style>
+  :root {
+    --bg: #1a1a2e; --panel: #16213e; --accent: #0f3460;
+    --highlight: #e94560; --text: #eee; --text-dim: #8892a4;
+    --success: #4ecca3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    height: 100vh; overflow: hidden;
+  }
+  #overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    background: var(--bg);
+  }
+  #overlay.hidden { display: none; }
+  #overlay h1 { font-size: 24px; margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  input[type=text] {
+    background: var(--panel); border: 1px solid var(--accent);
+    color: var(--text); padding: 8px 12px; border-radius: 6px;
+    font-size: 14px; width: 180px;
+  }
+  button {
+    background: var(--accent); color: var(--text);
+    border: 1px solid #1a4a80; border-radius: 6px;
+    cursor: pointer; font-size: 14px; padding: 8px 16px;
+  }
+  button:hover { background: #1a5a90; }
+  button.success { background: #2a8a6a; border-color: #1f6b50; }
+  button.danger { background: var(--highlight); border-color: #c0374d; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #enterVrBtn {
+    font-size: 20px; padding: 16px 40px; margin-top: 12px;
+    background: var(--highlight); border-color: #c0374d;
+  }
+  #enterVrBtn:hover:not(:disabled) { background: #d03050; }
+  .status-row {
+    display: flex; align-items: center; gap: 8px; font-size: 13px;
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--highlight); transition: background 0.3s;
+  }
+  .dot.on { background: var(--success); }
+  #logArea {
+    font-family: monospace; font-size: 11px; color: var(--text-dim);
+    background: var(--panel); border: 1px solid var(--accent);
+    border-radius: 6px; padding: 8px; width: 400px; max-width: 90vw;
+    max-height: 120px; overflow-y: auto; margin-top: 8px;
+    word-break: break-all;
+  }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <h1>AiNex VR Remote</h1>
+  <div class="row">
+    <input type="text" id="robotIp" value="192.168.1.218" placeholder="Robot IP" />
+    <button id="connectBtn" class="success" onclick="toggleConnection()">Connect</button>
+  </div>
+  <div class="status-row">
+    <div class="dot" id="statusDot"></div>
+    <span id="statusText">Disconnected</span>
+  </div>
+  <button id="enterVrBtn" disabled onclick="enterVR()">Enter VR</button>
+  <div style="font-size:12px;color:var(--text-dim);max-width:420px;text-align:center;">
+    Connect, then Enter VR.<br>
+    <b>Head</b>: look around to move head.<br>
+    <b>Left stick</b>: walk fwd/back. <b>Right stick</b>: turn.<br>
+    <b>A button</b>: toggle arm tracking. <b>Grip</b>: close grippers.<br>
+    <b>Y button</b>: toggle terminal. <b>B button</b>: hold for voice.<br>
+    <b>X button</b>: Ctrl+C. <b>Right trigger</b>: type on keyboard.
+  </div>
+  <div id="logArea"></div>
+</div>
+
+<script>
+// ===========================================================================
+// Constants — from URDF + servo_controller.yaml
+// ===========================================================================
+var TICKS_PER_RAD = 238.732;
+
+// Servo config: id, init pulse, coefficient
+// Shoulder pitch servos are INVERTED (min>max in yaml -> negative coeff)
+var SERVO = {
+  l_sho_pitch: { id: 13, init: 875, coeff: -TICKS_PER_RAD },
+  r_sho_pitch: { id: 14, init: 125, coeff: -TICKS_PER_RAD },
+  l_sho_roll:  { id: 15, init: 500, coeff:  TICKS_PER_RAD },
+  r_sho_roll:  { id: 16, init: 500, coeff:  TICKS_PER_RAD },
+  l_el_pitch:  { id: 17, init: 500, coeff:  TICKS_PER_RAD },
+  r_el_pitch:  { id: 18, init: 500, coeff:  TICKS_PER_RAD },
+  l_el_yaw:    { id: 19, init: 500, coeff:  TICKS_PER_RAD },
+  r_el_yaw:    { id: 20, init: 500, coeff:  TICKS_PER_RAD },
+  l_gripper:   { id: 21, init: 500, coeff:  TICKS_PER_RAD },
+  r_gripper:   { id: 22, init: 500, coeff:  TICKS_PER_RAD },
+};
+
+// Init pose angles (radians) from init_pose.yaml
+var INIT = {
+  l_sho_pitch: 0.0,   r_sho_pitch: 0.0,
+  l_sho_roll:  1.293,  r_sho_roll: -1.293,
+  l_el_pitch: -0.10,   r_el_pitch:  0.10,
+  l_el_yaw:  -1.926,   r_el_yaw:    1.926,
+  l_gripper:   0.0,    r_gripper:   0.0,
+};
+
+// Calibration pose: arms held straight forward (VR calibration position)
+// NOTE: L forward = positive sho_pitch, R forward = NEGATIVE sho_pitch
+// (servos are mirror-mounted; same URDF axis but opposite physical direction)
+var CAL_POSE = {
+  l_sho_pitch:  1.571, r_sho_pitch: -1.571,  // 90 deg forward (opposite signs!)
+  l_sho_roll:   0.0,   r_sho_roll:   0.0,    // not spread
+  l_el_pitch:   0.0,   r_el_pitch:   0.0,    // elbows straight
+  l_el_yaw:     0.0,   r_el_yaw:     0.0,    // no twist
+  l_gripper:    0.0,   r_gripper:    0.0,
+};
+
+// URDF link lengths (m)
+var UPPER_ARM = 0.074;
+var FOREARM   = 0.089;
+var SMOOTH = 0.3;
+
+// ===========================================================================
+// State
+// ===========================================================================
+var ros = null, connected = false;
+var headPanPub, headTiltPub, walkParamPub, walkCommandClient, servoPub;
+var walkingEnabled = false;
+var reconnectTimer = null, robotIpCached = '';
+
+var scene, camera, renderer;
+var videoTexture, videoMesh;
+var logCanvas, logTexture, logMesh;
+var cameraLoading = false, cameraTimer = null;
+
+var lastHeadPan = 0, lastHeadTilt = 0;
+var lastServoTime = 0, lastWalkTime = 0;
+var isWalking = false;
+var frameCount = 0;
+
+// Arm tracking
+var handsEnabled = false;
+var calibrated = false;
+var calRef = { left: { pitch: 0, roll: 0 }, right: { pitch: 0, roll: 0 } };
+var smoothArm = {
+  left:  { pitch: INIT.l_sho_pitch, roll: INIT.l_sho_roll, elbow: INIT.l_el_pitch, yaw: 0, grip: 0 },
+  right: { pitch: INIT.r_sho_pitch, roll: INIT.r_sho_roll, elbow: INIT.r_el_pitch, yaw: 0, grip: 0 },
+};
+
+// Button debounce
+var aButtonWasPressed = false;
+var yButtonWasPressed = false;
+var xButtonWasPressed = false;
+var bButtonWasPressed = false;
+var triggerWasPressed = false;
+
+var controllerGrips = [null, null];
+
+// Terminal state
+var termShowing = false;
+var termCanvas, termTexture, termMesh;
+var kbCanvas, kbTexture, kbMesh;
+var ptyWs = null, ptyReconnectTimer = null;
+
+// Voice recording state
+var voiceStream = null, voiceRecorder = null, voiceChunks = [];
+var voiceRecording = false;
+var voiceStatusMsg = '', voiceStatusTimer = null;
+
+// ===========================================================================
+// VT100 Terminal Emulator
+// ===========================================================================
+var TERM_COLS = 120, TERM_ROWS = 40;
+var termGrid = [], termAltGrid = [];
+var termCurX = 0, termCurY = 0;
+var termSavedX = 0, termSavedY = 0;
+var termFg = 7, termBg = 0, termBold = false, termReverse = false;
+var termFgRGB = null, termBgRGB = null;
+var termScrollTop = 0, termScrollBot = TERM_ROWS - 1;
+var termEscBuf = '';
+var termInEsc = false;
+var termUseAlt = false;
+var termCursorVisible = true;
+
+var TERM_COLORS = [
+  '#000000','#aa0000','#00aa00','#aa5500','#0000aa','#aa00aa','#00aaaa','#aaaaaa',
+  '#555555','#ff5555','#55ff55','#ffff55','#5555ff','#ff55ff','#55ffff','#ffffff'
+];
+
+function termInitGrid(grid) {
+  grid.length = 0;
+  for (var r = 0; r < TERM_ROWS; r++) {
+    var row = [];
+    for (var c = 0; c < TERM_COLS; c++) {
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    }
+    grid.push(row);
+  }
+}
+termInitGrid(termGrid);
+termInitGrid(termAltGrid);
+
+function termClearRegion(r1, c1, r2, c2) {
+  var grid = termUseAlt ? termAltGrid : termGrid;
+  for (var r = r1; r <= r2 && r < TERM_ROWS; r++) {
+    for (var c = c1; c <= c2 && c < TERM_COLS; c++) {
+      grid[r][c] = { ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null };
+    }
+  }
+}
+
+function termScrollUp(n) {
+  var grid = termUseAlt ? termAltGrid : termGrid;
+  for (var i = 0; i < n; i++) {
+    grid.splice(termScrollTop, 1);
+    var row = [];
+    for (var c = 0; c < TERM_COLS; c++) {
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    }
+    grid.splice(termScrollBot, 0, row);
+  }
+}
+
+function termScrollDown(n) {
+  var grid = termUseAlt ? termAltGrid : termGrid;
+  for (var i = 0; i < n; i++) {
+    grid.splice(termScrollBot, 1);
+    var row = [];
+    for (var c = 0; c < TERM_COLS; c++) {
+      row.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+    }
+    grid.splice(termScrollTop, 0, row);
+  }
+}
+
+function termProcessCSI(buf) {
+  var match = buf.match(/^(\??)([0-9;]*)([A-Za-z@`])/);
+  if (!match) return;
+  var priv = match[1], paramStr = match[2], cmd = match[3];
+  var params = paramStr ? paramStr.split(';').map(function(s) { return parseInt(s, 10) || 0; }) : [];
+  var p0 = params[0] || 0;
+  var p1 = params[1] || 0;
+  var grid = termUseAlt ? termAltGrid : termGrid;
+
+  switch (cmd) {
+    case 'A': termCurY = Math.max(termScrollTop, termCurY - (p0 || 1)); break;
+    case 'B': termCurY = Math.min(termScrollBot, termCurY + (p0 || 1)); break;
+    case 'C': termCurX = Math.min(TERM_COLS - 1, termCurX + (p0 || 1)); break;
+    case 'D': termCurX = Math.max(0, termCurX - (p0 || 1)); break;
+    case 'E': termCurY = Math.min(termScrollBot, termCurY + (p0 || 1)); termCurX = 0; break;
+    case 'F': termCurY = Math.max(termScrollTop, termCurY - (p0 || 1)); termCurX = 0; break;
+    case 'G': termCurX = Math.max(0, Math.min(TERM_COLS - 1, (p0 || 1) - 1)); break;
+    case 'd': termCurY = Math.max(0, Math.min(TERM_ROWS - 1, (p0 || 1) - 1)); break;
+    case 'H': case 'f':
+      termCurY = Math.max(0, Math.min(TERM_ROWS - 1, (p0 || 1) - 1));
+      termCurX = Math.max(0, Math.min(TERM_COLS - 1, (p1 || 1) - 1));
+      break;
+    case 'J':
+      if (p0 === 0) { termClearRegion(termCurY, termCurX, termCurY, TERM_COLS - 1); termClearRegion(termCurY + 1, 0, TERM_ROWS - 1, TERM_COLS - 1); }
+      else if (p0 === 1) { termClearRegion(0, 0, termCurY - 1, TERM_COLS - 1); termClearRegion(termCurY, 0, termCurY, termCurX); }
+      else if (p0 === 2 || p0 === 3) { termClearRegion(0, 0, TERM_ROWS - 1, TERM_COLS - 1); }
+      break;
+    case 'K':
+      if (p0 === 0) termClearRegion(termCurY, termCurX, termCurY, TERM_COLS - 1);
+      else if (p0 === 1) termClearRegion(termCurY, 0, termCurY, termCurX);
+      else if (p0 === 2) termClearRegion(termCurY, 0, termCurY, TERM_COLS - 1);
+      break;
+    case 'X':
+      termClearRegion(termCurY, termCurX, termCurY, Math.min(TERM_COLS - 1, termCurX + (p0 || 1) - 1));
+      break;
+    case 'P':
+      var dn = p0 || 1;
+      var drow = grid[termCurY];
+      drow.splice(termCurX, dn);
+      for (var di = 0; di < dn; di++) drow.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+      break;
+    case '@':
+      var an = p0 || 1;
+      var arow = grid[termCurY];
+      for (var ai = 0; ai < an; ai++) arow.splice(termCurX, 0, { ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+      arow.length = TERM_COLS;
+      break;
+    case 'S': termScrollUp(p0 || 1); break;
+    case 'T': termScrollDown(p0 || 1); break;
+    case 'L':
+      var ln = p0 || 1;
+      for (var li = 0; li < ln; li++) {
+        grid.splice(termScrollBot, 1);
+        var lr = [];
+        for (var lc = 0; lc < TERM_COLS; lc++) lr.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+        grid.splice(termCurY, 0, lr);
+      }
+      break;
+    case 'M':
+      var mn = p0 || 1;
+      for (var mi = 0; mi < mn; mi++) {
+        grid.splice(termCurY, 1);
+        var mr = [];
+        for (var mc = 0; mc < TERM_COLS; mc++) mr.push({ ch: ' ', fg: 7, bg: 0, bold: false, rev: false, fgRGB: null, bgRGB: null });
+        grid.splice(termScrollBot, 0, mr);
+      }
+      break;
+    case 'r':
+      termScrollTop = Math.max(0, (p0 || 1) - 1);
+      termScrollBot = Math.min(TERM_ROWS - 1, (p1 || TERM_ROWS) - 1);
+      termCurX = 0; termCurY = 0;
+      break;
+    case 's': termSavedX = termCurX; termSavedY = termCurY; break;
+    case 'u': termCurX = termSavedX; termCurY = termSavedY; break;
+    case 'm': termProcessSGR(params); break;
+    case 'h':
+      if (priv === '?') {
+        if (p0 === 1049) { termUseAlt = true; termInitGrid(termAltGrid); termCurX = 0; termCurY = 0; }
+        else if (p0 === 25) termCursorVisible = true;
+      }
+      break;
+    case 'l':
+      if (priv === '?') {
+        if (p0 === 1049) { termUseAlt = false; termCurX = 0; termCurY = 0; }
+        else if (p0 === 25) termCursorVisible = false;
+      }
+      break;
+    case 'n':
+      if (p0 === 6 && ptyWs && ptyWs.readyState === 1) {
+        termSend('\x1b[' + (termCurY + 1) + ';' + (termCurX + 1) + 'R');
+      }
+      break;
+  }
+}
+
+function termProcessSGR(params) {
+  if (params.length === 0) params = [0];
+  for (var i = 0; i < params.length; i++) {
+    var p = params[i];
+    if (p === 0) { termFg = 7; termBg = 0; termBold = false; termReverse = false; termFgRGB = null; termBgRGB = null; }
+    else if (p === 1) termBold = true;
+    else if (p === 7) termReverse = true;
+    else if (p === 22) termBold = false;
+    else if (p === 27) termReverse = false;
+    else if (p >= 30 && p <= 37) { termFg = p - 30; termFgRGB = null; }
+    else if (p === 38) {
+      if (i + 1 < params.length && params[i + 1] === 5 && i + 2 < params.length) {
+        termFgRGB = term256Color(params[i + 2]); i += 2;
+      } else if (i + 1 < params.length && params[i + 1] === 2 && i + 4 < params.length) {
+        termFgRGB = 'rgb(' + params[i + 2] + ',' + params[i + 3] + ',' + params[i + 4] + ')'; i += 4;
+      }
+    }
+    else if (p === 39) { termFg = 7; termFgRGB = null; }
+    else if (p >= 40 && p <= 47) { termBg = p - 40; termBgRGB = null; }
+    else if (p === 48) {
+      if (i + 1 < params.length && params[i + 1] === 5 && i + 2 < params.length) {
+        termBgRGB = term256Color(params[i + 2]); i += 2;
+      } else if (i + 1 < params.length && params[i + 1] === 2 && i + 4 < params.length) {
+        termBgRGB = 'rgb(' + params[i + 2] + ',' + params[i + 3] + ',' + params[i + 4] + ')'; i += 4;
+      }
+    }
+    else if (p === 49) { termBg = 0; termBgRGB = null; }
+    else if (p >= 90 && p <= 97) { termFg = p - 90 + 8; termFgRGB = null; }
+    else if (p >= 100 && p <= 107) { termBg = p - 100 + 8; termBgRGB = null; }
+  }
+}
+
+function term256Color(n) {
+  if (n < 16) return TERM_COLORS[n];
+  if (n < 232) {
+    n -= 16;
+    var r = Math.floor(n / 36) * 51;
+    var g = Math.floor((n % 36) / 6) * 51;
+    var b = (n % 6) * 51;
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  var v = (n - 232) * 10 + 8;
+  return 'rgb(' + v + ',' + v + ',' + v + ')';
+}
+
+function termWrite(text) {
+  var grid = termUseAlt ? termAltGrid : termGrid;
+  for (var i = 0; i < text.length; i++) {
+    var ch = text[i];
+    var code = text.charCodeAt(i);
+
+    if (termInEsc) {
+      termEscBuf += ch;
+      if (termEscBuf.length === 1) {
+        if (ch === '[') continue;
+        if (ch === ']') continue;
+        if (ch === '(' || ch === ')') continue;
+        if (ch === '7') { termSavedX = termCurX; termSavedY = termCurY; termInEsc = false; termEscBuf = ''; continue; }
+        if (ch === '8') { termCurX = termSavedX; termCurY = termSavedY; termInEsc = false; termEscBuf = ''; continue; }
+        if (ch === 'M') {
+          if (termCurY === termScrollTop) termScrollDown(1);
+          else termCurY--;
+          termInEsc = false; termEscBuf = ''; continue;
+        }
+        if (ch === 'D') {
+          if (termCurY === termScrollBot) termScrollUp(1);
+          else termCurY++;
+          termInEsc = false; termEscBuf = ''; continue;
+        }
+        termInEsc = false; termEscBuf = '';
+        continue;
+      }
+      if (termEscBuf[0] === '[') {
+        var last = termEscBuf[termEscBuf.length - 1];
+        if ((last >= 'A' && last <= 'Z') || (last >= 'a' && last <= 'z') || last === '@' || last === '`') {
+          termProcessCSI(termEscBuf.substring(1));
+          termInEsc = false; termEscBuf = '';
+        } else if (termEscBuf.length > 64) {
+          termInEsc = false; termEscBuf = '';
+        }
+        continue;
+      }
+      if (termEscBuf[0] === ']') {
+        if (ch === '\x07' || (termEscBuf.length >= 2 && termEscBuf.slice(-2) === '\x1b\\')) {
+          termInEsc = false; termEscBuf = '';
+        } else if (termEscBuf.length > 256) {
+          termInEsc = false; termEscBuf = '';
+        }
+        continue;
+      }
+      if (termEscBuf[0] === '(' || termEscBuf[0] === ')') {
+        termInEsc = false; termEscBuf = '';
+        continue;
+      }
+      termInEsc = false; termEscBuf = '';
+      continue;
+    }
+
+    if (ch === '\x1b') { termInEsc = true; termEscBuf = ''; continue; }
+    if (ch === '\r') { termCurX = 0; continue; }
+    if (ch === '\n') {
+      if (termCurY >= termScrollBot) termScrollUp(1);
+      else termCurY++;
+      continue;
+    }
+    if (ch === '\b') { if (termCurX > 0) termCurX--; continue; }
+    if (ch === '\t') { termCurX = Math.min(TERM_COLS - 1, (Math.floor(termCurX / 8) + 1) * 8); continue; }
+    if (ch === '\x07') continue;
+    if (code < 32) continue;
+
+    if (termCurX >= TERM_COLS) {
+      termCurX = 0;
+      if (termCurY >= termScrollBot) termScrollUp(1);
+      else termCurY++;
+    }
+    grid[termCurY][termCurX] = {
+      ch: ch, fg: termFg, bg: termBg, bold: termBold, rev: termReverse,
+      fgRGB: termFgRGB, bgRGB: termBgRGB
+    };
+    termCurX++;
+  }
+}
+
+// ===========================================================================
+// Terminal Canvas Rendering
+// ===========================================================================
+var TERM_CANVAS_W = 1920, TERM_CANVAS_H = 1080;
+var TERM_CHAR_W = 0, TERM_CHAR_H = 0;
+var termBlinkOn = true, termBlinkTimer = 0;
+
+function renderTerminal() {
+  if (!termCanvas) return;
+  var ctx = termCanvas.getContext('2d');
+  var w = TERM_CANVAS_W, h = TERM_CANVAS_H;
+
+  var statusBarH = 24;
+  TERM_CHAR_W = Math.floor(w / TERM_COLS);
+  TERM_CHAR_H = Math.floor((h - statusBarH) / TERM_ROWS);
+  var fontSize = Math.floor(TERM_CHAR_H * 0.85);
+
+  var grid = termUseAlt ? termAltGrid : termGrid;
+
+  ctx.fillStyle = '#0c0c1a';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.textBaseline = 'top';
+  for (var r = 0; r < TERM_ROWS; r++) {
+    for (var c = 0; c < TERM_COLS; c++) {
+      var cell = grid[r][c];
+      var x = c * TERM_CHAR_W;
+      var y = r * TERM_CHAR_H;
+
+      var fgColor = cell.fgRGB || TERM_COLORS[cell.fg] || TERM_COLORS[7];
+      var bgColor = cell.bgRGB || TERM_COLORS[cell.bg] || TERM_COLORS[0];
+
+      if (cell.rev) { var tmp = fgColor; fgColor = bgColor; bgColor = tmp; }
+      if (cell.bold && !cell.fgRGB && cell.fg < 8) fgColor = TERM_COLORS[cell.fg + 8];
+
+      if (bgColor !== '#000000') {
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(x, y, TERM_CHAR_W, TERM_CHAR_H);
+      }
+
+      if (cell.ch !== ' ') {
+        ctx.fillStyle = fgColor;
+        ctx.font = (cell.bold ? 'bold ' : '') + fontSize + 'px monospace';
+        ctx.fillText(cell.ch, x + 1, y + 1);
+      }
+    }
+  }
+
+  // Blinking cursor
+  termBlinkTimer++;
+  if (termBlinkTimer > 30) { termBlinkOn = !termBlinkOn; termBlinkTimer = 0; }
+  if (termCursorVisible && termBlinkOn && termCurY < TERM_ROWS && termCurX < TERM_COLS) {
+    ctx.fillStyle = '#00ff88';
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(termCurX * TERM_CHAR_W, termCurY * TERM_CHAR_H, TERM_CHAR_W, TERM_CHAR_H);
+    ctx.globalAlpha = 1.0;
+  }
+
+  // Status bar
+  var sy = h - statusBarH;
+  ctx.fillStyle = '#1a1a3a';
+  ctx.fillRect(0, sy, w, statusBarH);
+  ctx.fillStyle = '#8888cc';
+  ctx.font = '14px monospace';
+  var ptyStat = ptyWs && ptyWs.readyState === 1 ? 'PTY:connected' : 'PTY:disconnected';
+  ctx.fillText(ptyStat + '  |  ' + TERM_COLS + 'x' + TERM_ROWS, 8, sy + 5);
+
+  if (voiceRecording) {
+    ctx.fillStyle = '#ff4444';
+    ctx.fillText('  RECORDING...', 400, sy + 5);
+  } else if (voiceStatusMsg) {
+    ctx.fillStyle = '#44ff88';
+    ctx.fillText('  Voice: ' + voiceStatusMsg, 400, sy + 5);
+  }
+
+  ctx.fillStyle = '#666688';
+  ctx.fillText('Y=toggle  B=voice  X=Ctrl+C', w - 320, sy + 5);
+
+  termTexture.needsUpdate = true;
+}
+
+// ===========================================================================
+// VR Log
+// ===========================================================================
+var vrLogLines = [];
+var VR_LOG_MAX = 16;
+
+function vrLog(msg) {
+  var t = new Date().toLocaleTimeString();
+  vrLogLines.push('[' + t + '] ' + msg);
+  if (vrLogLines.length > VR_LOG_MAX) vrLogLines.shift();
+  log(msg);
+}
+
+function log(msg) {
+  var el = document.getElementById('logArea');
+  if (!el) return;
+  var t = new Date().toLocaleTimeString();
+  el.innerHTML += '<div>[' + t + '] ' + msg + '</div>';
+  el.scrollTop = el.scrollHeight;
+}
+
+function renderVRLog() {
+  if (!logCanvas) return;
+  var ctx = logCanvas.getContext('2d');
+  var w = logCanvas.width, h = logCanvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(0,0,20,0.85)';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = '#335';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, w - 2, h - 2);
+
+  ctx.fillStyle = handsEnabled ? '#4ecca3' : '#e94560';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('HANDS: ' + (handsEnabled ? 'ON' : 'OFF (press A)'), 12, 28);
+  ctx.fillStyle = connected ? '#4ecca3' : '#e94560';
+  ctx.fillText('ROS: ' + (connected ? 'OK' : 'DISCONNECTED'), 420, 28);
+
+  ctx.fillStyle = '#bbb';
+  ctx.font = '15px monospace';
+  for (var i = 0; i < vrLogLines.length; i++) {
+    ctx.fillText(vrLogLines[i], 12, 52 + i * 20);
+  }
+  logTexture.needsUpdate = true;
+}
+
+// ===========================================================================
+// ROS Connection
+// ===========================================================================
+function toggleConnection() {
+  if (connected) disconnect(); else connect();
+}
+
+function connect(ipOverride) {
+  var ip = ipOverride || document.getElementById('robotIp').value.trim();
+  if (!ip) return;
+  robotIpCached = ip;
+  vrLog('Connecting to ' + ip + '...');
+  if (ros) { try { ros.close(); } catch(e) {} ros = null; }
+  connected = false;
+
+  var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  var wsPort = location.protocol === 'https:' ? location.port : '9090';
+  var wsPath = location.protocol === 'https:' ? '/ws_proxy' : '';
+  var wsUrl = proto + '//' + ip + ':' + wsPort + wsPath;
+  vrLog('WS: ' + wsUrl);
+  ros = new ROSLIB.Ros({ url: wsUrl });
+
+  ros.on('connection', function() {
+    connected = true;
+    updateConnUI(true);
+    vrLog('ROS connected!');
+    setupPublishers();
+    checkVRSupport();
+    if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
+  });
+  ros.on('error', function() { vrLog('ROS error'); });
+  ros.on('close', function() {
+    connected = false;
+    updateConnUI(false);
+    vrLog('ROS disconnected');
+    scheduleReconnect();
+  });
+}
+
+function scheduleReconnect() {
+  if (reconnectTimer || !robotIpCached) return;
+  reconnectTimer = setInterval(function() {
+    if (!connected && robotIpCached) {
+      vrLog('Reconnecting...');
+      connect(robotIpCached);
+    } else if (connected) {
+      clearInterval(reconnectTimer);
+      reconnectTimer = null;
+    }
+  }, 3000);
+}
+
+function disconnect() {
+  if (ros) { ros.close(); ros = null; }
+  connected = false;
+  updateConnUI(false);
+}
+
+function updateConnUI(on) {
+  document.getElementById('statusDot').className = 'dot' + (on ? ' on' : '');
+  document.getElementById('statusText').textContent = on ? 'Connected' : 'Disconnected';
+  document.getElementById('connectBtn').textContent = on ? 'Disconnect' : 'Connect';
+  document.getElementById('connectBtn').className = on ? 'danger' : 'success';
+}
+
+function setupPublishers() {
+  headPanPub = new ROSLIB.Topic({ ros: ros, name: '/head_pan_controller/command', messageType: 'ainex_interfaces/HeadState' });
+  headTiltPub = new ROSLIB.Topic({ ros: ros, name: '/head_tilt_controller/command', messageType: 'ainex_interfaces/HeadState' });
+  walkParamPub = new ROSLIB.Topic({ ros: ros, name: '/app/set_walking_param', messageType: 'ainex_interfaces/AppWalkingParam' });
+  walkCommandClient = new ROSLIB.Service({ ros: ros, name: '/walking/command', serviceType: 'ainex_interfaces/SetWalkingCommand' });
+  servoPub = new ROSLIB.Topic({ ros: ros, name: '/ros_robot_controller/bus_servo/set_position', messageType: 'ros_robot_controller/SetBusServosPosition' });
+}
+
+// ===========================================================================
+// ROS Commands
+// ===========================================================================
+function sendHeadPan(deg) {
+  if (!connected || !headPanPub) return;
+  headPanPub.publish(new ROSLIB.Message({ position: deg * Math.PI / 180, duration: 0.1 }));
+}
+function sendHeadTilt(deg) {
+  if (!connected || !headTiltPub) return;
+  headTiltPub.publish(new ROSLIB.Message({ position: deg * Math.PI / 180, duration: 0.1 }));
+}
+function sendWalkCommand(cmd) {
+  if (!walkCommandClient) return;
+  walkCommandClient.callService(new ROSLIB.ServiceRequest({ command: cmd }), function() {});
+}
+function sendWalkParam(x, y, angle) {
+  if (!connected || !walkParamPub) return;
+  walkParamPub.publish(new ROSLIB.Message({ speed: 2, height: 0.036, x: x, y: y, angle: angle }));
+}
+function angle2pulse(servo, angle) {
+  return Math.max(0, Math.min(1000, servo.init + Math.round(angle * servo.coeff)));
+}
+function sendServoPositions(positions) {
+  if (!connected || !servoPub) return;
+  servoPub.publish(new ROSLIB.Message({
+    duration: 0.05,
+    position: positions.map(function(p) { return { id: p[0], position: p[1] }; })
+  }));
+}
+function sendServoPositionsSmooth(positions, duration) {
+  if (!connected || !servoPub) return;
+  servoPub.publish(new ROSLIB.Message({
+    duration: duration,
+    position: positions.map(function(p) { return { id: p[0], position: p[1] }; })
+  }));
+}
+function sendPose(poseObj, duration) {
+  var positions = [];
+  for (var name in poseObj) {
+    positions.push([SERVO[name].id, angle2pulse(SERVO[name], poseObj[name])]);
+  }
+  if (duration) sendServoPositionsSmooth(positions, duration);
+  else sendServoPositions(positions);
+}
+function sendInitPose() {
+  sendPose(INIT, 0.5);
+}
+
+// ===========================================================================
+// Three.js Scene
+// ===========================================================================
+function initScene() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x111122);
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 100);
+  camera.position.set(0, 1.6, 0);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.xr.enabled = true;
+  document.body.appendChild(renderer.domElement);
+
+  scene.add(new THREE.GridHelper(10, 20, 0x444466, 0x222244));
+
+  // Camera feed screen
+  videoTexture = new THREE.Texture();
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
+  videoMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.2, 2.4),
+    new THREE.MeshBasicMaterial({ map: videoTexture, side: THREE.DoubleSide })
+  );
+  videoMesh.position.set(0, 1.6, -2);
+  scene.add(videoMesh);
+
+  // Terminal screen — same position as camera, hidden initially
+  termCanvas = document.createElement('canvas');
+  termCanvas.width = TERM_CANVAS_W;
+  termCanvas.height = TERM_CANVAS_H;
+  termTexture = new THREE.CanvasTexture(termCanvas);
+  termTexture.minFilter = THREE.LinearFilter;
+  termMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.2, 2.4),
+    new THREE.MeshBasicMaterial({ map: termTexture, side: THREE.DoubleSide })
+  );
+  termMesh.position.set(0, 1.6, -2);
+  termMesh.visible = false;
+  scene.add(termMesh);
+
+  // Virtual keyboard — below terminal, angled up
+  kbCanvas = document.createElement('canvas');
+  kbCanvas.width = 1200;
+  kbCanvas.height = 400;
+  kbTexture = new THREE.CanvasTexture(kbCanvas);
+  kbTexture.minFilter = THREE.LinearFilter;
+  kbMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 0.8),
+    new THREE.MeshBasicMaterial({ map: kbTexture, transparent: true })
+  );
+  kbMesh.position.set(0, 0.7, -1.5);
+  kbMesh.rotation.x = -0.5;
+  kbMesh.visible = false;
+  scene.add(kbMesh);
+
+  // VR debug log panel
+  logCanvas = document.createElement('canvas');
+  logCanvas.width = 800;
+  logCanvas.height = 400;
+  logTexture = new THREE.CanvasTexture(logCanvas);
+  logTexture.minFilter = THREE.LinearFilter;
+  logMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.6, 0.8),
+    new THREE.MeshBasicMaterial({ map: logTexture, transparent: true })
+  );
+  logMesh.position.set(0, 0.3, -1.2);
+  logMesh.rotation.x = -0.6;
+  scene.add(logMesh);
+
+  // Controller spheres
+  var sg = new THREE.SphereGeometry(0.03, 8, 8);
+  controllerGrips[0] = new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ color: 0x4488ff }));
+  controllerGrips[1] = new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ color: 0xff4444 }));
+  controllerGrips[0].visible = false;
+  controllerGrips[1].visible = false;
+  scene.add(controllerGrips[0]);
+  scene.add(controllerGrips[1]);
+  scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+  window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+// ===========================================================================
+// Camera Feed
+// ===========================================================================
+function startCameraFeed() {
+  if (cameraTimer) return;
+  cameraTimer = setInterval(pollCamera, 100);
+}
+function stopCameraFeed() {
+  if (cameraTimer) { clearInterval(cameraTimer); cameraTimer = null; }
+}
+function pollCamera() {
+  if (cameraLoading) return;
+  cameraLoading = true;
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() { videoTexture.image = img; videoTexture.needsUpdate = true; cameraLoading = false; };
+  img.onerror = function() { cameraLoading = false; };
+  img.src = '/camera_proxy/snapshot?topic=' + encodeURIComponent('/camera/image_raw') + '&quality=70&_t=' + Date.now();
+}
+
+// ===========================================================================
+// PTY WebSocket Client
+// ===========================================================================
+function termConnect() {
+  if (ptyWs && (ptyWs.readyState === 0 || ptyWs.readyState === 1)) return;
+  var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  var url = proto + '//' + location.host + '/ws_pty';
+  vrLog('PTY connecting...');
+  ptyWs = new WebSocket(url);
+  ptyWs.onopen = function() {
+    vrLog('PTY connected');
+    ptyWs.send(JSON.stringify({ type: 'resize', cols: TERM_COLS, rows: TERM_ROWS }));
+  };
+  ptyWs.onmessage = function(ev) {
+    try {
+      var msg = JSON.parse(ev.data);
+      if (msg.type === 'output') {
+        termWrite(msg.data);
+      } else if (msg.type === 'exit') {
+        termWrite('\r\n\x1b[1;31m[Process exited. Press Enter to restart]\x1b[0m\r\n');
+      }
+    } catch(e) {}
+  };
+  ptyWs.onclose = function() {
+    vrLog('PTY disconnected');
+    schedulePtyReconnect();
+  };
+  ptyWs.onerror = function() {};
+}
+
+function schedulePtyReconnect() {
+  if (ptyReconnectTimer) return;
+  ptyReconnectTimer = setInterval(function() {
+    if (!ptyWs || ptyWs.readyState > 1) {
+      if (termShowing) termConnect();
+    }
+    if (ptyWs && ptyWs.readyState === 1) {
+      clearInterval(ptyReconnectTimer);
+      ptyReconnectTimer = null;
+    }
+  }, 3000);
+}
+
+function termSend(data) {
+  if (ptyWs && ptyWs.readyState === 1) {
+    ptyWs.send(JSON.stringify({ type: 'input', data: data }));
+  }
+}
+
+function termSendCtrlC() { termSend('\x03'); }
+
+function termRestart() {
+  if (ptyWs && ptyWs.readyState === 1) {
+    ptyWs.send(JSON.stringify({ type: 'restart' }));
+  }
+}
+
+// ===========================================================================
+// Virtual Keyboard
+// ===========================================================================
+var KB_ROWS = [
+  [
+    { l: 'Esc', w: 1.5, v: '\x1b' }, { l: '`', w: 1, v: '`', s: '~' },
+    { l: '1', w: 1, v: '1', s: '!' }, { l: '2', w: 1, v: '2', s: '@' },
+    { l: '3', w: 1, v: '3', s: '#' }, { l: '4', w: 1, v: '4', s: '$' },
+    { l: '5', w: 1, v: '5', s: '%' }, { l: '6', w: 1, v: '6', s: '^' },
+    { l: '7', w: 1, v: '7', s: '&' }, { l: '8', w: 1, v: '8', s: '*' },
+    { l: '9', w: 1, v: '9', s: '(' }, { l: '0', w: 1, v: '0', s: ')' },
+    { l: '-', w: 1, v: '-', s: '_' }, { l: '=', w: 1, v: '=', s: '+' },
+    { l: 'Bksp', w: 1.5, v: '\x7f' }
+  ],
+  [
+    { l: 'Tab', w: 1.5, v: '\t' },
+    { l: 'q', w: 1 }, { l: 'w', w: 1 }, { l: 'e', w: 1 }, { l: 'r', w: 1 },
+    { l: 't', w: 1 }, { l: 'y', w: 1 }, { l: 'u', w: 1 }, { l: 'i', w: 1 },
+    { l: 'o', w: 1 }, { l: 'p', w: 1 },
+    { l: '[', w: 1, v: '[', s: '{' }, { l: ']', w: 1, v: ']', s: '}' },
+    { l: '\\', w: 1.5, v: '\\', s: '|' }
+  ],
+  [
+    { l: 'Ctrl', w: 1.8, v: 'CTRL', special: true },
+    { l: 'a', w: 1 }, { l: 's', w: 1 }, { l: 'd', w: 1 }, { l: 'f', w: 1 },
+    { l: 'g', w: 1 }, { l: 'h', w: 1 }, { l: 'j', w: 1 }, { l: 'k', w: 1 },
+    { l: 'l', w: 1 },
+    { l: ';', w: 1, v: ';', s: ':' }, { l: "'", w: 1, v: "'", s: '"' },
+    { l: 'Enter', w: 2.2, v: '\r' }
+  ],
+  [
+    { l: 'Shift', w: 2.2, v: 'SHIFT', special: true },
+    { l: 'z', w: 1 }, { l: 'x', w: 1 }, { l: 'c', w: 1 }, { l: 'v', w: 1 },
+    { l: 'b', w: 1 }, { l: 'n', w: 1 }, { l: 'm', w: 1 },
+    { l: ',', w: 1, v: ',', s: '<' }, { l: '.', w: 1, v: '.', s: '>' },
+    { l: '/', w: 1, v: '/', s: '?' },
+    { l: 'Up', w: 1.3, v: '\x1b[A' }, { l: 'Shift', w: 1.5, v: 'SHIFT', special: true }
+  ],
+  [
+    { l: 'Ctrl', w: 1.5, v: 'CTRL', special: true },
+    { l: 'Space', w: 8, v: ' ' },
+    { l: 'Left', w: 1.3, v: '\x1b[D' }, { l: 'Down', w: 1.3, v: '\x1b[B' },
+    { l: 'Right', w: 1.3, v: '\x1b[C' }
+  ]
+];
+
+var kbShift = false, kbCtrl = false;
+var kbHoverRow = -1, kbHoverCol = -1;
+var kbKeyRects = [];
+
+function renderKeyboard() {
+  if (!kbCanvas) return;
+  var ctx = kbCanvas.getContext('2d');
+  var w = kbCanvas.width, h = kbCanvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(10,10,30,0.9)';
+  ctx.fillRect(0, 0, w, h);
+
+  kbKeyRects = [];
+  var unitW = w / 16;
+  var rowH = h / 5.2;
+  var gap = 3;
+
+  for (var r = 0; r < KB_ROWS.length; r++) {
+    var x = gap;
+    var y = r * rowH + gap;
+    for (var c = 0; c < KB_ROWS[r].length; c++) {
+      var key = KB_ROWS[r][c];
+      var kw = key.w * unitW - gap * 2;
+      var kh = rowH - gap * 2;
+      var hovered = (r === kbHoverRow && c === kbHoverCol);
+
+      if (key.special && ((key.v === 'SHIFT' && kbShift) || (key.v === 'CTRL' && kbCtrl))) {
+        ctx.fillStyle = '#446688';
+      } else if (hovered) {
+        ctx.fillStyle = '#334466';
+      } else {
+        ctx.fillStyle = '#1a2a44';
+      }
+      ctx.beginPath();
+      ctx.roundRect(x, y, kw, kh, 4);
+      ctx.fill();
+
+      ctx.strokeStyle = hovered ? '#88aacc' : '#334466';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      var label = key.l;
+      if (kbShift && label.length === 1 && label >= 'a' && label <= 'z') label = label.toUpperCase();
+      else if (kbShift && key.s) label = key.s;
+
+      ctx.fillStyle = hovered ? '#ffffff' : '#bbccdd';
+      ctx.font = (label.length > 2 ? '14' : '18') + 'px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x + kw / 2, y + kh / 2);
+      ctx.textAlign = 'left';
+
+      kbKeyRects.push({ r: r, c: c, x: x, y: y, w: kw, h: kh, key: key });
+      x += key.w * unitW;
+    }
+  }
+
+  kbTexture.needsUpdate = true;
+}
+
+function kbGetKeyAt(uvx, uvy) {
+  var cx = uvx * kbCanvas.width;
+  var cy = uvy * kbCanvas.height;
+  for (var i = 0; i < kbKeyRects.length; i++) {
+    var kr = kbKeyRects[i];
+    if (cx >= kr.x && cx <= kr.x + kr.w && cy >= kr.y && cy <= kr.y + kr.h) return kr;
+  }
+  return null;
+}
+
+function kbPressKey(kr) {
+  var key = kr.key;
+  if (key.special) {
+    if (key.v === 'SHIFT') kbShift = !kbShift;
+    else if (key.v === 'CTRL') kbCtrl = !kbCtrl;
+    return;
+  }
+  var val = key.v || key.l;
+  if (kbShift) {
+    if (val.length === 1 && val >= 'a' && val <= 'z') val = val.toUpperCase();
+    else if (key.s) val = key.s;
+    kbShift = false;
+  }
+  if (kbCtrl) {
+    if (val.length === 1) {
+      var upper = val.toUpperCase();
+      if (upper >= 'A' && upper <= 'Z') val = String.fromCharCode(upper.charCodeAt(0) - 64);
+    }
+    kbCtrl = false;
+  }
+  termSend(val);
+}
+
+// ===========================================================================
+// Keyboard Ray-casting
+// ===========================================================================
+var kbRaycaster = new THREE.Raycaster();
+
+function updateKeyboardRaycast(frame, refSpace, session) {
+  if (!termShowing || !kbMesh || !kbMesh.visible) {
+    kbHoverRow = -1; kbHoverCol = -1;
+    return;
+  }
+
+  var sources = session.inputSources;
+  var rightSource = null;
+  for (var i = 0; i < sources.length; i++) {
+    if (sources[i].handedness === 'right' && sources[i].targetRaySpace) {
+      rightSource = sources[i];
+      break;
+    }
+  }
+  if (!rightSource) return;
+
+  var rayPose = frame.getPose(rightSource.targetRaySpace, refSpace);
+  if (!rayPose) return;
+
+  var rp = rayPose.transform.position;
+  var ro = rayPose.transform.orientation;
+  var origin = new THREE.Vector3(rp.x, rp.y, rp.z);
+  var quat = new THREE.Quaternion(ro.x, ro.y, ro.z, ro.w);
+  var direction = new THREE.Vector3(0, 0, -1).applyQuaternion(quat);
+
+  kbRaycaster.set(origin, direction);
+  var intersects = kbRaycaster.intersectObject(kbMesh);
+  if (intersects.length > 0) {
+    var uv = intersects[0].uv;
+    if (uv) {
+      var kr = kbGetKeyAt(uv.x, 1.0 - uv.y);
+      if (kr) { kbHoverRow = kr.r; kbHoverCol = kr.c; return; }
+    }
+  }
+  kbHoverRow = -1; kbHoverCol = -1;
+}
+
+// ===========================================================================
+// Voice Input
+// ===========================================================================
+function voiceStartRecording() {
+  if (voiceRecording) return;
+  if (!voiceStream) {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+      voiceStream = stream;
+      voiceBeginCapture();
+    }).catch(function(e) {
+      vrLog('Mic error: ' + e.message);
+    });
+  } else {
+    voiceBeginCapture();
+  }
+}
+
+function voiceBeginCapture() {
+  voiceChunks = [];
+  var mimeType = 'audio/webm;codecs=opus';
+  if (!MediaRecorder.isTypeSupported(mimeType)) {
+    mimeType = 'audio/webm';
+    if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+  }
+  voiceRecorder = new MediaRecorder(voiceStream, mimeType ? { mimeType: mimeType } : {});
+  voiceRecorder.ondataavailable = function(e) {
+    if (e.data.size > 0) voiceChunks.push(e.data);
+  };
+  voiceRecorder.onstop = function() {
+    var blob = new Blob(voiceChunks, { type: voiceRecorder.mimeType || 'audio/webm' });
+    voiceTranscribe(blob);
+  };
+  voiceRecorder.start();
+  voiceRecording = true;
+  vrLog('Voice recording started');
+}
+
+function voiceStopRecording() {
+  if (!voiceRecording || !voiceRecorder) return;
+  voiceRecording = false;
+  voiceRecorder.stop();
+  vrLog('Voice recording stopped');
+}
+
+function voiceTranscribe(blob) {
+  voiceStatusMsg = 'Transcribing...';
+  fetch('/api/transcribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'audio/webm' },
+    body: blob
+  }).then(function(resp) { return resp.json(); })
+  .then(function(data) {
+    if (data.text) {
+      var text = data.text.trim();
+      voiceStatusMsg = text.substring(0, 60);
+      vrLog('Voice: ' + text);
+      if (voiceStatusTimer) clearTimeout(voiceStatusTimer);
+      voiceStatusTimer = setTimeout(function() {
+        termSend(text);
+        voiceStatusMsg = '';
+      }, 1500);
+    } else if (data.error) {
+      voiceStatusMsg = 'Error: ' + data.error.substring(0, 40);
+      vrLog('Transcribe error: ' + data.error);
+      if (voiceStatusTimer) clearTimeout(voiceStatusTimer);
+      voiceStatusTimer = setTimeout(function() { voiceStatusMsg = ''; }, 3000);
+    }
+  }).catch(function(e) {
+    voiceStatusMsg = 'Network error';
+    vrLog('Transcribe fetch error: ' + e.message);
+    if (voiceStatusTimer) clearTimeout(voiceStatusTimer);
+    voiceStatusTimer = setTimeout(function() { voiceStatusMsg = ''; }, 3000);
+  });
+}
+
+// ===========================================================================
+// WebXR
+// ===========================================================================
+function checkVRSupport() {
+  if (!navigator.xr) return;
+  navigator.xr.isSessionSupported('immersive-vr').then(function(ok) {
+    document.getElementById('enterVrBtn').disabled = !ok;
+    if (ok) log('VR ready');
+  });
+}
+
+function enterVR() {
+  if (!navigator.xr) return;
+  initScene();
+  startCameraFeed();
+  renderer.xr.addEventListener('sessionstart', function() {
+    vrLog('VR session started');
+    document.getElementById('overlay').classList.add('hidden');
+  });
+  renderer.xr.addEventListener('sessionend', function() {
+    log('VR session ended');
+    document.getElementById('overlay').classList.remove('hidden');
+    onSessionEnd();
+  });
+  navigator.xr.requestSession('immersive-vr', {
+    optionalFeatures: ['local-floor']
+  }).then(function(session) {
+    renderer.xr.setSession(session);
+    renderer.setAnimationLoop(renderLoop);
+  }).catch(function(e) { log('VR error: ' + e.message); });
+}
+
+function onSessionEnd() {
+  if (walkingEnabled) {
+    sendWalkParam(0, 0, 0);
+    sendWalkCommand('stop');
+    walkingEnabled = false;
+  }
+  sendHeadPan(0);
+  sendHeadTilt(0);
+  sendInitPose();
+  handsEnabled = false;
+  calibrated = false;
+  stopCameraFeed();
+  log('Robot reset to init pose');
+}
+
+// ===========================================================================
+// Terminal Toggle
+// ===========================================================================
+function toggleTerminal() {
+  termShowing = !termShowing;
+  if (termMesh) termMesh.visible = termShowing;
+  if (kbMesh) kbMesh.visible = termShowing;
+  if (videoMesh) videoMesh.visible = !termShowing;
+  if (termShowing) {
+    termConnect();
+    vrLog('Terminal ON');
+  } else {
+    vrLog('Terminal OFF');
+  }
+}
+
+// ===========================================================================
+// Arm geometry
+// ===========================================================================
+function getShoulderPos(headY, isLeft) {
+  return { x: isLeft ? -0.20 : 0.20, y: headY - 0.18, z: 0 };
+}
+
+function computeVRArmAngles(cp, sp, isLeft) {
+  var dx = cp.x - sp.x, dy = cp.y - sp.y, dz = cp.z - sp.z;
+  var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+  var pitch = Math.atan2(-dz, -dy);
+  var lateral = isLeft ? -dx : dx;
+  var vertFwd = Math.sqrt(dy * dy + dz * dz);
+  var roll = Math.atan2(lateral, vertFwd);
+  var maxReach = UPPER_ARM + FOREARM - 0.005;
+  var d = Math.max(0.02, Math.min(dist, maxReach));
+  var cosA = (UPPER_ARM * UPPER_ARM + FOREARM * FOREARM - d * d) / (2 * UPPER_ARM * FOREARM);
+  cosA = Math.max(-1, Math.min(1, cosA));
+  var elbow = Math.PI - Math.acos(cosA);
+  return { pitch: pitch, roll: roll, elbow: elbow };
+}
+
+function smoothVal(cur, tgt, f) { return cur + (tgt - cur) * (1 - f); }
+
+// ===========================================================================
+// Per-frame input processing
+// ===========================================================================
+function processInputs(timestamp, frame) {
+  if (!frame) return;
+  var session = renderer.xr.getSession();
+  if (!session) return;
+  var refSpace = renderer.xr.getReferenceSpace();
+  if (!refSpace) {
+    if (frameCount % 60 === 0) vrLog('Waiting for ref space...');
+    return;
+  }
+
+  var pose = frame.getViewerPose(refSpace);
+
+  // ===================== HEAD TRACKING =====================
+  if (pose && connected) {
+    var q = pose.transform.orientation;
+    var tq = new THREE.Quaternion(q.x, q.y, q.z, q.w);
+    var euler = new THREE.Euler().setFromQuaternion(tq, 'YXZ');
+
+    var panDeg = euler.y * 180 / Math.PI;
+    var tiltDeg = euler.x * 180 / Math.PI;
+
+    panDeg = Math.max(-80, Math.min(80, panDeg));
+    tiltDeg = Math.max(-30, Math.min(30, tiltDeg));
+
+    if (Math.abs(panDeg - lastHeadPan) > 1 || Math.abs(tiltDeg - lastHeadTilt) > 1) {
+      sendHeadPan(panDeg);
+      sendHeadTilt(tiltDeg);
+      lastHeadPan = panDeg;
+      lastHeadTilt = tiltDeg;
+    }
+
+    // Position screens in front of face, locked to the clamped robot head angles.
+    // This makes it feel like looking through the robot's neck.
+    var panRad  = panDeg  * Math.PI / 180;
+    var tiltRad = tiltDeg * Math.PI / 180;
+    var scrDist = 2.0;
+    var hx = pose.transform.position.x;
+    var hy = pose.transform.position.y;
+    var hz = pose.transform.position.z;
+    // Spherical: pan=Y rotation, tilt=X rotation, forward=-Z
+    var sx = hx - Math.sin(panRad) * Math.cos(tiltRad) * scrDist;
+    var sy = hy - Math.sin(tiltRad) * scrDist;
+    var sz = hz - Math.cos(panRad) * Math.cos(tiltRad) * scrDist;
+    if (videoMesh) {
+      videoMesh.position.set(sx, sy, sz);
+      videoMesh.rotation.set(-tiltRad, panRad, 0, 'YXZ');
+    }
+    if (termMesh) {
+      termMesh.position.set(sx, sy, sz);
+      termMesh.rotation.set(-tiltRad, panRad, 0, 'YXZ');
+    }
+  }
+
+  // ===================== CONTROLLERS =====================
+  var headY = pose ? pose.transform.position.y : 1.6;
+  var leftCtrl = null, rightCtrl = null;
+  var leftGP = null, rightGP = null;
+
+  var sources = session.inputSources;
+  for (var i = 0; i < sources.length; i++) {
+    var src = sources[i];
+    if (!src.gripSpace) continue;
+    var gp = frame.getPose(src.gripSpace, refSpace);
+    if (!gp) continue;
+    var p = gp.transform.position;
+
+    if (src.handedness === 'left') {
+      leftCtrl = { x: p.x, y: p.y, z: p.z };
+      leftGP = src.gamepad;
+      controllerGrips[0].position.set(p.x, p.y, p.z);
+      controllerGrips[0].visible = true;
+    } else if (src.handedness === 'right') {
+      rightCtrl = { x: p.x, y: p.y, z: p.z };
+      rightGP = src.gamepad;
+      controllerGrips[1].position.set(p.x, p.y, p.z);
+      controllerGrips[1].visible = true;
+    }
+  }
+
+  // Diagnostics on first detection
+  if (frameCount === 30) {
+    vrLog('Ctrl: ' + sources.length + ' L:' + (leftCtrl ? 'y' : 'n') +
+      ' R:' + (rightCtrl ? 'y' : 'n') + ' conn:' + connected);
+    if (rightGP) vrLog('R btns:' + rightGP.buttons.length + ' axes:' + rightGP.axes.length);
+  }
+
+  // ===================== Y BUTTON: TOGGLE TERMINAL =====================
+  if (leftGP && leftGP.buttons.length > 5) {
+    var yPressed = leftGP.buttons[5].pressed;
+    if (yPressed && !yButtonWasPressed) toggleTerminal();
+    yButtonWasPressed = yPressed;
+  }
+
+  // ===================== X BUTTON: CTRL+C =====================
+  if (leftGP && leftGP.buttons.length > 4) {
+    var xPressed = leftGP.buttons[4].pressed;
+    if (xPressed && !xButtonWasPressed && termShowing) {
+      termSendCtrlC();
+      vrLog('Sent Ctrl+C');
+    }
+    xButtonWasPressed = xPressed;
+  }
+
+  // ===================== B BUTTON: VOICE =====================
+  if (rightGP && rightGP.buttons.length > 5) {
+    var bPressed = rightGP.buttons[5].pressed;
+    if (bPressed && !bButtonWasPressed && termShowing) voiceStartRecording();
+    if (!bPressed && bButtonWasPressed && voiceRecording) voiceStopRecording();
+    bButtonWasPressed = bPressed;
+  }
+
+  // ===================== RIGHT TRIGGER: KEYBOARD =====================
+  if (rightGP && rightGP.buttons.length > 0 && termShowing) {
+    var trigPressed = rightGP.buttons[0].pressed;
+    if (trigPressed && !triggerWasPressed && kbHoverRow >= 0 && kbHoverCol >= 0) {
+      for (var ki = 0; ki < kbKeyRects.length; ki++) {
+        if (kbKeyRects[ki].r === kbHoverRow && kbKeyRects[ki].c === kbHoverCol) {
+          kbPressKey(kbKeyRects[ki]); break;
+        }
+      }
+    }
+    triggerWasPressed = trigPressed;
+  }
+
+  // Update keyboard raycasting
+  if (termShowing) updateKeyboardRaycast(frame, refSpace, session);
+
+  if (!connected) {
+    if (frameCount === 60 && robotIpCached) scheduleReconnect();
+    return;
+  }
+
+  // ===================== A BUTTON: TOGGLE HANDS =====================
+  if (rightGP && rightGP.buttons.length > 4) {
+    var aPressed = rightGP.buttons[4].pressed;
+    if (aPressed && !aButtonWasPressed) {
+      if (!handsEnabled) {
+        if (leftCtrl && rightCtrl) {
+          // Move robot arms to calibration pose (arms forward)
+          sendPose(CAL_POSE, 0.5);
+          // Capture VR controller angles as calibration reference
+          var lSh = getShoulderPos(headY, true);
+          var rSh = getShoulderPos(headY, false);
+          calRef.left = computeVRArmAngles(leftCtrl, lSh, true);
+          calRef.right = computeVRArmAngles(rightCtrl, rSh, false);
+          // Reset smooth values to CAL_POSE (not INIT)
+          smoothArm.left.pitch = CAL_POSE.l_sho_pitch;
+          smoothArm.left.roll  = CAL_POSE.l_sho_roll;
+          smoothArm.left.elbow = CAL_POSE.l_el_pitch;
+          smoothArm.left.yaw   = CAL_POSE.l_el_yaw;
+          smoothArm.right.pitch = CAL_POSE.r_sho_pitch;
+          smoothArm.right.roll  = CAL_POSE.r_sho_roll;
+          smoothArm.right.elbow = CAL_POSE.r_el_pitch;
+          smoothArm.right.yaw   = CAL_POSE.r_el_yaw;
+          calibrated = true;
+          handsEnabled = true;
+          vrLog('HANDS ON -- cal pose sent, calibrated');
+        } else {
+          vrLog('Need both controllers visible to calibrate');
+        }
+      } else {
+        handsEnabled = false;
+        calibrated = false;
+        sendInitPose();
+        vrLog('HANDS OFF -- init pose');
+      }
+    }
+    aButtonWasPressed = aPressed;
+  }
+
+  // ===================== WALKING =====================
+  var walkX = 0, walkAngle = 0, walkActive = false;
+
+  if (leftGP && leftGP.axes.length >= 4) {
+    var ly = leftGP.axes[3];
+    if (Math.abs(ly) > 0.15) {
+      walkX = ly < 0 ? 0.015 : -0.015;
+      walkActive = true;
+    }
+  }
+  if (rightGP && rightGP.axes.length >= 4) {
+    var rx = rightGP.axes[2];
+    if (Math.abs(rx) > 0.15) {
+      walkAngle = rx > 0 ? -8 : 8;
+      walkActive = true;
+    }
+  }
+
+  if (walkActive && timestamp - lastWalkTime > 200) {
+    if (!walkingEnabled) { sendWalkCommand('start'); walkingEnabled = true; vrLog('Walk START'); }
+    sendWalkParam(walkX, 0, walkAngle);
+    lastWalkTime = timestamp;
+    isWalking = true;
+  } else if (!walkActive && walkingEnabled) {
+    sendWalkParam(0, 0, 0);
+    sendWalkCommand('stop');
+    walkingEnabled = false;
+    isWalking = false;
+    vrLog('Walk STOP');
+  }
+
+  // ===================== ARM TRACKING (20Hz) =====================
+  if (handsEnabled && calibrated && timestamp - lastServoTime > 50) {
+    var positions = [];
+
+    if (leftCtrl) {
+      var lSh = getShoulderPos(headY, true);
+      var la = computeVRArmAngles(leftCtrl, lSh, true);
+
+      var dPitch = la.pitch - calRef.left.pitch;
+      var dRoll  = la.roll  - calRef.left.roll;
+
+      // Apply deltas to CAL_POSE (not INIT)
+      // Left: +dPitch = forward = +sho_pitch
+      var tgtPitch = CAL_POSE.l_sho_pitch + dPitch;
+      // Left: +dRoll = outward = +sho_roll
+      var tgtRoll  = CAL_POSE.l_sho_roll  + dRoll;
+      // Left: elbow bend = POSITIVE el_pitch (confirmed from wave action)
+      var tgtElbow = CAL_POSE.l_el_pitch  + la.elbow;
+
+      // Safety clamping (L: pitch positive=fwd, roll positive=out, elbow positive=bend)
+      tgtPitch = Math.max(-0.5, Math.min(2.5, tgtPitch));
+      tgtRoll  = Math.max(-0.5, Math.min(1.5, tgtRoll));
+      tgtElbow = Math.max(-0.2, Math.min(2.0, tgtElbow));
+
+      smoothArm.left.pitch = smoothVal(smoothArm.left.pitch, tgtPitch, SMOOTH);
+      smoothArm.left.roll  = smoothVal(smoothArm.left.roll,  tgtRoll,  SMOOTH);
+      smoothArm.left.elbow = smoothVal(smoothArm.left.elbow, tgtElbow, SMOOTH);
+
+      if (leftGP && leftGP.buttons.length > 1) {
+        smoothArm.left.grip = leftGP.buttons[1].value > 0.5 ? 1.5 : 0.0;
+      }
+
+      if (!isWalking) {
+        positions.push([SERVO.l_sho_pitch.id, angle2pulse(SERVO.l_sho_pitch, smoothArm.left.pitch)]);
+      }
+      positions.push([SERVO.l_sho_roll.id,  angle2pulse(SERVO.l_sho_roll,  smoothArm.left.roll)]);
+      positions.push([SERVO.l_el_pitch.id,   angle2pulse(SERVO.l_el_pitch,  smoothArm.left.elbow)]);
+      positions.push([SERVO.l_el_yaw.id,     angle2pulse(SERVO.l_el_yaw,    smoothArm.left.yaw)]);
+      positions.push([SERVO.l_gripper.id,    angle2pulse(SERVO.l_gripper,   smoothArm.left.grip)]);
+    }
+
+    if (rightCtrl) {
+      var rSh = getShoulderPos(headY, false);
+      var ra = computeVRArmAngles(rightCtrl, rSh, false);
+
+      var dPitch = ra.pitch - calRef.right.pitch;
+      var dRoll  = ra.roll  - calRef.right.roll;
+
+      // Apply deltas to CAL_POSE (not INIT)
+      // Right: +dPitch = forward = NEGATIVE sho_pitch (mirror-mounted servo!)
+      var tgtPitch = CAL_POSE.r_sho_pitch - dPitch;
+      // Right: +dRoll = outward = NEGATIVE sho_roll
+      var tgtRoll  = CAL_POSE.r_sho_roll  - dRoll;
+      // Right: elbow bend = NEGATIVE el_pitch (confirmed from wave action)
+      var tgtElbow = CAL_POSE.r_el_pitch  - ra.elbow;
+
+      // Safety clamping (R: pitch negative=fwd, roll negative=out, elbow negative=bend)
+      tgtPitch = Math.max(-2.5, Math.min(0.5, tgtPitch));
+      tgtRoll  = Math.max(-1.5, Math.min(0.5, tgtRoll));
+      tgtElbow = Math.max(-2.0, Math.min(0.2, tgtElbow));
+
+      smoothArm.right.pitch = smoothVal(smoothArm.right.pitch, tgtPitch, SMOOTH);
+      smoothArm.right.roll  = smoothVal(smoothArm.right.roll,  tgtRoll,  SMOOTH);
+      smoothArm.right.elbow = smoothVal(smoothArm.right.elbow, tgtElbow, SMOOTH);
+
+      if (rightGP && rightGP.buttons.length > 1) {
+        smoothArm.right.grip = rightGP.buttons[1].value > 0.5 ? -1.5 : 0.0;
+      }
+
+      if (!isWalking) {
+        positions.push([SERVO.r_sho_pitch.id, angle2pulse(SERVO.r_sho_pitch, smoothArm.right.pitch)]);
+      }
+      positions.push([SERVO.r_sho_roll.id,  angle2pulse(SERVO.r_sho_roll,  smoothArm.right.roll)]);
+      positions.push([SERVO.r_el_pitch.id,   angle2pulse(SERVO.r_el_pitch,  smoothArm.right.elbow)]);
+      positions.push([SERVO.r_el_yaw.id,     angle2pulse(SERVO.r_el_yaw,    smoothArm.right.yaw)]);
+      positions.push([SERVO.r_gripper.id,    angle2pulse(SERVO.r_gripper,   smoothArm.right.grip)]);
+    }
+
+    if (positions.length > 0) sendServoPositions(positions);
+    lastServoTime = timestamp;
+
+    // Periodic diagnostics (~every 5s at 72Hz)
+    if (frameCount % 360 === 0) {
+      if (leftCtrl) {
+        vrLog('L sho_p=' + smoothArm.left.pitch.toFixed(2) +
+          ' sho_r=' + smoothArm.left.roll.toFixed(2) +
+          ' el_p=' + smoothArm.left.elbow.toFixed(2));
+      }
+      if (rightCtrl) {
+        vrLog('R sho_p=' + smoothArm.right.pitch.toFixed(2) +
+          ' sho_r=' + smoothArm.right.roll.toFixed(2) +
+          ' el_p=' + smoothArm.right.elbow.toFixed(2));
+      }
+    }
+  }
+}
+
+// ===========================================================================
+// Render Loop
+// ===========================================================================
+function renderLoop(timestamp, frame) {
+  frameCount++;
+  try { processInputs(timestamp, frame); }
+  catch (e) { if (frameCount % 60 === 0) vrLog('ERR: ' + e.message); }
+  try { renderVRLog(); } catch(e2) {}
+  if (termShowing) {
+    try { renderTerminal(); } catch(e3) {}
+    try { renderKeyboard(); } catch(e4) {}
+  }
+  renderer.render(scene, camera);
+}
+
+// ===========================================================================
+// Lifecycle
+// ===========================================================================
+window.addEventListener('beforeunload', function() { onSessionEnd(); });
+
+if (navigator.xr) {
+  navigator.xr.isSessionSupported('immersive-vr').then(function(ok) {
+    if (ok) log('WebXR: VR supported');
+    else log('WebXR: VR not supported');
+  });
+} else {
+  log('WebXR not available');
+}
+log('Connect, then Enter VR. Y=terminal, B=voice, X=Ctrl+C.');
+</script>
+</body>
+</html>

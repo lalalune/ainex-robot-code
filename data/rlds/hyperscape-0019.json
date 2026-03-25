@@ -1,0 +1,515 @@
+{
+  "trajectory_id": "hyperscape-0019",
+  "agent_id": "eliza-agent-4",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_19_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -41.05105551279017,
+              -32.05790610626101,
+              5.931768482919
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7813995611629789,
+            "distance_to_agent": 3.5348877857516774,
+            "bearing_to_agent": 0.9147251366247009,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -35.489903679405714,
+              -31.52974515239486,
+              6.267987585449195
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7019559185931117,
+            "distance_to_agent": 5.975779108472984,
+            "bearing_to_agent": -0.2635218229834402,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_2",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -36.345733122756265,
+              -27.103769496878474,
+              6.914865727817073
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6341457429326477,
+            "distance_to_agent": 8.989455124929817,
+            "bearing_to_agent": 0.19387731549674259,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_19_3",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -48.15086518078009,
+              -41.51465943510535,
+              7.9729781794155254
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8225482942461401,
+            "distance_to_agent": 10.241899930561939,
+            "bearing_to_agent": 2.8512805438549798,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.0821538320958,
+          7.017794185460662,
+          35.2792737295575
+        ],
+        "task": "Walk to the Iron Ore and interact with it"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_19_2",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.8736073722343185,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_19_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -41.05105551279017,
+              -32.05790610626101,
+              5.931768482919
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7813995611629789,
+            "distance_to_agent": 3.5348877857516774,
+            "bearing_to_agent": 0.9147251366247009,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -35.489903679405714,
+              -31.52974515239486,
+              6.267987585449195
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7019559185931117,
+            "distance_to_agent": 5.975779108472984,
+            "bearing_to_agent": -0.2635218229834402,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_2",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -36.345733122756265,
+              -27.103769496878474,
+              6.914865727817073
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6341457429326477,
+            "distance_to_agent": 8.989455124929817,
+            "bearing_to_agent": 0.19387731549674259,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_19_3",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -48.15086518078009,
+              -41.51465943510535,
+              7.9729781794155254
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8225482942461401,
+            "distance_to_agent": 10.241899930561939,
+            "bearing_to_agent": 2.8512805438549798,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.0821538320958,
+          7.017794185460662,
+          35.2792737295575
+        ],
+        "task": "Walk to the Iron Ore and interact with it"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_19_2",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.600410091224677,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_19_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -41.05105551279017,
+              -32.05790610626101,
+              5.931768482919
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7813995611629789,
+            "distance_to_agent": 3.5348877857516774,
+            "bearing_to_agent": 0.9147251366247009,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -35.489903679405714,
+              -31.52974515239486,
+              6.267987585449195
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7019559185931117,
+            "distance_to_agent": 5.975779108472984,
+            "bearing_to_agent": -0.2635218229834402,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_2",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -36.345733122756265,
+              -27.103769496878474,
+              6.914865727817073
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6341457429326477,
+            "distance_to_agent": 8.989455124929817,
+            "bearing_to_agent": 0.19387731549674259,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_19_3",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -48.15086518078009,
+              -41.51465943510535,
+              7.9729781794155254
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8225482942461401,
+            "distance_to_agent": 10.241899930561939,
+            "bearing_to_agent": 2.8512805438549798,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.0821538320958,
+          7.017794185460662,
+          35.2792737295575
+        ],
+        "task": "Walk to the Iron Ore and interact with it"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_19_2",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.8472748481349526,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_19_0",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -41.05105551279017,
+              -32.05790610626101,
+              5.931768482919
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7813995611629789,
+            "distance_to_agent": 3.5348877857516774,
+            "bearing_to_agent": 0.9147251366247009,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_1",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -35.489903679405714,
+              -31.52974515239486,
+              6.267987585449195
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7019559185931117,
+            "distance_to_agent": 5.975779108472984,
+            "bearing_to_agent": -0.2635218229834402,
+            "source": "game",
+            "properties": {}
+          },
+          {
+            "entity_id": "entity_19_2",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -36.345733122756265,
+              -27.103769496878474,
+              6.914865727817073
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6341457429326477,
+            "distance_to_agent": 8.989455124929817,
+            "bearing_to_agent": 0.19387731549674259,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_19_3",
+            "entity_type": "landmark",
+            "label": "Oak Tree",
+            "position": [
+              -48.15086518078009,
+              -41.51465943510535,
+              7.9729781794155254
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8225482942461401,
+            "distance_to_agent": 10.241899930561939,
+            "bearing_to_agent": 2.8512805438549798,
+            "source": "game",
+            "properties": {}
+          }
+        ],
+        "agent_position": [
+          -40.0821538320958,
+          7.017794185460662,
+          35.2792737295575
+        ],
+        "task": "Walk to the Iron Ore and interact with it"
+      },
+      "action": {
+        "type": "combat",
+        "name": "attack",
+        "params": {
+          "target_entity": "entity_19_2",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.4291124108817812,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.7504047224757295,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

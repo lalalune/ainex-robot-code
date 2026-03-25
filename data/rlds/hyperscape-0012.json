@@ -1,0 +1,671 @@
+{
+  "trajectory_id": "hyperscape-0012",
+  "agent_id": "eliza-agent-2",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_12_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -24.16905306226381,
+              -5.760394778006884,
+              4.535023072589423
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8207968982311036,
+            "distance_to_agent": 7.213258062498665,
+            "bearing_to_agent": 0.7976973865045842,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -29.408461116006244,
+              -12.839315126904301,
+              6.012288029192295
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.716503715612411,
+            "distance_to_agent": 10.123832723797552,
+            "bearing_to_agent": 1.8195081856565158,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_12_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -23.699877776190174,
+              -18.155225851323486,
+              5.341146703170637
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6284719040613916,
+            "distance_to_agent": 8.392973043083988,
+            "bearing_to_agent": 2.6713923092057814,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.983754678412986,
+              -13.464251367797473,
+              7.3615853173084105
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8644732171413472,
+            "distance_to_agent": 8.914120881098842,
+            "bearing_to_agent": -1.7953981671019592,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -19.46197556806396,
+          6.2102732107214855,
+          10.963091224513036
+        ],
+        "task": "Talk to the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_12_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.22480945026602384,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_12_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -24.16905306226381,
+              -5.760394778006884,
+              4.535023072589423
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8207968982311036,
+            "distance_to_agent": 7.213258062498665,
+            "bearing_to_agent": 0.7976973865045842,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -29.408461116006244,
+              -12.839315126904301,
+              6.012288029192295
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.716503715612411,
+            "distance_to_agent": 10.123832723797552,
+            "bearing_to_agent": 1.8195081856565158,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_12_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -23.699877776190174,
+              -18.155225851323486,
+              5.341146703170637
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6284719040613916,
+            "distance_to_agent": 8.392973043083988,
+            "bearing_to_agent": 2.6713923092057814,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.983754678412986,
+              -13.464251367797473,
+              7.3615853173084105
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8644732171413472,
+            "distance_to_agent": 8.914120881098842,
+            "bearing_to_agent": -1.7953981671019592,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -19.46197556806396,
+          6.2102732107214855,
+          10.963091224513036
+        ],
+        "task": "Talk to the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_12_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.7489577220696233,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_12_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -24.16905306226381,
+              -5.760394778006884,
+              4.535023072589423
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8207968982311036,
+            "distance_to_agent": 7.213258062498665,
+            "bearing_to_agent": 0.7976973865045842,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -29.408461116006244,
+              -12.839315126904301,
+              6.012288029192295
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.716503715612411,
+            "distance_to_agent": 10.123832723797552,
+            "bearing_to_agent": 1.8195081856565158,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_12_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -23.699877776190174,
+              -18.155225851323486,
+              5.341146703170637
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6284719040613916,
+            "distance_to_agent": 8.392973043083988,
+            "bearing_to_agent": 2.6713923092057814,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.983754678412986,
+              -13.464251367797473,
+              7.3615853173084105
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8644732171413472,
+            "distance_to_agent": 8.914120881098842,
+            "bearing_to_agent": -1.7953981671019592,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -19.46197556806396,
+          6.2102732107214855,
+          10.963091224513036
+        ],
+        "task": "Talk to the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_12_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.9426762407440408,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_12_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -24.16905306226381,
+              -5.760394778006884,
+              4.535023072589423
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8207968982311036,
+            "distance_to_agent": 7.213258062498665,
+            "bearing_to_agent": 0.7976973865045842,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -29.408461116006244,
+              -12.839315126904301,
+              6.012288029192295
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.716503715612411,
+            "distance_to_agent": 10.123832723797552,
+            "bearing_to_agent": 1.8195081856565158,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_12_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -23.699877776190174,
+              -18.155225851323486,
+              5.341146703170637
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6284719040613916,
+            "distance_to_agent": 8.392973043083988,
+            "bearing_to_agent": 2.6713923092057814,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.983754678412986,
+              -13.464251367797473,
+              7.3615853173084105
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8644732171413472,
+            "distance_to_agent": 8.914120881098842,
+            "bearing_to_agent": -1.7953981671019592,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -19.46197556806396,
+          6.2102732107214855,
+          10.963091224513036
+        ],
+        "task": "Talk to the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_12_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.7345339232856153,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_12_0",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -24.16905306226381,
+              -5.760394778006884,
+              4.535023072589423
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8207968982311036,
+            "distance_to_agent": 7.213258062498665,
+            "bearing_to_agent": 0.7976973865045842,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_1",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              -29.408461116006244,
+              -12.839315126904301,
+              6.012288029192295
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.716503715612411,
+            "distance_to_agent": 10.123832723797552,
+            "bearing_to_agent": 1.8195081856565158,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_12_2",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -23.699877776190174,
+              -18.155225851323486,
+              5.341146703170637
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6284719040613916,
+            "distance_to_agent": 8.392973043083988,
+            "bearing_to_agent": 2.6713923092057814,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          },
+          {
+            "entity_id": "entity_12_3",
+            "entity_type": "object",
+            "label": "Gold Ore",
+            "position": [
+              -10.983754678412986,
+              -13.464251367797473,
+              7.3615853173084105
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.8644732171413472,
+            "distance_to_agent": 8.914120881098842,
+            "bearing_to_agent": -1.7953981671019592,
+            "source": "game",
+            "properties": {
+              "rarity": "rare"
+            }
+          }
+        ],
+        "agent_position": [
+          -19.46197556806396,
+          6.2102732107214855,
+          10.963091224513036
+        ],
+        "task": "Talk to the Iron Ore"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_12_1",
+          "target_label": "Iron Ore"
+        }
+      },
+      "reward": 0.5751991092199304,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 3.2261764455852338,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

@@ -6,6 +6,7 @@ import time
 import unittest
 
 from bridge.perception import PerceptionAggregator
+from training.schema.canonical import AINEX_ENTITY_SLOT_DIM, AINEX_SCHEMA_VERSION
 
 
 class PerceptionAggregatorTests(unittest.TestCase):
@@ -16,6 +17,7 @@ class PerceptionAggregatorTests(unittest.TestCase):
         snap = agg.snapshot()
         self.assertEqual(len(snap.tracked_entities), 0)
         self.assertFalse(snap.is_walking)
+        self.assertEqual(snap.schema_version, AINEX_SCHEMA_VERSION)
 
     def test_update_entity(self) -> None:
         agg = PerceptionAggregator()
@@ -81,6 +83,34 @@ class PerceptionAggregatorTests(unittest.TestCase):
         agg = PerceptionAggregator()
         snap = agg.snapshot(language_instruction="pick up the cup")
         self.assertEqual(snap.language_instruction, "pick up the cup")
+
+    def test_entity_slots_are_canonicalized(self) -> None:
+        agg = PerceptionAggregator()
+        agg.update_entity_slots((0.25, 0.5))
+        snap = agg.snapshot()
+        self.assertEqual(len(snap.entity_slots), AINEX_ENTITY_SLOT_DIM)
+        self.assertAlmostEqual(snap.entity_slots[0], 0.25)
+        self.assertAlmostEqual(snap.entity_slots[1], 0.5)
+        self.assertTrue(all(v == 0.0 for v in snap.entity_slots[2:]))
+
+    def test_scene_summary_includes_mock_entity_shape(self) -> None:
+        agg = PerceptionAggregator()
+        agg.update_entities_batch(
+            [
+                {
+                    "entity_id": "mock-red-ball-01",
+                    "label": "red ball",
+                    "confidence": 0.98,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.4,
+                    "source": "mock",
+                }
+            ]
+        )
+        summary = agg.scene_summary()
+        self.assertEqual(summary["entity_count"], 1)
+        self.assertEqual(summary["entities"][0]["label"], "red ball")
 
 
 if __name__ == "__main__":

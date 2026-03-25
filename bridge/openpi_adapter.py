@@ -9,60 +9,39 @@ the robot always receives a bounded command.
 from __future__ import annotations
 
 import logging
-import math
-from dataclasses import asdict
-from typing import Any
 
 from training.interfaces import (
     AinexPerceptionObservation,
+    JsonValue,
     OpenPIActionChunk,
     OpenPIObservationPayload,
     TrackedEntity,
 )
+from training.schema.canonical import (
+    AINEX_ACTION_DIM,
+    AINEX_ENTITY_SLOT_DIM,
+    AINEX_PROPRIO_DIM,
+    AINEX_SCHEMA_VERSION,
+    AINEX_STATE_DIM,
+    BATTERY_MAX,
+    BATTERY_MIN,
+    HEAD_PAN_RANGE,
+    HEAD_TILT_RANGE,
+    IMU_RANGE,
+    WALK_HEIGHT_MAX,
+    WALK_HEIGHT_MIN,
+    WALK_SPEED_MAX,
+    WALK_SPEED_MIN,
+    WALK_X_RANGE,
+    WALK_Y_RANGE,
+    WALK_YAW_RANGE,
+    canonical_entity_slots,
+    clamp_value,
+    denormalize_value,
+    normalize_value,
+)
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Normalization constants (maps raw AiNex values to [-1, 1] or [0, 1])
-# ---------------------------------------------------------------------------
-_WALK_X_RANGE = 0.05       # ±0.05 m/step
-_WALK_Y_RANGE = 0.05
-_WALK_YAW_RANGE = 10.0     # ±10 deg/step
-_WALK_HEIGHT_MIN = 0.015
-_WALK_HEIGHT_MAX = 0.06
-_WALK_SPEED_MIN = 1
-_WALK_SPEED_MAX = 4
-_HEAD_PAN_RANGE = 1.5      # ±1.5 rad
-_HEAD_TILT_RANGE = 1.0     # ±1.0 rad
-_IMU_RANGE = math.pi       # ±π rad
-_BATTERY_MIN = 10400       # mV
-_BATTERY_MAX = 12600
-
-# State vector dimension for the AiNex proprioception
-AINEX_PROPRIO_DIM = 11
-# Entity slot dimensions (8 slots x 19 dims)
-AINEX_ENTITY_SLOT_DIM = 152
-# Full state dimension (proprioception + entity slots)
-AINEX_STATE_DIM = AINEX_PROPRIO_DIM + AINEX_ENTITY_SLOT_DIM  # 163
-
-# Action vector dimension from OpenPI
-AINEX_ACTION_DIM = 7  # walk_x, walk_y, walk_yaw, walk_height, walk_speed, head_pan, head_tilt
-
-
-def _norm(value: float, lo: float, hi: float) -> float:
-    """Normalize value from [lo, hi] to [-1, 1]."""
-    if hi == lo:
-        return 0.0
-    return 2.0 * (value - lo) / (hi - lo) - 1.0
-
-
-def _denorm(value: float, lo: float, hi: float) -> float:
-    """Denormalize from [-1, 1] to [lo, hi]."""
-    return lo + (value + 1.0) * 0.5 * (hi - lo)
-
-
-def _clamp(value: float, lo: float, hi: float) -> float:
-    return max(lo, min(hi, value))
 
 
 # ---------------------------------------------------------------------------
@@ -75,33 +54,36 @@ def build_observation(
     """Convert an AiNex perception snapshot into an OpenPI observation payload."""
 
     proprio = (
-        _norm(perception.walk_x, -_WALK_X_RANGE, _WALK_X_RANGE),
-        _norm(perception.walk_y, -_WALK_Y_RANGE, _WALK_Y_RANGE),
-        _norm(perception.walk_yaw, -_WALK_YAW_RANGE, _WALK_YAW_RANGE),
-        _norm(perception.walk_height, _WALK_HEIGHT_MIN, _WALK_HEIGHT_MAX),
-        _norm(float(perception.walk_speed), float(_WALK_SPEED_MIN), float(_WALK_SPEED_MAX)),
-        _norm(perception.head_pan, -_HEAD_PAN_RANGE, _HEAD_PAN_RANGE),
-        _norm(perception.head_tilt, -_HEAD_TILT_RANGE, _HEAD_TILT_RANGE),
-        _norm(perception.imu_roll, -_IMU_RANGE, _IMU_RANGE),
-        _norm(perception.imu_pitch, -_IMU_RANGE, _IMU_RANGE),
+        normalize_value(perception.walk_x, -WALK_X_RANGE, WALK_X_RANGE),
+        normalize_value(perception.walk_y, -WALK_Y_RANGE, WALK_Y_RANGE),
+        normalize_value(perception.walk_yaw, -WALK_YAW_RANGE, WALK_YAW_RANGE),
+        normalize_value(perception.walk_height, WALK_HEIGHT_MIN, WALK_HEIGHT_MAX),
+        normalize_value(float(perception.walk_speed), float(WALK_SPEED_MIN), float(WALK_SPEED_MAX)),
+        normalize_value(perception.head_pan, -HEAD_PAN_RANGE, HEAD_PAN_RANGE),
+        normalize_value(perception.head_tilt, -HEAD_TILT_RANGE, HEAD_TILT_RANGE),
+        normalize_value(perception.imu_roll, -IMU_RANGE, IMU_RANGE),
+        normalize_value(perception.imu_pitch, -IMU_RANGE, IMU_RANGE),
         1.0 if perception.is_walking else -1.0,
-        _norm(float(perception.battery_mv), float(_BATTERY_MIN), float(_BATTERY_MAX)),
+        normalize_value(float(perception.battery_mv), float(BATTERY_MIN), float(BATTERY_MAX)),
     )
 
     # Entity slots (already normalized to [-1, 1] by slot encoder)
     if perception.entity_slots and len(perception.entity_slots) == AINEX_ENTITY_SLOT_DIM:
         entity_slots = tuple(perception.entity_slots)
     else:
-        if perception.entity_slots and len(perception.entity_slots) != AINEX_ENTITY_SLOT_DIM:
+        if perception.entity_slots:
             logger.warning(
-                "entity_slots has %d dims, expected %d; using zeros",
+                "entity_slots has %d dims, expected %d; canonicalizing length",
                 len(perception.entity_slots), AINEX_ENTITY_SLOT_DIM,
             )
-        entity_slots = (0.0,) * AINEX_ENTITY_SLOT_DIM
+            entity_slots = canonical_entity_slots(perception.entity_slots)
+        else:
+            entity_slots = canonical_entity_slots(())
 
     state = proprio + entity_slots
 
-    metadata: dict[str, Any] = {
+    metadata: dict[str, JsonValue] = {
+        "schema_version": AINEX_SCHEMA_VERSION,
         "timestamp": perception.timestamp,
         "battery_mv": perception.battery_mv,
     }
@@ -121,14 +103,16 @@ def build_observation(
         prompt=perception.language_instruction,
         image=perception.camera_frame,
         metadata=metadata,
+        schema_version=perception.schema_version,
     )
 
 
-def observation_to_dict(obs: OpenPIObservationPayload) -> dict[str, Any]:
+def observation_to_dict(obs: OpenPIObservationPayload) -> dict[str, JsonValue]:
     """Serialize an observation payload to a dict suitable for the OpenPI client."""
-    d: dict[str, Any] = {
+    d: dict[str, JsonValue] = {
         "state": list(obs.state),
         "prompt": obs.prompt,
+        "schema_version": obs.schema_version,
     }
     if obs.image:
         d["image"] = obs.image
@@ -141,7 +125,7 @@ def observation_to_dict(obs: OpenPIObservationPayload) -> dict[str, Any]:
 # Action decoder
 # ---------------------------------------------------------------------------
 
-def decode_action(raw: dict[str, Any]) -> OpenPIActionChunk:
+def decode_action(raw: dict[str, JsonValue]) -> OpenPIActionChunk:
     """Decode an OpenPI action response into an AiNex action chunk.
 
     Accepts either:
@@ -151,16 +135,20 @@ def decode_action(raw: dict[str, Any]) -> OpenPIActionChunk:
     confidence = float(raw.get("confidence", 1.0))
 
     action_vector = raw.get("action")
+    if isinstance(action_vector, (list, tuple)) and len(action_vector) < AINEX_ACTION_DIM:
+        raise ValueError(
+            f"OpenPI action vector has {len(action_vector)} dimensions; expected at least {AINEX_ACTION_DIM}"
+        )
     if isinstance(action_vector, (list, tuple)) and len(action_vector) >= AINEX_ACTION_DIM:
         # Raw action vector from policy: decode positionally
         av = [float(v) for v in action_vector]
-        walk_x = _clamp(_denorm(av[0], -_WALK_X_RANGE, _WALK_X_RANGE), -_WALK_X_RANGE, _WALK_X_RANGE)
-        walk_y = _clamp(_denorm(av[1], -_WALK_Y_RANGE, _WALK_Y_RANGE), -_WALK_Y_RANGE, _WALK_Y_RANGE)
-        walk_yaw = _clamp(_denorm(av[2], -_WALK_YAW_RANGE, _WALK_YAW_RANGE), -_WALK_YAW_RANGE, _WALK_YAW_RANGE)
-        walk_height = _clamp(_denorm(av[3], _WALK_HEIGHT_MIN, _WALK_HEIGHT_MAX), _WALK_HEIGHT_MIN, _WALK_HEIGHT_MAX)
-        walk_speed = int(round(_clamp(_denorm(av[4], float(_WALK_SPEED_MIN), float(_WALK_SPEED_MAX)), float(_WALK_SPEED_MIN), float(_WALK_SPEED_MAX))))
-        head_pan = _clamp(_denorm(av[5], -_HEAD_PAN_RANGE, _HEAD_PAN_RANGE), -_HEAD_PAN_RANGE, _HEAD_PAN_RANGE)
-        head_tilt = _clamp(_denorm(av[6], -_HEAD_TILT_RANGE, _HEAD_TILT_RANGE), -_HEAD_TILT_RANGE, _HEAD_TILT_RANGE)
+        walk_x = clamp_value(denormalize_value(av[0], -WALK_X_RANGE, WALK_X_RANGE), -WALK_X_RANGE, WALK_X_RANGE)
+        walk_y = clamp_value(denormalize_value(av[1], -WALK_Y_RANGE, WALK_Y_RANGE), -WALK_Y_RANGE, WALK_Y_RANGE)
+        walk_yaw = clamp_value(denormalize_value(av[2], -WALK_YAW_RANGE, WALK_YAW_RANGE), -WALK_YAW_RANGE, WALK_YAW_RANGE)
+        walk_height = clamp_value(denormalize_value(av[3], WALK_HEIGHT_MIN, WALK_HEIGHT_MAX), WALK_HEIGHT_MIN, WALK_HEIGHT_MAX)
+        walk_speed = int(round(clamp_value(denormalize_value(av[4], float(WALK_SPEED_MIN), float(WALK_SPEED_MAX)), float(WALK_SPEED_MIN), float(WALK_SPEED_MAX))))
+        head_pan = clamp_value(denormalize_value(av[5], -HEAD_PAN_RANGE, HEAD_PAN_RANGE), -HEAD_PAN_RANGE, HEAD_PAN_RANGE)
+        head_tilt = clamp_value(denormalize_value(av[6], -HEAD_TILT_RANGE, HEAD_TILT_RANGE), -HEAD_TILT_RANGE, HEAD_TILT_RANGE)
 
         return OpenPIActionChunk(
             raw_action=tuple(av),
@@ -172,19 +160,21 @@ def decode_action(raw: dict[str, Any]) -> OpenPIActionChunk:
             head_pan=head_pan,
             head_tilt=head_tilt,
             confidence=confidence,
+            schema_version=AINEX_SCHEMA_VERSION,
         )
 
     # Named-field format (e.g., from a structured policy)
     return OpenPIActionChunk(
-        walk_x=_clamp(float(raw.get("walk_x", 0.0)), -_WALK_X_RANGE, _WALK_X_RANGE),
-        walk_y=_clamp(float(raw.get("walk_y", 0.0)), -_WALK_Y_RANGE, _WALK_Y_RANGE),
-        walk_yaw=_clamp(float(raw.get("walk_yaw", 0.0)), -_WALK_YAW_RANGE, _WALK_YAW_RANGE),
-        walk_height=_clamp(float(raw.get("walk_height", 0.036)), _WALK_HEIGHT_MIN, _WALK_HEIGHT_MAX),
-        walk_speed=int(round(_clamp(float(raw.get("walk_speed", 2)), float(_WALK_SPEED_MIN), float(_WALK_SPEED_MAX)))),
-        head_pan=_clamp(float(raw.get("head_pan", 0.0)), -_HEAD_PAN_RANGE, _HEAD_PAN_RANGE),
-        head_tilt=_clamp(float(raw.get("head_tilt", 0.0)), -_HEAD_TILT_RANGE, _HEAD_TILT_RANGE),
+        walk_x=clamp_value(float(raw.get("walk_x", 0.0)), -WALK_X_RANGE, WALK_X_RANGE),
+        walk_y=clamp_value(float(raw.get("walk_y", 0.0)), -WALK_Y_RANGE, WALK_Y_RANGE),
+        walk_yaw=clamp_value(float(raw.get("walk_yaw", 0.0)), -WALK_YAW_RANGE, WALK_YAW_RANGE),
+        walk_height=clamp_value(float(raw.get("walk_height", 0.036)), WALK_HEIGHT_MIN, WALK_HEIGHT_MAX),
+        walk_speed=int(round(clamp_value(float(raw.get("walk_speed", 2)), float(WALK_SPEED_MIN), float(WALK_SPEED_MAX)))),
+        head_pan=clamp_value(float(raw.get("head_pan", 0.0)), -HEAD_PAN_RANGE, HEAD_PAN_RANGE),
+        head_tilt=clamp_value(float(raw.get("head_tilt", 0.0)), -HEAD_TILT_RANGE, HEAD_TILT_RANGE),
         action_name=str(raw.get("action_name", "")),
         confidence=confidence,
+        schema_version=str(raw.get("schema_version", AINEX_SCHEMA_VERSION)),
     )
 
 
@@ -249,4 +239,5 @@ def default_perception() -> AinexPerceptionObservation:
         walk_speed=2,
         head_pan=0.0,
         head_tilt=0.0,
+        schema_version=AINEX_SCHEMA_VERSION,
     )

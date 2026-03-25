@@ -56,12 +56,14 @@ class TestFaceRecognizer:
         assert id1 != id2
         assert rec.gallery_size == 2
 
-    def test_no_embedding_assigns_id(self):
+    def test_no_embedding_returns_empty(self):
         rec = FaceRecognizer()
         det = _make_detection(None)
         identity_id, score = rec.recognize(det)
-        assert identity_id != ""
+        # No embedding → can't identify, returns empty
+        assert identity_id == ""
         assert score == 0.0
+        assert rec.gallery_size == 0  # no useless gallery entry created
 
     def test_manual_enroll(self):
         rec = FaceRecognizer()

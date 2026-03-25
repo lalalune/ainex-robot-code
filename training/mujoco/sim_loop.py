@@ -153,12 +153,11 @@ class SimLoop:
         self.inference_fn, self.config = load_policy(checkpoint_dir)
         print("Policy loaded.")
 
-        # Always use PRIMITIVES model for physics (matches training dynamics).
-        # The full mesh model has extra joints (ball_x/y/z) that destabilize
-        # the walking policy.  For rendering, we remap qpos to the full mesh
-        # model separately (see run_headless / run_viewer).
+        # Use the MJX model which matches the MJX/Brax training dynamics.
+        # The primitives model has different contact geometry that causes
+        # trained policies to fail (direction reversal, instability).
         self.use_full_mesh = use_full_mesh
-        self.model = mujoco.MjModel.from_xml_path(str(consts.SCENE_PRIMITIVES_XML))
+        self.model = mujoco.MjModel.from_xml_path(str(consts.SCENE_MJX_XML))
         self.model.opt.timestep = 0.004  # sim_dt matching training
         self.data = mujoco.MjData(self.model)
 
@@ -183,12 +182,11 @@ class SimLoop:
             for i in range(self.model.nu)
         ])
 
-        # Standing pose from keyframe
-        key_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_KEY, "stand_bent_knees")
-        if key_id >= 0:
-            mujoco.mj_resetDataKeyframe(self.model, self.data, key_id)
-
-        # Default pose = actuated joint positions from keyframe (24-dim ctrl-space)
+        # Default pose = model's initial qpos (matches training env init).
+        # NOTE: Previous versions loaded the "stand_bent_knees" keyframe here,
+        # but the Brax training env initializes from qpos0 (all zeros), so the
+        # policy was trained relative to the straight-leg pose, not bent knees.
+        mujoco.mj_forward(self.model, self.data)
         self.default_pose = self.data.qpos[self._act_qpos_idx].copy()
 
         # Set initial control to default pose

@@ -1,0 +1,494 @@
+{
+  "trajectory_id": "hyperscape-0002",
+  "agent_id": "eliza-agent-2",
+  "steps": [
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_2_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              39.33888123327935,
+              49.77742367913391,
+              8.346858025021401
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9815263710084321,
+            "distance_to_agent": 7.82824200174737,
+            "bearing_to_agent": 1.6361840935043341,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_2_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              56.54559973876411,
+              48.69826431363153,
+              9.65564581855324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.642564329119082,
+            "distance_to_agent": 9.496996445808863,
+            "bearing_to_agent": -1.4031132483426014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_2",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              53.941224724811164,
+              54.873675770423375,
+              8.638448550255518
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7495655410364592,
+            "distance_to_agent": 9.108124217675856,
+            "bearing_to_agent": -0.66448910058313,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              47.89541836375434,
+              48.24482436181449,
+              9.722302936867214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6002287584511774,
+            "distance_to_agent": 1.4936347629400293,
+            "bearing_to_agent": -2.043521875100661,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_2_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              46.87995192194078,
+              51.59228246209937,
+              7.055267923628561
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9941285515775249,
+            "distance_to_agent": 3.157845250024148,
+            "bearing_to_agent": 0.266927677465169,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          47.10783776136182,
+          8.60779702234498,
+          -48.85189780571804
+        ],
+        "task": "Navigate to the Goblin Scout"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_2_2",
+          "target_label": "Goblin Scout"
+        }
+      },
+      "reward": 0.8780095992040405,
+      "is_terminal": false,
+      "is_first": true,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_2_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              39.33888123327935,
+              49.77742367913391,
+              8.346858025021401
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9815263710084321,
+            "distance_to_agent": 7.82824200174737,
+            "bearing_to_agent": 1.6361840935043341,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_2_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              56.54559973876411,
+              48.69826431363153,
+              9.65564581855324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.642564329119082,
+            "distance_to_agent": 9.496996445808863,
+            "bearing_to_agent": -1.4031132483426014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_2",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              53.941224724811164,
+              54.873675770423375,
+              8.638448550255518
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7495655410364592,
+            "distance_to_agent": 9.108124217675856,
+            "bearing_to_agent": -0.66448910058313,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              47.89541836375434,
+              48.24482436181449,
+              9.722302936867214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6002287584511774,
+            "distance_to_agent": 1.4936347629400293,
+            "bearing_to_agent": -2.043521875100661,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_2_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              46.87995192194078,
+              51.59228246209937,
+              7.055267923628561
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9941285515775249,
+            "distance_to_agent": 3.157845250024148,
+            "bearing_to_agent": 0.266927677465169,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          47.10783776136182,
+          8.60779702234498,
+          -48.85189780571804
+        ],
+        "task": "Navigate to the Goblin Scout"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_2_2",
+          "target_label": "Goblin Scout"
+        }
+      },
+      "reward": 0.5327061695295157,
+      "is_terminal": false,
+      "is_first": false,
+      "is_last": false
+    },
+    {
+      "observation": {
+        "entities": [
+          {
+            "entity_id": "entity_2_0",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              39.33888123327935,
+              49.77742367913391,
+              8.346858025021401
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9815263710084321,
+            "distance_to_agent": 7.82824200174737,
+            "bearing_to_agent": 1.6361840935043341,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          },
+          {
+            "entity_id": "entity_2_1",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              56.54559973876411,
+              48.69826431363153,
+              9.65564581855324
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.642564329119082,
+            "distance_to_agent": 9.496996445808863,
+            "bearing_to_agent": -1.4031132483426014,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_2",
+            "entity_type": "person",
+            "label": "Goblin Scout",
+            "position": [
+              53.941224724811164,
+              54.873675770423375,
+              8.638448550255518
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.7495655410364592,
+            "distance_to_agent": 9.108124217675856,
+            "bearing_to_agent": -0.66448910058313,
+            "source": "game",
+            "properties": {
+              "level": 5,
+              "health": 30
+            }
+          },
+          {
+            "entity_id": "entity_2_3",
+            "entity_type": "object",
+            "label": "Iron Ore",
+            "position": [
+              47.89541836375434,
+              48.24482436181449,
+              9.722302936867214
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.6002287584511774,
+            "distance_to_agent": 1.4936347629400293,
+            "bearing_to_agent": -2.043521875100661,
+            "source": "game",
+            "properties": {
+              "rarity": "common"
+            }
+          },
+          {
+            "entity_id": "entity_2_4",
+            "entity_type": "object",
+            "label": "Health Potion",
+            "position": [
+              46.87995192194078,
+              51.59228246209937,
+              7.055267923628561
+            ],
+            "velocity": [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            "size": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "confidence": 0.9941285515775249,
+            "distance_to_agent": 3.157845250024148,
+            "bearing_to_agent": 0.266927677465169,
+            "source": "game",
+            "properties": {
+              "value": 25
+            }
+          }
+        ],
+        "agent_position": [
+          47.10783776136182,
+          8.60779702234498,
+          -48.85189780571804
+        ],
+        "task": "Navigate to the Goblin Scout"
+      },
+      "action": {
+        "type": "navigate",
+        "name": "walk_to_target",
+        "params": {
+          "target_entity": "entity_2_2",
+          "target_label": "Goblin Scout"
+        }
+      },
+      "reward": 0.8724330410852574,
+      "is_terminal": true,
+      "is_first": false,
+      "is_last": true
+    }
+  ],
+  "metadata": {
+    "total_reward": 2.2831488098188135,
+    "status": "completed",
+    "source": "hyperscape_planner"
+  }
+}

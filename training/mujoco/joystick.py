@@ -37,26 +37,26 @@ def default_config() -> config_dict.ConfigDict:
         obs_noise=0.05,
         obs_history_size=3,
         max_foot_height=0.07,
-        # Velocity command ranges — conservative for small robot
-        lin_vel_x=[-0.3, 0.8],
+        # Velocity command ranges
+        lin_vel_x=[-0.3, 1.2],
         lin_vel_y=[-0.4, 0.4],
-        ang_vel_yaw=[-0.5, 0.5],
+        ang_vel_yaw=[-0.8, 0.8],
         reward_config=config_dict.create(
             scales=config_dict.create(
-                alive=0.5,
+                alive=2.0,          # Strongly reward staying upright
                 tracking_lin_vel=4.0,
                 tracking_ang_vel=2.0,
                 lin_vel_z=-2.0,
                 ang_vel_xy=-0.05,
-                orientation=-5.0,
-                torques=-0.0002,
-                action_rate=-0.01,
-                zero_cmd=-0.5,
-                termination=-1.0,
+                orientation=-3.0,   # Reduced from -5.0 — less harsh on tilt
+                torques=-0.0001,    # Reduced torque penalty
+                action_rate=-0.005, # Reduced jerk penalty
+                zero_cmd=-0.2,      # Reduced zero-cmd penalty
+                termination=-2.0,   # Stronger termination penalty
                 feet_slip=-0.1,
                 feet_clearance=0.0,
-                feet_orientation=-2.0,
-                energy=-0.0001,
+                feet_orientation=-1.0,  # Reduced from -2.0
+                energy=-0.00005,
             ),
             tracking_sigma=0.25,
         ),

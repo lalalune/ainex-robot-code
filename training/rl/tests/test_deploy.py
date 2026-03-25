@@ -73,4 +73,5 @@ class TestRLPolicyRuntime:
     def test_skill_registry_populated(self):
         runtime = RLPolicyRuntime()
         skills = runtime.registry.list_skills()
-        assert set(skills) == {"stand", "walk", "turn", "wave", "bow"}
+        expected = {"stand", "walk", "turn", "wave", "bow", "walk_to_target"}
+        assert set(skills) == expected

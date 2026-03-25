@@ -13,6 +13,7 @@ from typing import Any
 
 from perception.entity_slots.slot_config import TOTAL_ENTITY_DIMS
 from training.interfaces import AinexPerceptionObservation, TrackedEntity
+from training.schema.canonical import AINEX_SCHEMA_VERSION, canonical_entity_slots
 
 
 @dataclass
@@ -28,7 +29,7 @@ class _InternalEntity:
 
 
 class PerceptionAggregator:
-    """Thread-safe (single-writer) perception state aggregator."""
+    """Single-writer perception state aggregator."""
 
     def __init__(self, stale_timeout_sec: float = 5.0, max_entities: int = 64) -> None:
         self._stale_timeout = stale_timeout_sec
@@ -103,7 +104,7 @@ class PerceptionAggregator:
 
     def update_entity_slots(self, slots: tuple[float, ...]) -> None:
         """Update entity slots from perception pipeline."""
-        self._entity_slots = slots
+        self._entity_slots = canonical_entity_slots(slots)
 
     def update_telemetry(self, data: dict[str, Any]) -> None:
         """Update robot proprioception from bridge telemetry event data."""
@@ -177,6 +178,7 @@ class PerceptionAggregator:
             entity_slots=self._entity_slots,
             camera_frame=camera_frame,
             language_instruction=language_instruction,
+            schema_version=AINEX_SCHEMA_VERSION,
         )
 
     def scene_summary(self) -> dict[str, Any]:
@@ -198,6 +200,7 @@ class PerceptionAggregator:
             })
 
         return {
+            "schema_version": AINEX_SCHEMA_VERSION,
             "entity_count": len(entities),
             "entities": entities,
             "robot": {
